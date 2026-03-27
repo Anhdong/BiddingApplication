@@ -18,6 +18,17 @@
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <gson.version>2.12.1</gson.version>
+
+        <hikaricp.version>6.2.1</hikaricp.version>
+
+        <postgres.version>42.7.10</postgres.version>
+        <jbcrypt.version>0.4</jbcrypt.version>
+
+        <logback.version>1.5.16</logback.version>
+
+        <javafx.version>25.0.2</javafx.version>
+        <dotenv-java.version>3.2.0</dotenv-java.version>
     </properties>
 
 </project>
