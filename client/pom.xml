@@ -23,7 +23,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>com.BiddingApp.CommonUIController.MainLayoutController</mainClass>
+                    <mainClass>com.BiddingApplication.CommonUIController.MainLayoutController</mainClass>
                 </configuration>
             </plugin>
         </plugins>
