@@ -2,40 +2,31 @@ package com.uet.BiddingApplication.DTO.Response;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public class RealtimeUpdateDTO implements Serializable {
     private static final long serialVersionUID = 1L;
-    private String sessionId;
-    private BigDecimal newCurrentPrice;
-    private String newWinnerName;
+    private BidHistoryDTO lastBid;
+    private LocalDateTime newEndTime; // Sẽ NULL nếu không có gia hạn, có giá trị nếu Anti-sniping kích hoạt
 
-    public RealtimeUpdateDTO(String sessionId, BigDecimal newCurrentPrice, String newWinnerName) {
-        this.sessionId = sessionId;
-        this.newCurrentPrice = newCurrentPrice;
-        this.newWinnerName = newWinnerName;
+    public RealtimeUpdateDTO(BidHistoryDTO lastBid, LocalDateTime newEndTime) {
+        this.lastBid = lastBid;
+        this.newEndTime = newEndTime;
     }
 
-    public String getSessionId() {
-        return sessionId;
+    public BidHistoryDTO getLastBid() {
+        return lastBid;
     }
 
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
+    public void setLastBid(BidHistoryDTO lastBid) {
+        this.lastBid = lastBid;
     }
 
-    public BigDecimal getNewCurrentPrice() {
-        return newCurrentPrice;
+    public LocalDateTime getNewEndTime() {
+        return newEndTime;
     }
 
-    public void setNewCurrentPrice(BigDecimal newCurrentPrice) {
-        this.newCurrentPrice = newCurrentPrice;
-    }
-
-    public String getNewWinnerName() {
-        return newWinnerName;
-    }
-
-    public void setNewWinnerName(String newWinnerName) {
-        this.newWinnerName = newWinnerName;
+    public void setNewEndTime(LocalDateTime newEndTime) {
+        this.newEndTime = newEndTime;
     }
 }
