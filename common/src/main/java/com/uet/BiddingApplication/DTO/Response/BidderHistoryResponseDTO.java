@@ -4,6 +4,7 @@ import com.uet.BiddingApplication.Enum.SessionStatus;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public class BidderHistoryResponseDTO implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -13,15 +14,26 @@ public class BidderHistoryResponseDTO implements Serializable {
     private BigDecimal myHighestBid;
     private BigDecimal finalPrice;
     private SessionStatus status;
+    private LocalDateTime time;
 
     public BidderHistoryResponseDTO(String sessionId, String itemName, String winnerId,
-                                    BigDecimal myHighestBid, BigDecimal finalPrice, SessionStatus status) {
+                                    BigDecimal myHighestBid, BigDecimal finalPrice, SessionStatus status,
+                                    LocalDateTime time) {
         this.sessionId = sessionId;
         this.itemName = itemName;
         WinnerId = winnerId;
         this.myHighestBid = myHighestBid;
         this.finalPrice = finalPrice;
         this.status = status;
+        this.time = time;
+    }
+
+    public LocalDateTime getTime() {
+        return time;
+    }
+
+    public void setTime(LocalDateTime time) {
+        this.time = time;
     }
 
     public SessionStatus getStatus() {

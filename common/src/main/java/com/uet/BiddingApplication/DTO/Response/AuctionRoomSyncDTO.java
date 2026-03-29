@@ -11,7 +11,7 @@ public class AuctionRoomSyncDTO implements Serializable {
     private String imageURL;
     private BigDecimal currentPrice;
     private LocalDateTime endTime; // Để chạy đồng hồ đếm ngược
-    private List<BidHistoryDTO> history; // Để vẽ ngay lập tức cái Line Chart lúc mới vào
+    private List<BidHistoryDTO> history; // Để vẽ ngay lập tức cái table lúc mới vào
     private String highestBidderName; // Tên người đang giữ giá cao nhất hiện tại
 
     public AuctionRoomSyncDTO(String sessionId,String imageURL ,BigDecimal currentPrice, LocalDateTime endTime,

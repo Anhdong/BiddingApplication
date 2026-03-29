@@ -6,17 +6,24 @@ import java.time.LocalDateTime;
 
 public class RelistRequestDTO implements Serializable {
     private static final long serialVersionUID = 1L;
+
+    private String itemId;
     private String sessionId;
     private BigDecimal newStartPrice;
     private LocalDateTime newStartTime;
     private LocalDateTime newEndTime;
 
-    public RelistRequestDTO(String sessionId, BigDecimal newStartPrice,
+    public RelistRequestDTO(String itemId,String sessionId, BigDecimal newStartPrice,
                             LocalDateTime newStartTime, LocalDateTime newEndTime) {
+        this.itemId = itemId;
         this.sessionId = sessionId;
         this.newStartPrice = newStartPrice;
         this.newStartTime = newStartTime;
         this.newEndTime = newEndTime;
+    }
+
+    public String getItemId() {
+        return itemId;
     }
 
     public String getSessionId() {
