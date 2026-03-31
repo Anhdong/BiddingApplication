@@ -7,6 +7,9 @@ import java.time.LocalDateTime;
 public class Seller extends User {
     private String bankAccount;
 
+    public Seller() {
+    }
+
     public Seller(String id, LocalDateTime createdAt, String username, String email,
                   String phone, String passwordHash, RoleType role, String bankAccount) {
         super(id, createdAt, username, email, phone, passwordHash, role);

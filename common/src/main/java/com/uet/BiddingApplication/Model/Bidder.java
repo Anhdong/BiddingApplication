@@ -7,6 +7,9 @@ import java.time.LocalDateTime;
 public class Bidder extends User {
     private String shippingAddress;
 
+    public Bidder() {
+    }
+
     public Bidder(String id, LocalDateTime createdAt, String username, String email, String phone,
                   String passwordHash, RoleType role, String shippingAddress) {
         super(id, createdAt, username, email, phone, passwordHash, role);

@@ -13,6 +13,9 @@ public class Admin extends User{
         this.otpSecretKey = otpSecretKey;
     }
 
+    public Admin() {
+    }
+
     public String getOtpSecretKey() {
         return otpSecretKey;
     }

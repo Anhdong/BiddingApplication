@@ -6,9 +6,15 @@ public abstract class Entity {
     private String id;
     private LocalDateTime createdAt;
 
+    public Entity() {}
+
     public Entity(String id, LocalDateTime createdAt) {
         this.id = id;
         this.createdAt = createdAt;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getId() {

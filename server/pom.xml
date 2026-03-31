@@ -44,6 +44,12 @@
             <artifactId>dotenv-java</artifactId>
             <version>${dotenv-java.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito-junit-jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

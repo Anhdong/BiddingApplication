@@ -11,6 +11,9 @@ public class BidTransaction extends Entity{
     private BigDecimal bidAmount;
     private BidType bidType;
 
+    public BidTransaction() {
+    }
+
     public BidTransaction(String id, LocalDateTime createdAt, String bidderId, String sessionId,
                           BigDecimal bidAmount, BidType bidType) {
         super(id, createdAt);

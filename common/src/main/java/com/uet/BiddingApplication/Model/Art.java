@@ -15,6 +15,9 @@ public class Art extends Item{
         return artistName;
     }
 
+    public Art() {
+    }
+
     public void setArtistName(String artistName) {
         this.artistName = artistName;
     }

@@ -9,6 +9,7 @@ public class Item extends Entity {
     private String imageURL;
     private String sellerId;
 
+    public Item(){};
     public Item(String id, LocalDateTime createdAt, String name, String description,
                 String category, String imageURL, String sellerId) {
         super(id, createdAt);

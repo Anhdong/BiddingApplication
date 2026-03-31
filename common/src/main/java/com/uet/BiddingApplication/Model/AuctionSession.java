@@ -36,6 +36,9 @@ public class AuctionSession extends Entity{
         return itemId;
     }
 
+    public AuctionSession() {
+    }
+
     public void setItemId(String itemId) {
         this.itemId = itemId;
     }

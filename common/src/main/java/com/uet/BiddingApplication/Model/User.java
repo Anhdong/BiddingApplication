@@ -12,6 +12,9 @@ public class User extends Entity{
     private RoleType role;
     private boolean isActive;
 
+    public User() {
+    }
+
     public User(String id, LocalDateTime createdAt, String username, String email, String phone,
                 String passwordHash, RoleType role) {
         super(id, createdAt);

@@ -11,6 +11,9 @@ public class Electronics extends Item{
         this.warrantyMonths = warrantyMonths;
     }
 
+    public Electronics() {
+    }
+
     public int getWarrantyMonths() {
         return warrantyMonths;
     }
