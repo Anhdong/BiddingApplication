@@ -12,7 +12,21 @@ public class DatabaseConnectionPool {
     private static final HikariDataSource dataSource = initDataSource();
     private static HikariDataSource initDataSource() {
         //kiểm tra file .env nằm ở đâu
-        String directory = new File(".env").exists() ? "./" : "../";
+        String[] possiblePaths = {"./", "./server/", "../server/", "../"};
+        String directory = "./"; // Mặc định
+        boolean fileFound = false;
+
+        for (String path : possiblePaths) {
+            if (new File(path + ".env").exists()) {
+                directory = path;
+                fileFound = true;
+                break; // Tìm thấy thì dừng quét ngay
+            }
+        }
+
+        if (!fileFound) {
+            System.err.println("⚠️ Cảnh báo: Không tìm thấy file .env ở bất kỳ thư mục dự kiến nào!");
+        }
 
         //Đọc file .env
         Dotenv dotenv = Dotenv.configure().directory(directory).ignoreIfMissing().load();
