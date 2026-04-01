@@ -7,13 +7,15 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class ServerConnection {
-    private static ServerConnection instance;
-
-    private ServerConnection() {} // Chặn tạo object mới
-
-    public static synchronized ServerConnection getInstance() {
-        if (instance == null) {
-            instance = new ServerConnection();
+    public static volatile ServerConnection instance;
+    private ServerConnection() {}
+    public static ServerConnection getInstance(){
+        if(instance == null ){
+            synchronized (ClientSession.class){
+                if(instance == null){
+                    instance = new ServerConnection();
+                }
+            }
         }
         return instance;
     }

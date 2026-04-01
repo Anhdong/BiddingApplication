@@ -6,13 +6,15 @@ import java.util.concurrent.ExecutorService;
 
 public class AuctionServer {
 
-    private static AuctionServer instance;
-
+    public static volatile AuctionServer instance;
     private AuctionServer() {}
-
-    public static synchronized AuctionServer getInstance() {
-        if (instance == null) {
-            instance = new AuctionServer();
+    public static AuctionServer getInstance(){
+        if(instance == null ){
+            synchronized (AuctionServer.class){
+                if(instance == null){
+                    instance = new AuctionServer();
+                }
+            }
         }
         return instance;
     }

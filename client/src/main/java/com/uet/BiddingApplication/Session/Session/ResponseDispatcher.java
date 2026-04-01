@@ -3,13 +3,15 @@ package com.uet.BiddingApplication.Session.Session;
 import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
 
 public class ResponseDispatcher {
-    private static ResponseDispatcher instance;
-
+    public static volatile ResponseDispatcher instance;
     private ResponseDispatcher() {}
-
-    public static synchronized ResponseDispatcher getInstance() {
-        if (instance == null) {
-            instance = new ResponseDispatcher();
+    public static ResponseDispatcher getInstance(){
+        if(instance == null ){
+            synchronized (ClientSession.class){
+                if(instance == null){
+                    instance = new ResponseDispatcher();
+                }
+            }
         }
         return instance;
     }

@@ -11,12 +11,15 @@ public class ClientSession {
 
     private String currentToken;
 
-    private ClientSession() {
-    }
-
-    public static synchronized ClientSession getInstance() {
-        if (instance == null) {
-            instance = new ClientSession();
+    public static volatile ClientSession Instance;
+    private ClientSession() {}
+    public static ClientSession getInstance(){
+        if(instance == null ){
+            synchronized (ClientSession.class){
+                if(instance == null){
+                    instance = new ClientSession();
+                }
+            }
         }
         return instance;
     }
