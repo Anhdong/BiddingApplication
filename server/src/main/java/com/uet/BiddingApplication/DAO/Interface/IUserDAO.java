@@ -14,5 +14,5 @@ public interface IUserDAO {
     public boolean changePassword(String userId, String newHashedPassword);
     public List<User> getAllUsers();
     public List<User> searchUsers(String keyword, String role, Boolean status);
-
+    public boolean deleteUser(String userId);
 }

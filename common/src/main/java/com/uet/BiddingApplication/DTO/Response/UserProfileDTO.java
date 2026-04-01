@@ -13,6 +13,9 @@ public class UserProfileDTO implements Serializable {
     private RoleType role;
     private String specialAttribute;
 
+    public UserProfileDTO() {
+    }
+
     public UserProfileDTO(String username, String id, String email, String phone,
                           RoleType role, String specialAttribute) {
         this.username = username;

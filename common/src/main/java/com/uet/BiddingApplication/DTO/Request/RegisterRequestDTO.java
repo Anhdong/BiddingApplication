@@ -6,6 +6,10 @@ import java.io.Serializable;
 
 public class RegisterRequestDTO implements Serializable {
     private static final long serialVersionUID = 1L;
+
+    public RegisterRequestDTO() {
+    }
+
     private String username;
     private String password;
     private String email;

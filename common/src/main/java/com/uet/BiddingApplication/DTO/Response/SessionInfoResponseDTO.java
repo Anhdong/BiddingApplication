@@ -30,6 +30,9 @@ public class SessionInfoResponseDTO implements Serializable {
         this.endTime = endTime;
     }
 
+    public SessionInfoResponseDTO() {
+    }
+
     public String getSessionId() {
         return sessionId;
     }

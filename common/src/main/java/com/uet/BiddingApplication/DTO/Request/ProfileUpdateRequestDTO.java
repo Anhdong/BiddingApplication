@@ -16,6 +16,9 @@ public class ProfileUpdateRequestDTO implements Serializable {
         this.specialAttribute = specialAttribute;
     }
 
+    public ProfileUpdateRequestDTO() {
+    }
+
     public String getUsername() {
         return username;
     }

@@ -15,6 +15,9 @@ public class AdminActionRequestDTO implements Serializable {
         this.otpCode = otpCode;
     }
 
+    public AdminActionRequestDTO() {
+    }
+
     public String getTargetId() {
         return targetId;
     }

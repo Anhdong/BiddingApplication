@@ -13,6 +13,9 @@ public class AuctionCardDTO implements Serializable {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 
+    public AuctionCardDTO() {
+    }
+
     public String getSessionId() {
         return sessionId;
     }

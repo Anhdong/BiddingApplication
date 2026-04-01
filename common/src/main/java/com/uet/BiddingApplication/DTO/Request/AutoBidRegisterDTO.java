@@ -5,6 +5,10 @@ import java.math.BigDecimal;
 
 public class AutoBidRegisterDTO implements Serializable {
     private static final long serialVersionUID = 1L;
+
+    public AutoBidRegisterDTO() {
+    }
+
     private String sessionId;
     private BigDecimal maxBid;
     private BigDecimal increment;

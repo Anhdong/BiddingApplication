@@ -17,6 +17,9 @@ public class BidRequestDTO implements Serializable {
         this.bidType = bidType;
     }
 
+    public BidRequestDTO() {
+    }
+
     public String getSessionId() {
         return sessionId;
     }

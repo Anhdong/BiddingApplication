@@ -14,6 +14,9 @@ public class ItemUpdateRequestDTO implements Serializable {
     private String imageExtension;
     private String attribute;
 
+    public ItemUpdateRequestDTO() {
+    }
+
     public ItemUpdateRequestDTO(String name, String description, Category category, String oldImageURL,
                                 byte[] imageBytes, String imageExtension, String attribute) {
         this.name = name;

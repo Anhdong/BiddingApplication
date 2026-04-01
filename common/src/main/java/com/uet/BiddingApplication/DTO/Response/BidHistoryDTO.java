@@ -10,4 +10,7 @@ public class BidHistoryDTO implements Serializable {
     private BigDecimal bidAmount;
     private LocalDateTime time;
     private String sessionId;
+
+    public BidHistoryDTO() {
+    }
 }

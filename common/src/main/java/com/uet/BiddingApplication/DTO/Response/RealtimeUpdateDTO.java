@@ -14,6 +14,9 @@ public class RealtimeUpdateDTO implements Serializable {
         this.newEndTime = newEndTime;
     }
 
+    public RealtimeUpdateDTO() {
+    }
+
     public BidHistoryDTO getLastBid() {
         return lastBid;
     }

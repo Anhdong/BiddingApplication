@@ -28,6 +28,9 @@ public class BidderHistoryResponseDTO implements Serializable {
         this.time = time;
     }
 
+    public BidderHistoryResponseDTO() {
+    }
+
     public LocalDateTime getTime() {
         return time;
     }

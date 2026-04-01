@@ -12,6 +12,9 @@ public class SessionFilterRequestDTO implements Serializable {
         this.timeSortOption = timeSortOption;
     }
 
+    public SessionFilterRequestDTO() {
+    }
+
     public String getCategory() {
         return category;
     }

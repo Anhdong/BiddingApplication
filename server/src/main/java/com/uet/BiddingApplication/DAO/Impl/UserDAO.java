@@ -296,4 +296,19 @@ public class UserDAO implements IUserDAO {
         }
         return list;
     }
+
+    @Override
+    public boolean deleteUser(String userId) {
+        String sql = "DELETE FROM users WHERE id = ?::uuid";
+        try(Connection conn=DatabaseConnectionPool.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, userId);
+            return ps.executeUpdate() > 0;
+        }
+        catch(SQLException e){
+            System.err.println("[UserDAO] Lỗi deleteUser");
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

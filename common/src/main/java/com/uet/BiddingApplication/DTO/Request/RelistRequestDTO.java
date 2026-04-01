@@ -22,6 +22,9 @@ public class RelistRequestDTO implements Serializable {
         this.newEndTime = newEndTime;
     }
 
+    public RelistRequestDTO() {
+    }
+
     public String getItemId() {
         return itemId;
     }

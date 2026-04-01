@@ -9,6 +9,10 @@ public class ItemCreateDTO implements Serializable {
     private String name;
     private String description;
     private String category;
+
+    public ItemCreateDTO() {
+    }
+
     private byte[] imageBytes;
     private String imageExtension;
     private BigDecimal startPrice;

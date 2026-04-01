@@ -12,6 +12,9 @@ public class AuthResponseDTO implements Serializable {
         this.userProfile = userProfile;
     }
 
+    public AuthResponseDTO() {
+    }
+
     public String getToken() {
         return token;
     }

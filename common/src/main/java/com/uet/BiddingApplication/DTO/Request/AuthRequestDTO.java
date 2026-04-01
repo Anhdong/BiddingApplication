@@ -12,6 +12,9 @@ public class AuthRequestDTO implements Serializable {
         this.password = password;
     }
 
+    public AuthRequestDTO() {
+    }
+
     public String getUsername() {
         return username;
     }

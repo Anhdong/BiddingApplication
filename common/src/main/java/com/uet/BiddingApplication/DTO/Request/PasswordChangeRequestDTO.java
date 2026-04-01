@@ -12,6 +12,9 @@ public class PasswordChangeRequestDTO implements Serializable {
         this.newPassword = newPassword;
     }
 
+    public PasswordChangeRequestDTO() {
+    }
+
     public String getOldPassword() {
         return oldPassword;
     }

@@ -24,6 +24,9 @@ public class AuctionRoomSyncDTO implements Serializable {
         this.highestBidderName = highestBidderName;
     }
 
+    public AuctionRoomSyncDTO() {
+    }
+
     public String getSessionId() {
         return sessionId;
     }
