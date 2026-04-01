@@ -43,9 +43,9 @@ public class StorageService {
         this.Key = dotenv.get("SUPABASE_SERVICE_KEY");
         this.bucketName = dotenv.get("SUPABASE_BUCKET_NAME");
         System.out.println(Url+" "+Key+" "+bucketName);
-        // [TƯ DUY FAIL-FAST] Báo lỗi ngay lập tức nếu thiếu cấu hình
+        //Báo lỗi ngay lập tức nếu thiếu cấu hình
         if (Url == null || Key == null || bucketName == null) {
-            throw new RuntimeException("🚨 LỖI NGHIÊM TRỌNG: Không thể đọc được cấu hình Supabase từ file .env. Hãy kiểm tra lại đường dẫn file và tên biến!");
+            throw new RuntimeException("LỖI NGHIÊM TRỌNG: Không thể đọc được cấu hình Supabase từ file .env. Hãy kiểm tra lại đường dẫn file và tên biến!");
         }
 
         this.httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).
@@ -94,6 +94,45 @@ public class StorageService {
             case ".gif":  return "image/gif";
             case ".webp": return "image/webp";
             default:      return "application/octet-stream";
+        }
+    }
+    // xóa ảnh cũ trên storage
+    public void deleteImage(String publicUrl) {
+        if (publicUrl == null || publicUrl.trim().isEmpty()) {
+            return; // Không có ảnh cũ thì bỏ qua
+        }
+
+        try {
+            // 1. Trích xuất tên file từ publicUrl
+            // URL có dạng: https://.../storage/v1/object/public/auction-items/123-abc.jpg
+            // Ta cần lấy đoạn "123-abc.jpg" ở cuối cùng
+            String fileName = publicUrl.substring(publicUrl.lastIndexOf("/") + 1);
+
+            // 2. Xây dựng Endpoint API để xóa (Lưu ý: Không có chữ 'public' trong endpoint xóa)
+            // Format đúng: /storage/v1/object/[BUCKET_NAME]/[FILE_NAME]
+            String endpoint = String.format("%s/storage/v1/object/%s/%s", Url, bucketName, fileName);
+
+            // 3. Xây dựng request DELETE
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(endpoint))
+                    .header("Authorization", "Bearer " + Key)
+                    .DELETE() // Dùng method DELETE
+                    .build();
+
+            // 4. Gửi yêu cầu
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 200 || response.statusCode() == 204) {
+                System.out.println("[Storage Info] Đã dọn dẹp ảnh cũ thành công: " + fileName);
+            } else {
+                System.err.println("[Storage Warning] Không thể xóa ảnh cũ. Status: " + response.statusCode() + ", Body: " + response.body());
+            }
+
+        } catch (Exception e) {
+            System.err.println("[Storage Error] Lỗi khi cố gắng xóa ảnh cũ: " + publicUrl);
+            e.printStackTrace();
+            // LƯU Ý: Ta chỉ in log chứ không throw Exception làm sập luồng Update Item.
+            // Vì việc xóa file rác thất bại không nên cản trở việc User cập nhật thông tin thành công.
         }
     }
 }

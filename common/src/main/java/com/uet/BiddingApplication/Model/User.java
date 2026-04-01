@@ -4,13 +4,13 @@ import com.uet.BiddingApplication.Enum.RoleType;
 
 import java.time.LocalDateTime;
 
-public class User extends Entity{
+public abstract class User extends Entity{
     private String username;
     private String email;
     private String phone;
     private String passwordHash;
     private RoleType role;
-    private boolean isActive;
+    private boolean isActive=true;
 
     public User() {
     }
@@ -23,7 +23,6 @@ public class User extends Entity{
         this.phone = phone;
         this.passwordHash = passwordHash;
         this.role = role;
-        this.isActive = true;
     }
 
     public String getUsername() {

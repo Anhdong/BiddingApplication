@@ -6,11 +6,13 @@ public abstract class Entity {
     private String id;
     private LocalDateTime createdAt;
 
-    public Entity() {}
+    public Entity() {
+        this.createdAt = LocalDateTime.now();
+    }
 
     public Entity(String id, LocalDateTime createdAt) {
         this.id = id;
-        this.createdAt = createdAt;
+        this.createdAt = createdAt!=null ? createdAt:LocalDateTime.now();
     }
 
     public void setId(String id) {
