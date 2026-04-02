@@ -1,5 +1,7 @@
 package com.uet.BiddingApplication.DTO.Response;
 
+import com.uet.BiddingApplication.Enum.SessionStatus;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -12,6 +14,7 @@ public class AuctionCardDTO implements Serializable {
     private BigDecimal startPrice;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    private SessionStatus status;
 
     public AuctionCardDTO() {
     }
@@ -64,13 +67,22 @@ public class AuctionCardDTO implements Serializable {
         this.endTime = endTime;
     }
 
+    public SessionStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(SessionStatus status) {
+        this.status = status;
+    }
+
     public AuctionCardDTO(String sessionId, String itemName, String imageURL, BigDecimal startPrice,
-                          LocalDateTime startTime, LocalDateTime endTime) {
+                          LocalDateTime startTime, LocalDateTime endTime, SessionStatus status) {
         this.sessionId = sessionId;
         this.itemName = itemName;
         this.imageURL = imageURL;
         this.startPrice = startPrice;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.status = status;
     }
 }

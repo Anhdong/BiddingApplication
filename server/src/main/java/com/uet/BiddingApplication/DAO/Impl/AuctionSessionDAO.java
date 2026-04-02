@@ -2,6 +2,8 @@ package com.uet.BiddingApplication.DAO.Impl;
 
 import com.uet.BiddingApplication.DAO.Interface.IAuctionSessionDAO;
 import com.uet.BiddingApplication.DTO.Response.SellerHistoryResponseDTO;
+import com.uet.BiddingApplication.DTO.Response.SessionInfoResponseDTO;
+import com.uet.BiddingApplication.Enum.Category;
 import com.uet.BiddingApplication.Enum.SessionStatus;
 import com.uet.BiddingApplication.Model.AuctionSession;
 import com.uet.BiddingApplication.Utils.DatabaseConnectionPool;
@@ -176,6 +178,54 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
            e.printStackTrace();
        }
         return list;
+    }
+    @Override
+    public SessionInfoResponseDTO getSessionInfo(String sessionId){
+        String sql="with item_info as(\n" +
+                "  select i.name,i.seller_id,i.description,i.image_url,i.category,i.condition,i.artist_name,i.warranty_months,\n" +
+                "         a.id,a.status,a.start_price,a.start_time,a.end_time\n" +
+                "  from items i\n" +
+                "  join auction_sessions a on i.id=a.item_id\n" +
+                "  where a.id=?::uuid\n" +
+                ")\n" +
+                "select info.name,info.description,info.image_url,info.category,info.condition,info.artist_name,info.warranty_months,\n" +
+                "      info.id,info.status,info.start_price,info.start_time,info.end_time,u.username\n" +
+                "from item_info info\n" +
+                "join users u on u.id=info.seller_id;";
+        SessionInfoResponseDTO dto=new SessionInfoResponseDTO();
+        try(Connection conn=DatabaseConnectionPool.getConnection();
+        PreparedStatement ps=conn.prepareStatement(sql);){
+            ps.setString(1, sessionId);
+            ResultSet rs=ps.executeQuery();
+            if(rs.next()){
+                dto.setSessionId(rs.getString("id"));
+                dto.setStatus(SessionStatus.valueOf(rs.getString("status")));
+                dto.setStartTime(rs.getTimestamp("start_time").toLocalDateTime());
+                dto.setEndTime(rs.getTimestamp("end_time").toLocalDateTime());
+                dto.setStartPrice(rs.getBigDecimal("start_price"));
+                dto.setDescription(rs.getString("description"));
+                dto.setImageUrl(rs.getString("image_url"));
+                dto.setItemName(rs.getString("name"));
+                dto.setSellerName(rs.getString("username"));
+                dto.setCategory(Category.valueOf(rs.getString("category")));
+                switch (dto.getCategory()) {
+                    case Category.ART:
+                        dto.setAttribute(rs.getString("artist_name"));
+                        break;
+                    case Category.ELECTRONICS:
+                        dto.setAttribute(rs.getString("warranty_months"));
+                        break;
+                    case VEHICLE:
+                        dto.setAttribute(rs.getString("condition"));
+                        break;
+                }
+            }
+
+        }catch (SQLException e){
+            System.err.println("[AuctionSessionDAO] Lỗi getSessionInfo");
+            e.printStackTrace();
+        }
+        return dto;
     }
 
     // --- Helper Method ---

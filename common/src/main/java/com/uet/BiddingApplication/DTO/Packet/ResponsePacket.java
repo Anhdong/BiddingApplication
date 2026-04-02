@@ -8,13 +8,16 @@ public class ResponsePacket<T> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private ActionType action;
-    private int stausCode;
+    private int statusCode;
     private String message;
     private T payload;
 
-    public ResponsePacket(ActionType action,int stausCode, String message, T payload) {
+    public ResponsePacket() {
+    }
+
+    public ResponsePacket(ActionType action, int statusCode, String message, T payload) {
         this.action = action;
-        this.stausCode = stausCode;
+        this.statusCode = statusCode;
         this.message = message;
         this.payload = payload;
     }
@@ -27,12 +30,12 @@ public class ResponsePacket<T> implements Serializable {
         this.action = action;
     }
 
-    public int getStausCode() {
-        return stausCode;
+    public int getStatusCode() {
+        return statusCode;
     }
 
-    public void setStausCode(int stausCode) {
-        this.stausCode = stausCode;
+    public void setStatusCode(int statusCode) {
+        this.statusCode = statusCode;
     }
 
     public String getMessage() {

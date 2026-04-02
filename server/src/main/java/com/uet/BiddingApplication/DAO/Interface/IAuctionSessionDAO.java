@@ -1,6 +1,7 @@
 package com.uet.BiddingApplication.DAO.Interface;
 
 import com.uet.BiddingApplication.DTO.Response.SellerHistoryResponseDTO;
+import com.uet.BiddingApplication.DTO.Response.SessionInfoResponseDTO;
 import com.uet.BiddingApplication.Enum.SessionStatus;
 import com.uet.BiddingApplication.Model.AuctionSession;
 
@@ -14,4 +15,5 @@ public interface IAuctionSessionDAO {
     boolean updateStatus(String sessionId, SessionStatus status);
     List<AuctionSession> getAllSessions();
     List<SellerHistoryResponseDTO> getSellerHistory(String sellerId);
+    SessionInfoResponseDTO getSessionInfo(String sessionId);
 }

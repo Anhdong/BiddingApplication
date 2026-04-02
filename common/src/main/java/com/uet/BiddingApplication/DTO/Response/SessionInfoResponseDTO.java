@@ -1,5 +1,8 @@
 package com.uet.BiddingApplication.DTO.Response;
 
+import com.uet.BiddingApplication.Enum.Category;
+import com.uet.BiddingApplication.Enum.SessionStatus;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -7,19 +10,23 @@ import java.time.LocalDateTime;
 public class SessionInfoResponseDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private String sessionId;
+    private String sellerName;
     private String itemName;
     private String description;
     private String imageUrl;
-    private String category;
+    private Category category;
     private String attribute;
     private BigDecimal startPrice;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    private SessionStatus status;
 
-    public SessionInfoResponseDTO(String sessionId, String itemName, String description,
-                                  String imageUrl, String category, String attribute,
-                                  BigDecimal startPrice, LocalDateTime startTime, LocalDateTime endTime) {
+    public SessionInfoResponseDTO(String sessionId,String sellerName, String itemName, String description,
+                                  String imageUrl, Category category, String attribute,
+                                  BigDecimal startPrice, LocalDateTime startTime, LocalDateTime endTime,
+                                  SessionStatus status) {
         this.sessionId = sessionId;
+        this.sellerName = sellerName;
         this.itemName = itemName;
         this.description = description;
         this.imageUrl = imageUrl;
@@ -28,6 +35,23 @@ public class SessionInfoResponseDTO implements Serializable {
         this.startPrice = startPrice;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.status = status;
+    }
+
+    public SessionStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(SessionStatus status) {
+        this.status = status;
+    }
+
+    public String getSellerName() {
+        return sellerName;
+    }
+
+    public void setSellerName(String sellerName) {
+        this.sellerName = sellerName;
     }
 
     public SessionInfoResponseDTO() {
@@ -65,11 +89,11 @@ public class SessionInfoResponseDTO implements Serializable {
         this.imageUrl = imageUrl;
     }
 
-    public String getCategory() {
+    public Category getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
 

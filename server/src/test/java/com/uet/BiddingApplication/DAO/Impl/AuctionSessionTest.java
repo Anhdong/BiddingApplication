@@ -3,6 +3,7 @@ package com.uet.BiddingApplication.DAO.Impl;
 import com.uet.BiddingApplication.DAO.Interface.IAuctionSessionDAO;
 import com.uet.BiddingApplication.DAO.Interface.IItemDAO;
 import com.uet.BiddingApplication.DTO.Response.SellerHistoryResponseDTO;
+import com.uet.BiddingApplication.DTO.Response.SessionInfoResponseDTO;
 import com.uet.BiddingApplication.Enum.Category;
 import com.uet.BiddingApplication.Enum.RoleType;
 import com.uet.BiddingApplication.Enum.SessionStatus;
@@ -89,6 +90,15 @@ public class AuctionSessionTest {
             }
 
             // =====================================================================
+            // [BƯỚC 2.5] TEST UPDATE (Cập nhật giá, người thắng và trạng thái)
+            // =====================================================================
+            System.out.println("⏳ [BƯỚC 2.5] Đang test getSessionInfo()...");
+            SessionInfoResponseDTO info = sessionDAO.getSessionInfo(sessionId);
+            if(info!=null){
+                System.out.println("✅ Lấy thông tin phiên thành công !");
+                System.out.println(info.getSessionId());
+            }
+            // =====================================================================
             // [BƯỚC 3] TEST UPDATE (Cập nhật giá, người thắng và trạng thái)
             // =====================================================================
             System.out.println("⏳ [BƯỚC 3] Đang mô phỏng kết thúc phiên đấu giá...");
@@ -129,11 +139,11 @@ public class AuctionSessionTest {
             try {
                 // XÓA THEO THỨ TỰ TỪ BẢNG CON ĐẾN BẢNG CHA để tránh lỗi Foreign Key
                 // Lưu ý: Nếu Interface của bạn chưa có deleteSession, bạn phải tự viết lệnh SQL hoặc xóa tay
-                // sessionDAO.deleteSession(sessionId);
+                //sessionDAO.deleteSession(sessionId);
 
-                itemDAO.deleteItem(itemId);
-                userDAO.deleteUser(winnerId);
-                userDAO.deleteUser(sellerId);
+//                itemDAO.deleteItem(itemId);
+//                userDAO.deleteUser(winnerId);
+//                userDAO.deleteUser(sellerId);
                 System.out.println("✅ Dọn dẹp thành công. Trả lại Database sạch sẽ!");
             } catch (Exception cleanUpEx) {
                 System.err.println("❌ Lỗi khi dọn dẹp dữ liệu (Có thể Interface chưa có hàm delete): " + cleanUpEx.getMessage());
