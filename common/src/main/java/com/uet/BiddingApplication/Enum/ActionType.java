@@ -43,8 +43,6 @@ public enum ActionType {
     UNSUBSCRIBE_REALTIME, // Client báo: "Tôi thoát phòng X, đừng gửi tin nữa"
 
     // Nhóm Phản hồi từ Server xuống Client (Server Responses - 4 hành động)
-    SUCCESS, // Trả về kèm DTO khi Request thành công
-    ERROR, // Trả về kèm câu lệnh String thông báo lỗi: "Tiền không hợp lệ", "Sai OTP"
     REALTIME_PRICE_UPDATE, // Server tự động đẩy giá mới và người giữ giá xuống
     REALTIME_SESSION_END // Server tự động báo hiệu hết giờ và chốt Winner
 }
