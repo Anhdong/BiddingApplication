@@ -2,8 +2,7 @@ package com.uet.BiddingApplication.DTO.Response;
 
 import java.io.Serializable;
 
-public class AuthResponseDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class AuthResponseDTO  {
     private String token;
     private UserProfileDTO userProfile;
 

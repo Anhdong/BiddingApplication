@@ -34,7 +34,6 @@ public class ItemDAO implements IItemDAO {
 
     @Override
     public boolean insertItem(Item item) {
-        // Cột "condition" thường là từ khóa nhạy cảm trong SQL, tùy DB có thể cần đổi tên thành "item_condition"
         String sql = "INSERT INTO items (id, name, description, image_url, seller_id, category, warranty_months, artist_name, condition, created_at) " +
                 "VALUES (?::uuid, ?, ?, ?, ?::uuid, ?, ?, ?, ?, ?)";
 

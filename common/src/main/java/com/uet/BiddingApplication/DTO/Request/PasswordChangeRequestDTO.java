@@ -2,8 +2,7 @@ package com.uet.BiddingApplication.DTO.Request;
 
 import java.io.Serializable;
 
-public class PasswordChangeRequestDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class PasswordChangeRequestDTO {
     private String oldPassword;
     private String newPassword;
 

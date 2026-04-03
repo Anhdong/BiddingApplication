@@ -6,8 +6,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class AuctionCardDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class AuctionCardDTO  {
     private String sessionId;
     private String itemName;
     private String imageURL;

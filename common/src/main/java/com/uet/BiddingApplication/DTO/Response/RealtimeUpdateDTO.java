@@ -4,8 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class RealtimeUpdateDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class RealtimeUpdateDTO  {
     private BidHistoryDTO lastBid;
     private LocalDateTime newEndTime; // Sẽ NULL nếu không có gia hạn, có giá trị nếu Anti-sniping kích hoạt
 

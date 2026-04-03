@@ -2,8 +2,7 @@ package com.uet.BiddingApplication.DTO.Request;
 
 import java.io.Serializable;
 
-public class AuthRequestDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class AuthRequestDTO {
     private String username;
     private String password;
 

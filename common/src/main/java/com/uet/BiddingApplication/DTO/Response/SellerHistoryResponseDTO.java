@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class SellerHistoryResponseDTO implements Serializable {
+public class SellerHistoryResponseDTO {
     private String sessionId;
     private String itemName;
     private BigDecimal startPrice;

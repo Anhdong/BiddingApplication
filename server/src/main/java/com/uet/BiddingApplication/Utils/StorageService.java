@@ -42,7 +42,6 @@ public class StorageService {
         this.Url = dotenv.get("SUPABASE_URL");
         this.Key = dotenv.get("SUPABASE_SERVICE_KEY");
         this.bucketName = dotenv.get("SUPABASE_BUCKET_NAME");
-        System.out.println(Url+" "+Key+" "+bucketName);
         //Báo lỗi ngay lập tức nếu thiếu cấu hình
         if (Url == null || Key == null || bucketName == null) {
             throw new RuntimeException("LỖI NGHIÊM TRỌNG: Không thể đọc được cấu hình Supabase từ file .env. Hãy kiểm tra lại đường dẫn file và tên biến!");
@@ -108,7 +107,7 @@ public class StorageService {
             // Ta cần lấy đoạn "123-abc.jpg" ở cuối cùng
             String fileName = publicUrl.substring(publicUrl.lastIndexOf("/") + 1);
 
-            // 2. Xây dựng Endpoint API để xóa (Lưu ý: Không có chữ 'public' trong endpoint xóa)
+            // 2. Xây dựng Endpoint API để xóa (Lưu ý: Không có chữ 'public' trong endpoint )
             // Format đúng: /storage/v1/object/[BUCKET_NAME]/[FILE_NAME]
             String endpoint = String.format("%s/storage/v1/object/%s/%s", Url, bucketName, fileName);
 

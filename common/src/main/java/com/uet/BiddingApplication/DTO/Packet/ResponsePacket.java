@@ -4,8 +4,7 @@ import com.uet.BiddingApplication.Enum.ActionType;
 
 import java.io.Serializable;
 
-public class ResponsePacket<T> implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class ResponsePacket<T>  {
 
     private ActionType action;
     private int statusCode;

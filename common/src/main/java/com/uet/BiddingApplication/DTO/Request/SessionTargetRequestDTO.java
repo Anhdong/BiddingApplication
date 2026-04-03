@@ -2,8 +2,7 @@ package com.uet.BiddingApplication.DTO.Request;
 
 import java.io.Serializable;
 
-public class SessionTargetRequestDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class SessionTargetRequestDTO  {
     private String sessionId;
 
     public SessionTargetRequestDTO(String sessionId) {

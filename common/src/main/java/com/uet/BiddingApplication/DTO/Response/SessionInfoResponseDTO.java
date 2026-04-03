@@ -7,8 +7,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class SessionInfoResponseDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class SessionInfoResponseDTO  {
     private String sessionId;
     private String sellerName;
     private String itemName;

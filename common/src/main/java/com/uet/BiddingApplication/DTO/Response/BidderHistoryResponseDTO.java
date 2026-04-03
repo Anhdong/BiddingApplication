@@ -6,8 +6,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class BidderHistoryResponseDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class BidderHistoryResponseDTO  {
     private String sessionId;
     private String itemName;
     private String WinnerId;
