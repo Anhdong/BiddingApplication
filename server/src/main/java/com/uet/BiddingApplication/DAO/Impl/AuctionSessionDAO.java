@@ -117,9 +117,13 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
     }
 
     @Override
-    public List<AuctionSession> getAllSessions() {
+    public List<AuctionSession> getAllSessions(boolean isActive) {
         List<AuctionSession> list = new ArrayList<>();
-        String sql = "SELECT * FROM auction_sessions ORDER BY created_at DESC";
+        String sql;
+        if(isActive) {
+            sql= "SELECT * FROM auction_sessions WHERE status in ('OPEN','RUNNING') ORDER BY end_time ASC";
+        }
+        else sql = "SELECT * FROM auction_sessions ORDER BY created_at DESC";
         try (Connection conn = DatabaseConnectionPool.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -133,6 +137,7 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
         }
         return list;
     }
+
 
     // ====================================================================================
     // HÀM BÁO CÁO LỊCH SỬ (DÙNG TỐI ƯU JOIN SQL VÀ TRẢ VỀ DTO)

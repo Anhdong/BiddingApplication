@@ -13,7 +13,7 @@ public interface IAuctionSessionDAO {
     AuctionSession getSessionById(String sessionId);
     boolean updatePriceAndWinner(String sessionId, BigDecimal newPrice, String winnerId);
     boolean updateStatus(String sessionId, SessionStatus status);
-    List<AuctionSession> getAllSessions();
+    List<AuctionSession> getAllSessions(boolean isActive);
     List<SellerHistoryResponseDTO> getSellerHistory(String sellerId);
     SessionInfoResponseDTO getSessionInfo(String sessionId);
 }
