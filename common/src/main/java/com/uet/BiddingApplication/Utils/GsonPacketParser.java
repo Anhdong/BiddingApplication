@@ -28,7 +28,7 @@ public class GsonPacketParser {
             JsonObject jsonObject = JsonParser.parseString(jsonLine).getAsJsonObject();
             ActionType action = ActionType.valueOf(jsonObject.get("action").getAsString());
 
-            // Xử lý bảo mật: Chặn các request quá hạn (Replay Attack / Lag)
+            // Chặn các request quá hạn
             long timestamp = jsonObject.has("timestamp") ? jsonObject.get("timestamp").getAsLong() : Instant.now().toEpochMilli();
 
             RequestPacket<Object> packet = new RequestPacket<>();
@@ -39,8 +39,12 @@ public class GsonPacketParser {
             if (jsonObject.has("payload") && !jsonObject.get("payload").isJsonNull()) {
                 // Tra cứu từ Registry thay vì hardcode switch-case ở đây
                 Type payloadType = PacketTypeRegistry.getRequestType(action);
-                Object payload = gson.fromJson(jsonObject.get("payload"), payloadType);
-                packet.setPayload(payload);
+                // Nếu hệ thống định nghĩa Action này không có data,
+                // ta phớt lờ luôn payload Client gửi lên.
+                if (payloadType != Void.class && jsonObject.has("payload") && !jsonObject.get("payload").isJsonNull()) {
+                    Object payload = gson.fromJson(jsonObject.get("payload"), payloadType);
+                    packet.setPayload(payload);
+                }
             }
             return packet;
 
@@ -66,8 +70,12 @@ public class GsonPacketParser {
 
             if (jsonObject.has("payload") && !jsonObject.get("payload").isJsonNull()) {
                 Type payloadType = PacketTypeRegistry.getResponseType(action);
-                Object payload = gson.fromJson(jsonObject.get("payload"), payloadType);
-                packet.setPayload(payload);
+                // Nếu hệ thống định nghĩa Action này không có data,
+                // ta phớt lờ luôn payload Client gửi lên.
+                if (payloadType != Void.class && jsonObject.has("payload") && !jsonObject.get("payload").isJsonNull()) {
+                    Object payload = gson.fromJson(jsonObject.get("payload"), payloadType);
+                    packet.setPayload(payload);
+                }
             }
             return packet;
 

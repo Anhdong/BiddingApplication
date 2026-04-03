@@ -30,6 +30,7 @@ public enum ActionType {
     SEARCH_ITEMS, // Tìm kiếm và lọc theo Keyword/Category/Price
     GET_SESSION_DETAIL, // Mở xem chi tiết 1 vật phẩm
     PRE_REGISTER_SESSION, // Bấm nút "Đăng ký trước" để được phép đấu giá
+    DELETE_REGISTER_SESSION,// Bấm nút "Hủy đăng ký trước"
     GET_REGISTERED_SESSIONS, // Lấy danh sách các phiên Bidder đã đăng ký
     GET_BIDDER_HISTORY, // Lấy kết quả thắng/thua các phiên đã tham gia
 

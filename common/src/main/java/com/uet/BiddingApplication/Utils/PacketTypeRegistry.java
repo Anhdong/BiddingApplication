@@ -63,6 +63,7 @@ public class PacketTypeRegistry {
         requestTypes.put(ActionType.SEARCH_ITEMS, filterRequestType);
         requestTypes.put(ActionType.GET_SESSION_DETAIL, targetRequestType);
         requestTypes.put(ActionType.PRE_REGISTER_SESSION, SessionRegisterRequestDTO.class);
+        requestTypes.put(ActionType.DELETE_REGISTER_SESSION, SessionRegisterRequestDTO.class);
         requestTypes.put(ActionType.GET_REGISTERED_SESSIONS, Void.class);
         requestTypes.put(ActionType.GET_BIDDER_HISTORY, Void.class);
 
