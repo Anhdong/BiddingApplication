@@ -30,7 +30,7 @@
 
         <javafx.version>25.0.2</javafx.version>
         <dotenv-java.version>3.2.0</dotenv-java.version>
-        <mockito-junit-jupiter.version>5.11.0</mockito-junit-jupiter.version>
+        <mockito-junit-jupiter.version>5.14.0</mockito-junit-jupiter.version>
     </properties>
     <dependencies>
         <dependency>

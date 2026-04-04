@@ -8,12 +8,12 @@ import java.time.LocalDateTime;
 public class AuctionSession extends Entity{
     private String itemId;
     private String sellerId;
-    private String winnerId;
+    private volatile String winnerId;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private SessionStatus status;
     private BigDecimal startPrice;
-    private BigDecimal currentPrice;
+    private volatile BigDecimal currentPrice;
     private BigDecimal bidStep;
 
     public AuctionSession(String id, LocalDateTime createdAt, String itemId, String sellerId,

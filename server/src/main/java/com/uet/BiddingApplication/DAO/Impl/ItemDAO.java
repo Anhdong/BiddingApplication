@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ItemDAO implements IItemDAO {
@@ -172,6 +173,29 @@ public class ItemDAO implements IItemDAO {
         }
         return items;
     }
+
+    @Override
+    public List<Item> getItemsByIds(List<String> itemIds) {
+        String placeholders=String.join(",", Collections.nCopies(itemIds.size(), "?"));
+        String sql = "SELECT * FROM items WHERE id IN ("+placeholders+")";
+        List<Item> items = new ArrayList<>();
+        try(Connection conn=DatabaseConnectionPool.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+            for (int i=0; i<itemIds.size(); i++) {
+                ps.setString(i+1, itemIds.get(i));
+            }
+            try(ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    items.add(mapRowToItem(rs));
+                }
+            }
+        }catch (SQLException e){
+            System.err.println("[ItemDAO] Lỗi getItemsByIds: ");
+            e.printStackTrace();
+        }
+        return items;
+    }
+
 
     // --- Helper Method: Tránh lặp lại code ---
     private Item mapRowToItem(ResultSet rs) throws SQLException {

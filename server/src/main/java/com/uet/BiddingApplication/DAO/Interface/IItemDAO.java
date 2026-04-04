@@ -10,4 +10,5 @@ public interface IItemDAO {
     public boolean deleteItem(String itemId);
     public Item getItemById(String itemId);
     public List<Item> getItemsBySellerId(String sellerId);
+    public List<Item> getItemsByIds(List<String> itemIds);
 }
