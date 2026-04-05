@@ -103,7 +103,7 @@ public class PacketTypeRegistry {
 
         // --- Nhóm Realtime ---
         responseTypes.put(ActionType.REALTIME_PRICE_UPDATE, RealtimeUpdateDTO.class);
-        responseTypes.put(ActionType.REALTIME_SESSION_END, RealtimeUpdateDTO.class);
+        responseTypes.put(ActionType.REALTIME_SESSION_END, SessionResultDTO.class);
 
         /*
          * LƯU Ý QUAN TRỌNG:
