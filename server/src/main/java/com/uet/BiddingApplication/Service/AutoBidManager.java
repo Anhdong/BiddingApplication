@@ -5,6 +5,28 @@ import com.uet.BiddingApplication.Model.AutoBidSetting;
 import java.math.BigDecimal;
 import java.util.PriorityQueue;
 import java.util.concurrent.ConcurrentHashMap;
+/**
+ * @TODO [Dành cho Thành viên 3 - Service]
+ * Nâng cấp trải nghiệm người dùng (UX) và chống kẹt Queue cho Auto-Bid.
+ *
+ * YÊU CẦU CẬP NHẬT:
+ * 1. Đổi kiểu dữ liệu của Queue từ PriorityQueue sang ConcurrentLinkedQueue (FIFO)
+ *    để đảm bảo tính công bằng theo thời gian đăng ký (ai vào trước xử lý trước).
+ *
+ * 2. Cập nhật logic trong vòng lặp của hàm triggerAutoBid():
+ *    - Khi duyệt Iterator, nếu phát hiện user có maxBid < currentPrice + increment:
+ *      a) Gọi iterator.remove() để xóa vĩnh viễn cài đặt này khỏi Queue.
+ *      b) THÔNG BÁO CHO USER: Đóng gói AutoBidCancelResponseDTO (chứa sessionId, bidderId).
+ *      c) Gọi RealtimeBroadcastService.sendPrivateMessage(bidderId, packet)< cần tạo thêm hàm này >để báo cho
+ *         máy khách tự động tắt nút Auto-bid trên giao diện.
+ *      d) Dùng 'continue' để xét tiếp người phía sau trong Queue.
+ *
+ *    - Nếu user đủ tiền NHƯNG đang là người dẫn đầu (highestBidderId):
+ *      Chỉ dùng 'continue' để bỏ qua (không xóa khỏi Queue, chống tự cắn đuôi).
+ *
+ *    - Nếu tìm thấy user hợp lệ đầu tiên: Đẩy BidRequestDTO vào InMemoryBidServiceImpl
+ *      và 'break' (KẾT THÚC HÀM NGAY LẬP TỨC) để nhường luồng cho Tầng Core xử lý.
+ */
 
 /**
  * Lớp quản lý đấu giá tự động (Auto-Bidding) cho người dùng.
