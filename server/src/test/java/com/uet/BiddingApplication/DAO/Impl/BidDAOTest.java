@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+@Disabled
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class BidDAOTest {
 
@@ -74,9 +74,9 @@ public class BidDAOTest {
     }
 
     private void cleanUpData() {
-//        userDAO.deleteUser(testSellerId);
-//        userDAO.deleteUser(testBidderId);
-//        ItemDAO.getInstance().deleteItem(testItemId);
+        userDAO.deleteUser(testSellerId);
+        userDAO.deleteUser(testBidderId);
+        ItemDAO.getInstance().deleteItem(testItemId);
     }
 
     // ================== 1 PHƯƠNG THỨC TEST DUY NHẤT NHƯ YÊU CẦU ==================

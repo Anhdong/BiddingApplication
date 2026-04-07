@@ -36,6 +36,7 @@ public class SearchCacheManager implements ISearchCacheManager{
     /**
      * Nạp toàn bộ các phiên đang OPEN hoặc RUNNING từ DB lên RAM khi bật Server
      */
+    @Override
     public void loadInitialData() {
         // Giả định AuctionSessionDAO có hàm lấy các phiên đang hoạt động
         List<AuctionSession> activeSessions = AuctionSessionDAO.getInstance().getAllSessions(true);
@@ -49,6 +50,7 @@ public class SearchCacheManager implements ISearchCacheManager{
     /**
      * Dựa vào danh sách phiên đang chạy ở trên, kéo các Item tương ứng từ DB lên RAM
      */
+    @Override
     public void loadInitialItems() {
         if (activeSessionsCache.isEmpty()) return;
 
@@ -74,6 +76,7 @@ public class SearchCacheManager implements ISearchCacheManager{
      * Cung cấp dữ liệu thô dạng Map/List cho AuctionViewMapper để đóng gói thành List Card.
      * Thường được gọi bởi ItemSearchService khi User cần hiển thị danh sách màn hình chính.
      */
+    @Override
     public List<AuctionCardDTO> getAllActiveSessionsAsCardDto() {
         // Rút toàn bộ session đang có trên RAM
         List<AuctionSession> sessions = new ArrayList<>(activeSessionsCache.values());
@@ -86,6 +89,7 @@ public class SearchCacheManager implements ISearchCacheManager{
      * Lấy 1 phiên cụ thể từ RAM, móc nối với Item tương ứng và nhờ Mapper đóng gói Detail DTO.
      * Được gọi khi Bidder bấm vào 1 thẻ sản phẩm.
      */
+    @Override
     public SessionInfoResponseDTO getSessionDetailDto(String sessionId) {
         return AuctionSessionDAO.getInstance().getSessionInfo(sessionId);
     }
@@ -93,7 +97,7 @@ public class SearchCacheManager implements ISearchCacheManager{
     // =========================================================================
     // 3. NHÓM PHƯƠNG THỨC CRUD NỘI BỘ CACHE
     // =========================================================================
-
+    @Override
     public void addSessionAndItem(AuctionSession session, Item item) {
         if (session != null && session.getId() != null) {
             activeSessionsCache.put(session.getId(), session);
@@ -102,11 +106,13 @@ public class SearchCacheManager implements ISearchCacheManager{
             itemCache.put(item.getId(), item);
         }
     }
-
+    @Override
     public void removeSession(String sessionId) {
         activeSessionsCache.remove(sessionId);
     }
-
+    @Override
+    public void removeItem(String itemId) {itemCache.remove(itemId);}
+    @Override
     public void updatePriceInCache(String sessionId, BigDecimal newPrice, String highestBidderId) {
         AuctionSession session = activeSessionsCache.get(sessionId);
         if (session != null) {
@@ -115,7 +121,7 @@ public class SearchCacheManager implements ISearchCacheManager{
         }
     }
 
-
+    @Override
     public AuctionSession getSession(String sessionId) {
         return activeSessionsCache.get(sessionId);
     }
@@ -124,7 +130,7 @@ public class SearchCacheManager implements ISearchCacheManager{
     public List<AuctionSession> getActiveSessions() {
         return new ArrayList<>(activeSessionsCache.values());
     }
-
+    @Override
     public Item getItem(String itemId) {
         return itemCache.get(itemId);
     }

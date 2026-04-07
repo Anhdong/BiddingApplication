@@ -4,6 +4,7 @@ import com.uet.BiddingApplication.Enum.BidType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class BidTransaction extends Entity{
     private String bidderId;
@@ -14,9 +15,9 @@ public class BidTransaction extends Entity{
     public BidTransaction() {
     }
 
-    public BidTransaction(String id, LocalDateTime createdAt, String bidderId, String sessionId,
+    public BidTransaction(String bidderId, String sessionId,
                           BigDecimal bidAmount, BidType bidType) {
-        super(id, createdAt);
+        super(UUID.randomUUID().toString(),LocalDateTime.now());
         this.bidderId = bidderId;
         this.sessionId = sessionId;
         this.bidAmount = bidAmount;

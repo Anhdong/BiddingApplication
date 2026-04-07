@@ -66,4 +66,10 @@ public class RealtimeBroadcastService {
         // TODO 3 (Processing): Dùng vòng lặp gọi AuctionServer.getInstance().getClientHandler(userId) để lấy luồng mạng.
         // TODO 4 (Output): Gọi handler.sendPacket(packet) để đẩy dữ liệu xuống.
     }
+    /**
+     * (Nam) : Bổ sung thêm 1 phương thức closeRoom() nữa, tác dụng là xóa phiên đấu giá khỏi map
+     * khi phiên kết thúc
+     */
+    public void closeRoom(String sessionId){
+    }
 }

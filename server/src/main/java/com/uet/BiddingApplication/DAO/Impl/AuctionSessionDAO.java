@@ -15,7 +15,6 @@ import java.util.List;
 
 public class AuctionSessionDAO implements IAuctionSessionDAO {
 
-    // --- Singleton Pattern ---
     private static volatile AuctionSessionDAO instance;
 
     private AuctionSessionDAO() {}
