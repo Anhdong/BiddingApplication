@@ -159,6 +159,9 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
             // 4. Kích hoạt AutoBid đệ quy (Nếu AutoBidManager đẩy giá, nó sẽ gọi lại enqueueBid)
             AutoBidManager.getInstance().triggerAutoBid(sessionId, req.getBidAmount());
         }
+        else{
+            // nhớ realtime.sendPrivateMess()dđể thông báo bid nhỏ hơn giá hiện tại
+        }
     }
 
     public boolean validateBid(BigDecimal bidAmount, AuctionSession session) {

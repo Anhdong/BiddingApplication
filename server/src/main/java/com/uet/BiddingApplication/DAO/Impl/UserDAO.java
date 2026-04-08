@@ -76,7 +76,7 @@ public class UserDAO implements IUserDAO {
     // 1. CÁC HÀM TÌM KIẾM CƠ BẢN (READ)
     // =========================================================================
     public User findByUsername(String username) {
-        String sql = "SELECT * FROM users WHERE username = ? AND is_active = true";
+        String sql = "SELECT * FROM users WHERE username = ?";
 
         // Sử dụng try-with-resources tinh gọn và an toàn
         try (Connection conn = DatabaseConnectionPool.getConnection();
