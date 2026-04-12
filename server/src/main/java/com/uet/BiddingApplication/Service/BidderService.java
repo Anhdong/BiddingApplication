@@ -1,6 +1,8 @@
 package com.uet.BiddingApplication.Service;
 
 import java.util.List;
+
+import com.uet.BiddingApplication.DTO.Response.AuctionCardDTO;
 import com.uet.BiddingApplication.DTO.Response.BidHistoryDTO;
 import com.uet.BiddingApplication.Model.AuctionSession;
 
@@ -33,7 +35,7 @@ public class BidderService {
     /**
      * Trả về danh sách các phiên mà Bidder này đã đăng ký tham gia trước.
      */
-    public List<AuctionSession> getRegisteredSessions(String bidderId){
+    public List<AuctionCardDTO> getRegisteredSessions(String bidderId){
         // TODO 1: Lấy instance của SessionRegistrationDAO (Do Tech Lead cung cấp)
         // TODO 2: Gọi phương thức lấy danh sách phiên đã đăng ký bằng ID của bidder
         // TODO 3: Trả về list danh sách đó (thay vì return null)
