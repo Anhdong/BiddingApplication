@@ -8,8 +8,6 @@ import com.uet.BiddingApplication.Model.Bidder;
 import com.uet.BiddingApplication.Model.Seller;
 import com.uet.BiddingApplication.Model.User;
 
-// TODO (Kiến trúc): Chuyển class này thành Singleton và thêm "implements DataMapper<User, UserProfileDTO>"
-// TODO (Kiến trúc): Xóa bỏ các từ khóa "static" ở các phương thức bên dưới sau khi áp dụng Singleton.
 public class UserMapper {
 
     /**
