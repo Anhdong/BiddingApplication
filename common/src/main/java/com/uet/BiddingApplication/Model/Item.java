@@ -61,4 +61,7 @@ public abstract class Item extends Entity {
     public void setSellerId(String sellerId) {
         this.sellerId = sellerId;
     }
+
+    // Phương thức trừu tượng để lấy thuộc tính đặc thù
+    public abstract String getDisplayAttributes();
 }

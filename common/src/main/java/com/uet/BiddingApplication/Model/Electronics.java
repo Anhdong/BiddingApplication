@@ -23,4 +23,10 @@ public class Electronics extends Item{
     public void setWarrantyMonths(int warrantyMonths) {
         this.warrantyMonths = warrantyMonths;
     }
+
+    @Override
+    public String getDisplayAttributes() {
+        // Tự lấy biến int riêng của nó và biến thành chuỗi
+        return "Bảo hành: " + this.warrantyMonths + " tháng";
+    }
 }

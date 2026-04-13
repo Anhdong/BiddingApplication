@@ -23,4 +23,10 @@ public class Art extends Item{
     public void setArtistName(String artistName) {
         this.artistName = artistName;
     }
+
+    @Override
+    public String getDisplayAttributes() {
+        // Tự lấy biến String riêng của nó
+        return "Tác giả: " + (this.artistName != null ? this.artistName : "Đang cập nhật");
+    }
 }
