@@ -4,8 +4,11 @@ import com.uet.BiddingApplication.Enum.RoleType;
 
 import java.io.Serializable;
 
-public class RegisterRequestDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class RegisterRequestDTO {
+
+    public RegisterRequestDTO() {
+    }
+
     private String username;
     private String password;
     private String email;

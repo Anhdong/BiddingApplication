@@ -3,8 +3,11 @@ package com.uet.BiddingApplication.DTO.Request;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class AutoBidRegisterDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class AutoBidRegisterDTO {
+
+    public AutoBidRegisterDTO() {
+    }
+
     private String sessionId;
     private BigDecimal maxBid;
     private BigDecimal increment;

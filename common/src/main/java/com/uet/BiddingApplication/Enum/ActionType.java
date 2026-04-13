@@ -7,6 +7,9 @@ public enum ActionType {
     LOGOUT, // Đăng xuất khỏi Session
     CHANGE_PASSWORD, // Đổi mật khẩu trong Settings
     UPDATE_PROFILE, // Cập nhật thông tin: Address, Phone...
+    JOIN_SESSION, //Gửi khi Bidder nhấn nút vào phòng.
+    LEAVE_SESSION,//Gửi khi Bidder chủ động thoát phòng.
+    FORCE_LOGOUT, //Server bắn xuống để thông báo tài khoản bị "đá" hoặc bị khóa.
 
     // Nhóm Admin (Quản trị viên - 5 hành động)
     GET_ALL_USERS, // Lấy danh sách User để quản lý
@@ -27,6 +30,7 @@ public enum ActionType {
     SEARCH_ITEMS, // Tìm kiếm và lọc theo Keyword/Category/Price
     GET_SESSION_DETAIL, // Mở xem chi tiết 1 vật phẩm
     PRE_REGISTER_SESSION, // Bấm nút "Đăng ký trước" để được phép đấu giá
+    DELETE_REGISTER_SESSION,// Bấm nút "Hủy đăng ký trước"
     GET_REGISTERED_SESSIONS, // Lấy danh sách các phiên Bidder đã đăng ký
     GET_BIDDER_HISTORY, // Lấy kết quả thắng/thua các phiên đã tham gia
 
@@ -40,8 +44,7 @@ public enum ActionType {
     UNSUBSCRIBE_REALTIME, // Client báo: "Tôi thoát phòng X, đừng gửi tin nữa"
 
     // Nhóm Phản hồi từ Server xuống Client (Server Responses - 4 hành động)
-    SUCCESS, // Trả về kèm DTO khi Request thành công
-    ERROR, // Trả về kèm câu lệnh String thông báo lỗi: "Tiền không hợp lệ", "Sai OTP"
     REALTIME_PRICE_UPDATE, // Server tự động đẩy giá mới và người giữ giá xuống
-    REALTIME_SESSION_END // Server tự động báo hiệu hết giờ và chốt Winner
+    REALTIME_SESSION_END, // Server tự động báo hiệu hết giờ và chốt Winner
+    AUTO_BID_CANCEL // Thông báo cho bidder khi giá hiện tại vượt quá max bid
 }

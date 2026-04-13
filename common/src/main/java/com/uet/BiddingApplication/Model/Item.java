@@ -1,17 +1,20 @@
 package com.uet.BiddingApplication.Model;
 
+import com.uet.BiddingApplication.Enum.Category;
+
 import java.time.LocalDateTime;
 
-public class Item extends Entity {
+public abstract class Item extends Entity {
     private String name;
     private String description;
-    private String category;
+    private Category category;
     private String imageURL;
     private String sellerId;
 
+    public Item(){};
     public Item(String id, LocalDateTime createdAt, String name, String description,
-                String category, String imageURL, String sellerId) {
-        super(id, createdAt);
+                Category category, String imageURL, String sellerId) {
+        super(id, createdAt!=null ? createdAt:LocalDateTime.now());
         this.name = name;
         this.description = description;
         this.category = category;
@@ -35,11 +38,11 @@ public class Item extends Entity {
         this.description = description;
     }
 
-    public String getCategory() {
+    public Category getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
 

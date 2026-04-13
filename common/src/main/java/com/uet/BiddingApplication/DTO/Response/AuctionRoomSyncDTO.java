@@ -5,8 +5,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class AuctionRoomSyncDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class AuctionRoomSyncDTO {
     private String sessionId;
     private String imageURL;
     private BigDecimal currentPrice;
@@ -22,6 +21,9 @@ public class AuctionRoomSyncDTO implements Serializable {
         this.endTime = endTime;
         this.history = history;
         this.highestBidderName = highestBidderName;
+    }
+
+    public AuctionRoomSyncDTO() {
     }
 
     public String getSessionId() {

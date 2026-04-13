@@ -4,11 +4,14 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class ItemCreateDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class ItemCreateDTO  {
     private String name;
     private String description;
     private String category;
+
+    public ItemCreateDTO() {
+    }
+
     private byte[] imageBytes;
     private String imageExtension;
     private BigDecimal startPrice;

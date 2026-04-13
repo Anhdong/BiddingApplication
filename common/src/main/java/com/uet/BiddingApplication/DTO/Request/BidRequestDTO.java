@@ -5,8 +5,7 @@ import com.uet.BiddingApplication.Enum.BidType;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class BidRequestDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class BidRequestDTO  {
     private String sessionId;
     private BigDecimal bidAmount;
     private BidType bidType;
@@ -15,6 +14,9 @@ public class BidRequestDTO implements Serializable {
         this.sessionId = sessionId;
         this.bidAmount = bidAmount;
         this.bidType = bidType;
+    }
+
+    public BidRequestDTO() {
     }
 
     public String getSessionId() {

@@ -57,4 +57,7 @@ public class AutoBidSetting extends Entity implements Comparable<AutoBidSetting>
                 .thenComparing(AutoBidSetting::getId) // Tiêu chí phụ nếu trùng thời gian
                 .compare(this, other);
     }
+
+    public AutoBidSetting() {
+    }
 }

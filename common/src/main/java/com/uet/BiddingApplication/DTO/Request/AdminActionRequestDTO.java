@@ -3,8 +3,7 @@ package com.uet.BiddingApplication.DTO.Request;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class AdminActionRequestDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class AdminActionRequestDTO {
     private String targetId;
     private String actionReason;
     private String otpCode;
@@ -13,6 +12,9 @@ public class AdminActionRequestDTO implements Serializable {
         this.targetId = targetId;
         this.actionReason = actionReason;
         this.otpCode = otpCode;
+    }
+
+    public AdminActionRequestDTO() {
     }
 
     public String getTargetId() {

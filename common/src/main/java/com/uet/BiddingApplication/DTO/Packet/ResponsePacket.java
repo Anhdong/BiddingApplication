@@ -2,13 +2,17 @@ package com.uet.BiddingApplication.DTO.Packet;
 
 import com.uet.BiddingApplication.Enum.ActionType;
 
-public class ResponsePacket<T> {
+import java.io.Serializable;
 
+public class ResponsePacket<T>  {
 
     private ActionType action;
     private int statusCode;
     private String message;
     private T payload;
+
+    public ResponsePacket() {
+    }
 
     public ResponsePacket(ActionType action, int statusCode, String message, T payload) {
         this.action = action;

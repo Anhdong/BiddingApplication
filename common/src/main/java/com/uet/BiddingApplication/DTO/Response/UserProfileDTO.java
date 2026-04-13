@@ -4,14 +4,16 @@ import com.uet.BiddingApplication.Enum.RoleType;
 
 import java.io.Serializable;
 
-public class UserProfileDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class UserProfileDTO  {
     private String username;
     private String id;
     private String email;
     private String phone;
     private RoleType role;
     private String specialAttribute;
+
+    public UserProfileDTO() {
+    }
 
     public UserProfileDTO(String username, String id, String email, String phone,
                           RoleType role, String specialAttribute) {

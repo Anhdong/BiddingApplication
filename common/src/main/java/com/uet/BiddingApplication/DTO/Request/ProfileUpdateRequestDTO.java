@@ -4,8 +4,7 @@ import com.uet.BiddingApplication.Enum.RoleType;
 
 import java.io.Serializable;
 
-public class ProfileUpdateRequestDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class ProfileUpdateRequestDTO  {
     private String username;
     private String phone;
     private String specialAttribute;
@@ -14,6 +13,9 @@ public class ProfileUpdateRequestDTO implements Serializable {
         this.username = username;
         this.phone = phone;
         this.specialAttribute = specialAttribute;
+    }
+
+    public ProfileUpdateRequestDTO() {
     }
 
     public String getUsername() {
