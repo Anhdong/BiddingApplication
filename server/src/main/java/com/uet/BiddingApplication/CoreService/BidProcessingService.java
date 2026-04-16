@@ -41,4 +41,6 @@ public interface BidProcessingService {
      * @param sessionId ID của phiên đấu giá cần lên lịch đếm ngược.
      */
     void startSessionProcessor(String sessionId);
+
+    void forceCancelSession(String sessionId, String reason);
 }
