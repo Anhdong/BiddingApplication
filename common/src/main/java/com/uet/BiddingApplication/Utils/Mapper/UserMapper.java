@@ -1,6 +1,7 @@
 package com.uet.BiddingApplication.Utils.Mapper;
 
 import com.uet.BiddingApplication.DTO.Request.ProfileUpdateRequestDTO;
+import com.uet.BiddingApplication.DTO.Request.RegisterRequestDTO;
 import com.uet.BiddingApplication.DTO.Response.UserProfileDTO;
 import com.uet.BiddingApplication.Enum.RoleType;
 import com.uet.BiddingApplication.Model.Admin;
@@ -115,6 +116,33 @@ public class UserMapper {
                 admin.setOtpSecretKey(newSpecialAttr);
             }
         }
+    }
+
+    public static User toEntity(RegisterRequestDTO dto) {
+        if (dto == null) return null;
+
+        // Lưu ý: Việc khởi tạo User cụ thể (Bidder/Seller) thường do Factory đảm nhận
+        // TODO (Design Pattern): Nên gọi UserFactory.createUser(dto.getRole()) ở đây thay vì if-else
+
+        User entity;
+        // Kiểm tra Role để khởi tạo đúng Class con tương ứng
+        if (dto.getRole() == RoleType.ADMIN){
+            entity = new Admin();
+            ((Admin) entity).setOtpSecretKey(dto.getSpecialAttribute());
+        } else if (dto.getRole() == RoleType.BIDDER) {
+            entity = new Bidder();
+            ((Bidder) entity).setShippingAddress(dto.getSpecialAttribute());
+        } else {
+            entity = new Seller();
+            ((Seller) entity).setBankAccount(dto.getSpecialAttribute());
+        }
+
+        entity.setUsername(dto.getUsername());
+        entity.setEmail(dto.getEmail());
+        entity.setPhone(dto.getPhone());
+        entity.setRole(dto.getRole());
+
+        return entity;
     }
 
 }
