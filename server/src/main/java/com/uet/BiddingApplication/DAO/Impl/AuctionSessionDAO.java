@@ -59,22 +59,31 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
     }
 
     @Override
-    public AuctionSession getSessionById(String sessionId) {
+    public AuctionSession getSessionByItemId(String ItemId) {
+        String sql = "SELECT * FROM auction_sessions WHERE item_id = ?::uuid";
+        return findSession(sql, ItemId);
+    }
+
+    @Override
+    public AuctionSession getSessionById(String id) {
         String sql = "SELECT * FROM auction_sessions WHERE id = ?::uuid";
+        return findSession(sql, id);
+    }
+
+    public AuctionSession findSession(String sql,String parameter) {
         try (Connection conn = DatabaseConnectionPool.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, sessionId);
+            ps.setString(1, parameter);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) return mapRowToSession(rs);
             }
         } catch (SQLException e) {
-            System.err.println("[AuctionSessionDAO] Lỗi getSessionById: " + sessionId);
+            System.err.println("[AuctionSessionDAO] Lỗi getSessionById: " + parameter);
             e.printStackTrace();
         }
         return null;
     }
-
     @Override
     public boolean updatePriceAndWinner(String sessionId, BigDecimal newPrice, String winnerId) {
         // Lưu ý: WinnerId có thể null nếu cập nhật giá khởi điểm, nhưng thường hàm này gọi khi có Bid mới.
