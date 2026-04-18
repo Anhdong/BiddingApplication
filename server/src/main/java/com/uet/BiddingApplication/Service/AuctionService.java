@@ -8,6 +8,7 @@ import com.uet.BiddingApplication.DTO.Request.SessionFilterRequestDTO;
 import com.uet.BiddingApplication.DTO.Response.AuctionCardDTO;
 import com.uet.BiddingApplication.DTO.Response.BidHistoryDTO;
 import com.uet.BiddingApplication.DTO.Response.SessionInfoResponseDTO;
+import com.uet.BiddingApplication.Enum.BidType;
 import com.uet.BiddingApplication.Exception.BusinessException;
 import com.uet.BiddingApplication.Model.AuctionSession;
 import com.uet.BiddingApplication.Model.BidTransaction;
@@ -71,33 +72,34 @@ public class AuctionService {
      * Hàm quan trọng: Cập nhật dữ liệu vào DB sau khi lõi đa luồng xác nhận giá hợp lệ.
      */
     public void updateSessionAfterValidBid(String sessionId, BidHistoryDTO bidInfo){
-        // TODO 1 (Input): Nhận sessionId và thông tin giá vừa đặt thành công (bidInfo).
-        // TODO 2 (Dependencies): Lấy instance của AuctionSessionDAO và BidDAO.
-        // TODO 3 (Processing): Gọi AuctionSessionDAO để cập nhật current_price và last_bidder.
-        // TODO 4 (Processing): Gọi BidDAO để lưu lịch sử trả giá (bidInfo) vào database.
-
+        // 1. Tìm User để lấy bidderId và KIỂM TRA NULL
         User bidder = UserDAO.getInstance().findByUsername(bidInfo.getBidderName());
-        if (bidder == null){
-            throw new BusinessException("Không tìm thấy Bidder");
+
+        if (bidder == null) {
+            System.err.println("Lỗi nghiêm trọng: Không tìm thấy User với tên: " + bidInfo.getBidderName());
+            return; // Thoát hàm ngay lập tức để tránh lỗi sập hệ thống
         }
 
         String bidderId = bidder.getId();
         BigDecimal newPrice = bidInfo.getBidAmount();
 
+        // 2. Gọi AuctionSessionDAO để cập nhật current_price và last_bidder
         boolean sessionUpdated = AuctionSessionDAO.getInstance().updatePriceAndWinner(sessionId, newPrice, bidderId);
 
         if (!sessionUpdated) {
-            // Log lỗi nếu không thể cập nhật DB, nhưng không ném Exception
-            // vì logic trên RAM đã hoàn tất thành công.
             System.err.println("Lỗi đồng bộ giá cho phiên: " + sessionId);
         }
 
-        // 2. Lưu lịch sử lượt trả giá này vào bảng BidTransaction
-        // Chuyển đổi từ DTO sang Entity hoặc truyền tham số trực tiếp tùy thiết kế DAO
-        BidTransaction bidLog = new BidTransaction();
-        bidLog.setSessionId(sessionId);
-        bidLog.setBidAmount(newPrice);
-        bidLog.setBidderId(bidderId);
+        // 3. Gọi BidDAO để lưu lịch sử trả giá vào database
+        // ƯU TIÊN SỬ DỤNG CONSTRUCTOR CÓ THAM SỐ để tự động sinh UUID ở lớp cha Entity
+        BidTransaction bidLog = new BidTransaction(
+                bidderId,
+                sessionId,
+                newPrice,
+                BidType.MANUAL // Thêm BidType.MANUAL (hoặc tùy logic) vì entity yêu cầu
+        );
+
+        // Đè lại thời gian chính xác từ RAM (DTO) truyền xuống thay vì thời gian lúc khởi tạo obj
         bidLog.setCreatedAt(bidInfo.getTime());
 
         boolean bidLogged = BidDAO.getInstance().insertBid(bidLog);
