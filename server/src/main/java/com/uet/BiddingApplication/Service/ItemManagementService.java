@@ -81,7 +81,7 @@ public class ItemManagementService {
             throw new BusinessException("Vật phẩm không tồn tại");
         }
 
-        if (itemId != oldItem.getId()){
+        if (itemId.equals(oldItem.getId())){
             throw new BusinessException("Bạn không có quyền thao tác với vật phẩm này.");
         }
 
