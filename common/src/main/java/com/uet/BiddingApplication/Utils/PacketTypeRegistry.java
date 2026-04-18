@@ -102,6 +102,8 @@ public class PacketTypeRegistry {
         responseTypes.put(ActionType.GET_SESSION_DETAIL, SessionInfoResponseDTO.class);
 
         // --- Nhóm Realtime ---
+        requestTypes.put(ActionType.REALTIME_SESSION_STARTED, SessionTargetDTO.class);
+        requestTypes.put(ActionType.REALTIME_SESSION_CANCELED, SessionTargetDTO.class);
         responseTypes.put(ActionType.REALTIME_PRICE_UPDATE, RealtimeUpdateDTO.class);
         responseTypes.put(ActionType.REALTIME_SESSION_END, SessionResultDTO.class);
         responseTypes.put(ActionType.AUTO_BID_CANCEL, AutoBidCancelResponseDTO.class);

@@ -4,6 +4,7 @@ import com.uet.BiddingApplication.DAO.Impl.AuctionSessionDAO;
 import com.uet.BiddingApplication.DAO.Impl.ItemDAO;
 import com.uet.BiddingApplication.DTO.Response.AuctionCardDTO;
 import com.uet.BiddingApplication.DTO.Response.SessionInfoResponseDTO;
+import com.uet.BiddingApplication.Enum.SessionStatus;
 import com.uet.BiddingApplication.Model.AuctionSession;
 import com.uet.BiddingApplication.Model.Item;
 import com.uet.BiddingApplication.Utils.Mapper.AuctionViewMapper;
@@ -130,6 +131,18 @@ public class SearchCacheManager implements ISearchCacheManager{
     public List<AuctionSession> getActiveSessions() {
         return new ArrayList<>(activeSessionsCache.values());
     }
+
+    @Override
+    public List<AuctionSession> getSessionsByStatus(SessionStatus status) {
+        List<AuctionSession> sessions = new ArrayList<>();
+        for (AuctionSession session : activeSessionsCache.values()) {
+            if (session.getStatus() == status) {
+                sessions.add(session);
+            }
+        }
+        return sessions;
+    }
+
     @Override
     public Item getItem(String itemId) {
         return itemCache.get(itemId);
