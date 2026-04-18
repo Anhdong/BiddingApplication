@@ -44,6 +44,8 @@ public enum ActionType {
     UNSUBSCRIBE_REALTIME, // Client báo: "Tôi thoát phòng X, đừng gửi tin nữa"
 
     // Nhóm Phản hồi từ Server xuống Client (Server Responses - 4 hành động)
+    REALTIME_SESSION_STARTED, // Thông báo phiên bắt đầu
+    REALTIME_SESSION_CANCELED,// Thông báo khi phiên bị hủy
     REALTIME_PRICE_UPDATE, // Server tự động đẩy giá mới và người giữ giá xuống
     REALTIME_SESSION_END, // Server tự động báo hiệu hết giờ và chốt Winner
     AUTO_BID_CANCEL // Thông báo cho bidder khi giá hiện tại vượt quá max bid

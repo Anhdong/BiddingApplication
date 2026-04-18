@@ -9,6 +9,7 @@ import com.uet.BiddingApplication.DTO.Request.BidRequestDTO;
 import com.uet.BiddingApplication.DTO.Response.BidHistoryDTO;
 import com.uet.BiddingApplication.DTO.Response.RealtimeUpdateDTO;
 import com.uet.BiddingApplication.DTO.Response.SessionResultDTO;
+import com.uet.BiddingApplication.DTO.Response.SessionTargetDTO;
 import com.uet.BiddingApplication.Enum.ActionType;
 import com.uet.BiddingApplication.Enum.SessionStatus;
 import com.uet.BiddingApplication.Model.AuctionSession;
@@ -160,7 +161,7 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
             AutoBidManager.getInstance().triggerAutoBid(sessionId, req.getBidAmount());
         }
         else{
-            // nhớ realtime.sendPrivateMess()dđể thông báo bid nhỏ hơn giá hiện tại
+
         }
     }
 
@@ -245,6 +246,44 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
 
             // Ghi đè lại tay cầm (Future) mới vào Map để quản lý
             scheduledTasks.put(sessionId, retryTask);
+        }
+    }
+    /**
+     * Dành cho Admin/Hệ thống gọi khi phát hiện vi phạm và cần hủy ngay lập tức phiên đang chạy.
+     */
+    @Override
+    public void forceCancelSession(String sessionId, String reason) {
+        AuctionSession session = searchCacheManager.getSession(sessionId);
+        if (session == null) return;
+
+        // 1. Dừng ngay lập tức đồng hồ đếm ngược
+        ScheduledFuture<?> task = scheduledTasks.get(sessionId);
+        if (task != null && !task.isDone()) {
+            task.cancel(true); // true: Cố gắng ngắt (interrupt) nếu đang chạy dở
+            scheduledTasks.remove(sessionId);
+        }
+
+        // 2. Cập nhật Database thành CANCELED
+        boolean dbUpdated = AuctionSessionDAO.getInstance().updateStatus(sessionId, SessionStatus.CANCELED);
+
+        if (dbUpdated) {
+            // 3. Xóa khỏi RAM
+            searchCacheManager.removeSession(sessionId);
+
+            // 4. Phát thanh giải tán phòng với lý do cụ thể
+            ResponsePacket<SessionTargetDTO> cancelPacket = new ResponsePacket<>(
+                    ActionType.REALTIME_SESSION_CANCELED,
+                    403,
+                    "Phiên đấu giá đã bị Admin hủy: " + reason,
+                    new SessionTargetDTO(sessionId,null,null)
+            );
+
+            realtimeBroadcastService.broadcast(sessionId, cancelPacket);
+            realtimeBroadcastService.closeRoom(sessionId);
+
+        } else {
+            System.err.println("CRITICAL: Không thể Force Cancel phiên " + sessionId + " xuống Database.");
+            // Có thể thêm logic Retry ở đây nếu cần thiết
         }
     }
 }
