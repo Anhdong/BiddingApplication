@@ -73,10 +73,10 @@ public class AuthService {
 
         // Logic xử lý đăng nhập đa thiết bị [cite: 345, 346]
         String userId = String.valueOf(user.getId());
-        ClientConnectionHandler oldHandler = AuctionServer.getInstance().getClientHandler(userId);
-        if (oldHandler != null) {
-            oldHandler.forceClose("Tài khoản đã đăng nhập ở nơi khác");
-        }
+//        ClientConnectionHandler oldHandler = AuctionServer.getInstance().getClientHandler(userId);
+//        if (oldHandler != null) {
+//            oldHandler.forceClose("Tài khoản đã đăng nhập ở nơi khác");
+//        }
 
         // Tạo Token và lưu vào Cache RAM [cite: 344]
         String token = UUID.randomUUID().toString();
