@@ -7,7 +7,7 @@ import com.uet.BiddingApplication.Model.*;
 import com.uet.BiddingApplication.Utils.Factory.ItemFactory;
 
 public class ItemMapper {
-    public Item toEntity(ItemCreateDTO dto, String sellerId, String imageUrl) {
+    public static Item toEntity(ItemCreateDTO dto, String sellerId, String imageUrl) {
         if (dto == null) return null;
 
         // 1. Gọi Factory để đúc ra đúng class con (Electronics, Art, hoặc Vehicle)
