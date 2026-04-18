@@ -24,6 +24,7 @@ public enum ActionType {
     DELETE_ITEM, // Xóa vật phẩm khỏi kho
     RELIST_ITEM, // Đăng bán lại vật phẩm bị ế
     GET_SELLER_HISTORY, // Lấy lịch sử các phiên của Seller kèm tên Winner
+    GET_SELLER_ITEMS,// Lấy danh sách các vật phẩm của Seller
 
     // Nhóm Bidder (Thông tin & Tìm kiếm - 6 hành động)
     GET_ACTIVE_SESSIONS, // Lấy danh sách phiên đang chạy cho trang chủ
