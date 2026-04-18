@@ -1,6 +1,7 @@
 package com.uet.BiddingApplication.Utils.Mapper;
 
 import com.uet.BiddingApplication.DTO.Request.ItemCreateDTO;
+import com.uet.BiddingApplication.DTO.Request.RelistRequestDTO;
 import com.uet.BiddingApplication.Model.AuctionSession;
 import com.uet.BiddingApplication.Enum.SessionStatus; // Giả sử em có Enum này
 
@@ -26,6 +27,33 @@ public class AuctionSessionMapper {
         // 4. BỔ SUNG LOGIC NGHIỆP VỤ (Quan trọng)
         // Giá hiện tại ban đầu chính là giá khởi điểm
         entity.setCurrentPrice(dto.getStartPrice());
+
+        // Gán trạng thái ban đầu cho phiên (Chưa bắt đầu hoặc Đang mở)
+        // Tùy theo logic của nhóm em có thể là PENDING hoặc OPEN
+        entity.setStatus(SessionStatus.OPEN);
+
+        return entity;
+    }
+
+    public static AuctionSession toEntity(RelistRequestDTO dto){
+        // 1. Kiểm tra an toàn
+        if (dto == null) return null;
+
+        AuctionSession entity = new AuctionSession();
+
+        String itemId = dto.getItemId();
+
+        // 2. Gắn khóa ngoại (Foreign key)
+        entity.setItemId(itemId);
+
+        // 3. Trích xuất thông tin phiên
+        entity.setStartTime(dto.getNewStartTime());
+        entity.setEndTime(dto.getNewEndTime());
+        entity.setStartPrice(dto.getNewStartPrice());
+
+        // 4. BỔ SUNG LOGIC NGHIỆP VỤ (Quan trọng)
+        // Giá hiện tại ban đầu chính là giá khởi điểm
+        entity.setCurrentPrice(dto.getNewStartPrice());
 
         // Gán trạng thái ban đầu cho phiên (Chưa bắt đầu hoặc Đang mở)
         // Tùy theo logic của nhóm em có thể là PENDING hoặc OPEN
