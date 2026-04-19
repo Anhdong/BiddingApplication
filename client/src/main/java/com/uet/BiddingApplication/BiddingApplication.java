@@ -1,0 +1,43 @@
+package com.uet.BiddingApplication;
+
+import atlantafx.base.theme.CupertinoLight;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+public class BiddingApplication extends Application {
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        // Apply CSS
+        Application.setUserAgentStylesheet(new CupertinoLight().getUserAgentStylesheet());
+
+        //Load FXML & create root
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/uet/BiddingApplication/fxml/Auth/LoginView.fxml"));
+        Parent root = loader.load();
+
+        // Create scene
+        Scene scene = new Scene(root);
+
+        // add custom CSS (optional)
+        // scene.getStylesheets().add(getClass().getResource("/styles/custom.css").toExternalForm());
+
+        // Create stage
+        stage.setTitle("Bidding Application");
+        stage.setScene(scene);
+
+        // Set mininum dimension prevent breaking layout
+        stage.setWidth(1280);
+        stage.setHeight(800);
+        stage.setMinWidth(800);
+        stage.setMinHeight(500);
+
+        stage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
