@@ -3,6 +3,8 @@ package com.uet.BiddingApplication.DTO.Request;
 import com.uet.BiddingApplication.Enum.Category;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public class ItemUpdateRequestDTO  {
     private String name;
@@ -12,12 +14,16 @@ public class ItemUpdateRequestDTO  {
     private byte[] imageBytes;
     private String imageExtension;
     private String attribute;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+    BigDecimal price;
 
     public ItemUpdateRequestDTO() {
     }
 
     public ItemUpdateRequestDTO(String name, String description, Category category, String oldImageURL,
-                                byte[] imageBytes, String imageExtension, String attribute) {
+                                byte[] imageBytes, String imageExtension, String attribute,
+                                LocalDateTime startTime, LocalDateTime endTime,BigDecimal price) {
         this.name = name;
         this.description = description;
         this.category = category;
@@ -25,6 +31,9 @@ public class ItemUpdateRequestDTO  {
         this.imageBytes = imageBytes;
         this.imageExtension = imageExtension;
         this.attribute = attribute;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.price = price;
     }
 
     public String getName() {
@@ -81,5 +90,29 @@ public class ItemUpdateRequestDTO  {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 }

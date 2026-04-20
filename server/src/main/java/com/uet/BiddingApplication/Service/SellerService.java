@@ -1,6 +1,11 @@
 package com.uet.BiddingApplication.Service;
 
 import java.util.List;
+
+import com.uet.BiddingApplication.DAO.Impl.AuctionSessionDAO;
+import com.uet.BiddingApplication.DAO.Impl.ItemDAO;
+import com.uet.BiddingApplication.DAO.Interface.IItemDAO;
+import com.uet.BiddingApplication.DTO.Response.AuctionCardDTO;
 import com.uet.BiddingApplication.DTO.Response.SellerHistoryResponseDTO;
 import com.uet.BiddingApplication.DTO.Request.ItemUpdateRequestDTO;
 
@@ -11,9 +16,13 @@ import com.uet.BiddingApplication.DTO.Request.ItemUpdateRequestDTO;
 public class SellerService {
 
     private static volatile SellerService instance = null;
+    private IItemDAO itemDAO;
+    private AuctionSessionDAO sessionDAO;
 
     private SellerService(){
         // TODO: Khởi tạo instance của ItemDAO và AuctionSessionDAO.
+        itemDAO =ItemDAO.getInstance();
+        sessionDAO=AuctionSessionDAO.getInstance();
     }
 
     public static SellerService getInstance(){
@@ -44,6 +53,7 @@ public class SellerService {
         // TODO 1 (Input): Nhận thông tin cần sửa từ request.
         // TODO 2 (Processing): Kiểm tra trạng thái phiên, nếu đang RUNNING thì chặn ném Exception.
         // TODO 3 (Side-effect): Gọi ItemDAO.updateItem(...) để ghi xuống cơ sở dữ liệu.
+        // TODO 4 : Gọi AuctionSessionDAO để update phiên đấu giá( time,price)
     }
 
     /**
@@ -53,5 +63,8 @@ public class SellerService {
         // TODO 1 (Input): Nhận itemId.
         // TODO 2 (Processing): Kiểm tra điều kiện (Không được xóa nếu phiên đang chạy hoặc đã kết thúc).
         // TODO 3 (Side-effect): Gọi ItemDAO.deleteItem(...).
+    }
+    public List<AuctionCardDTO> getSellerItems(String sellerId){
+        return itemDAO.getSellerItems(sellerId);
     }
 }
