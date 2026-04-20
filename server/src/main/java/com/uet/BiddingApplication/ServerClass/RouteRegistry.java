@@ -130,12 +130,13 @@ public class RouteRegistry {
         // ==============================================================================
         // 4. NHÓM NGƯỜI MUA (BidderService & AuctionService)
         // ==============================================================================
-        // [ĐÃ BỔ SUNG]: Chức năng Đăng ký tham gia phiên đấu giá
+        /*
         registry.put(ActionType.PRE_REGISTER_SESSION, req -> {
             SessionRegisterRequestDTO dto = (SessionRegisterRequestDTO) req.getPayload();
             BidderService.getInstance().registerForSession(dto, req.getUserId());
             return new ResponsePacket<Void>(ActionType.PRE_REGISTER_SESSION, 200, "Đăng ký tham gia phiên thành công", null);
         });
+         */
         registry.put(ActionType.GET_REGISTERED_SESSIONS, req -> {
             Object result = BidderService.getInstance().getRegisteredSessions(req.getUserId());
             return new ResponsePacket<Object>(ActionType.GET_REGISTERED_SESSIONS, 200, "OK", result);
@@ -161,13 +162,14 @@ public class RouteRegistry {
         // ==============================================================================
         // 5. NHÓM CỐT LÕI ĐẤU GIÁ (AutoBidManager & AuctionService)
         // ==============================================================================
-        // [ĐÃ BỔ SUNG]: Chức năng đặt giá thủ công (Core của app)
+
+        /*
         registry.put(ActionType.PLACE_MANUAL_BID, req -> {
             BidRequestDTO dto = (BidRequestDTO) req.getPayload();
             AuctionService.getInstance().placeManualBid(dto, req.getUserId());
             return new ResponsePacket<Void>(ActionType.PLACE_MANUAL_BID, 200, "Đặt giá thành công", null);
         });
-
+        */
         registry.put(ActionType.REGISTER_AUTO_BID, req -> {
             // Lưu ý: Nếu trong tương lai bạn dùng AutoBidRegisterDTO thay vì AutoBidSetting thì sửa ép kiểu ở đây
             AutoBidSetting setting = (AutoBidSetting) req.getPayload();

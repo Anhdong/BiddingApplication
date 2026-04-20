@@ -60,12 +60,4 @@ public class AuctionService {
         // TODO 3 (Processing): Gọi AuctionSessionDAO để cập nhật current_price và last_bidder.
         // TODO 4 (Processing): Gọi BidDAO để lưu lịch sử trả giá (bidInfo) vào database.
     }
-    /**
-     * Xử lý logic khi người dùng đặt giá thủ công
-     */
-    public void placeManualBid(com.uet.BiddingApplication.DTO.Request.BidRequestDTO dto, String userId) {
-        // TODO: Triển khai logic xử lý đặt giá
-        // Gợi ý: Kiểm tra giá hợp lệ, lưu vào DB, cập nhật giá hiện tại và gọi RealtimeBroadcastService để báo cho mọi người
-        System.out.println("User " + userId + " đang đặt giá " + dto.getBidAmount() + " cho phiên " + dto.getSessionId());
-    }
 }

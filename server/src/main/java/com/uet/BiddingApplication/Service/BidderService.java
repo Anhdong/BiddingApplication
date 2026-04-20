@@ -47,7 +47,7 @@ public class BidderService {
     /**
      * Trả về lịch sử tất cả các lần vung tiền của Bidder này.
      */
-    public List<BidHistoryDTO> getBidderHistory(String bidderId){
+    public List<BidHistoryDTO> getBidderHistory(String bidderId) {
         // TODO 1: Lấy instance của BidDAO (Do Tech Lead cung cấp)
         // TODO 2: Gọi phương thức lấy toàn bộ lịch sử vung tiền của user này
         // TODO 3: Nếu DAO trả về đúng kiểu List<BidHistoryDTO> thì return thẳng,
@@ -57,13 +57,5 @@ public class BidderService {
         // return BidDAO.getInstance().getBidderHistory(bidderId);
 
         return null;
-    }
-    /**
-     * Xử lý logic đăng ký tham gia phiên đấu giá của Bidder
-     */
-    public void registerForSession(com.uet.BiddingApplication.DTO.Request.SessionRegisterRequestDTO dto, String userId) {
-        // TODO: Triển khai logic đăng ký tham gia phiên
-        // Gợi ý: Gọi SessionRegistrationDAO.getInstance().registerBidder(...) tại đây
-        System.out.println("Đang xử lý đăng ký phiên: " + dto.getSessionId() + " cho user: " + userId);
     }
 }
