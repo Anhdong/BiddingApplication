@@ -56,7 +56,7 @@ public class RequestRouter {
             RouteRegistry.CommandHandler command = RouteRegistry.getHandler(action);
 
             // 3. THỰC THI LOGIC
-            ResponsePacket<?> response = command.handle(request, handler);
+            ResponsePacket<?> response = command.handle(request);
 
             // 4. GỬI PHẢN HỒI (Nếu có)
             if (response != null) {
