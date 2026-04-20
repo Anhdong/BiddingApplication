@@ -80,6 +80,10 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
         if (session == null) return;
 
         long delaySeconds = ChronoUnit.SECONDS.between(LocalDateTime.now(), session.getEndTime());
+        ScheduledFuture<?> oldTask = scheduledTasks.get(sessionId);
+        if (oldTask != null && !oldTask.isDone()) {
+            oldTask.cancel(false);
+        }
         if (delaySeconds <= 0) {
             handleAuctionEnd(sessionId);
             return;
@@ -158,7 +162,7 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
             }
 
             // 4. Kích hoạt AutoBid đệ quy (Nếu AutoBidManager đẩy giá, nó sẽ gọi lại enqueueBid)
-            AutoBidManager.getInstance().triggerAutoBid(sessionId, req.getBidAmount());
+            AutoBidManager.getInstance().triggerAutoBid(sessionId, req.getBidAmount(),task.bidderId());
         }
         else{
 

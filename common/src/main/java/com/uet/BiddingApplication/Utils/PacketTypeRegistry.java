@@ -56,6 +56,7 @@ public class PacketTypeRegistry {
         requestTypes.put(ActionType.DELETE_ITEM, ItemTargetRequestDTO.class); // Đã update DTO mới
         requestTypes.put(ActionType.RELIST_ITEM, RelistRequestDTO.class);
         requestTypes.put(ActionType.GET_SELLER_HISTORY, Void.class);
+        requestTypes.put(ActionType.GET_SELLER_ITEMS, Void.class);
 
         // --- Nhóm Bidder ---
         Type filterRequestType = SessionFilterRequestDTO.class;
@@ -95,6 +96,7 @@ public class PacketTypeRegistry {
 
         // --- Nhóm Seller & Bidder ---
         responseTypes.put(ActionType.GET_SELLER_HISTORY, sellerHistoryListType);
+        responseTypes.put(ActionType.GET_SELLER_ITEMS, auctionCardListType);
         responseTypes.put(ActionType.GET_BIDDER_HISTORY, bidderHistoryListType);
         responseTypes.put(ActionType.GET_ACTIVE_SESSIONS, auctionCardListType);
         responseTypes.put(ActionType.SEARCH_ITEMS, auctionCardListType);
