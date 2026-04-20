@@ -47,7 +47,7 @@ public class BidderService {
     /**
      * Trả về lịch sử tất cả các lần vung tiền của Bidder này.
      */
-    public List<BidHistoryDTO> getBidderHistory(String bidderId){
+    public List<BidHistoryDTO> getBidderHistory(String bidderId) {
         // TODO 1: Lấy instance của BidDAO (Do Tech Lead cung cấp)
         // TODO 2: Gọi phương thức lấy toàn bộ lịch sử vung tiền của user này
         // TODO 3: Nếu DAO trả về đúng kiểu List<BidHistoryDTO> thì return thẳng,
