@@ -1,0 +1,13 @@
+.auth-background {
+    /* Đường dẫn đến hình ảnh của bạn */
+    -fx-background-image: url("/app/assets/background.jpg");
+
+    /* Căn giữa hình ảnh */
+    -fx-background-position: center center;
+
+    /* Không lặp lại hình ảnh */
+    -fx-background-repeat: no-repeat;
+
+    /* QUAN TRỌNG: Hiệu ứng Cover (Tự phóng to và crop để lấp đầy) */
+    -fx-background-size: cover;
+}

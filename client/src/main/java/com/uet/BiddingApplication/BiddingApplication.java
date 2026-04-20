@@ -15,7 +15,7 @@ public class BiddingApplication extends Application {
         Application.setUserAgentStylesheet(new CupertinoLight().getUserAgentStylesheet());
 
         //Load FXML & create root
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/uet/BiddingApplication/fxml/Auth/LoginView.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/app/fxml/Auth/LoginView.fxml"));
         Parent root = loader.load();
 
         // Create scene
