@@ -17,23 +17,23 @@
    <children>
       <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="400.0" spacing="4.0" styleClass="rounded-box">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-bold" text="SIGN IN">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="SIGN IN" textAlignment="CENTER">
                <font>
-                  <Font name="Adwaita Mono" size="38.0" />
+                  <Font name="System Bold" size="35.0" />
                </font>
             </Text>
-            <Region prefHeight="80.0" prefWidth="200.0" />
+            <Region prefHeight="40.0" prefWidth="200.0" />
+            <TextField layoutX="110.0" layoutY="389.0" maxHeight="-Infinity" maxWidth="200.0" promptText="Username" styleClass="border-muted">
+               <VBox.margin>
+                  <Insets bottom="8.0" />
+               </VBox.margin>
+            </TextField>
             <TextField maxHeight="-Infinity" maxWidth="200.0" promptText="Email" styleClass="border-muted">
                <VBox.margin>
                   <Insets bottom="8.0" />
                </VBox.margin>
             </TextField>
             <TextField layoutX="110.0" layoutY="266.0" maxHeight="-Infinity" maxWidth="200.0" promptText="Telephone" styleClass="border-muted">
-               <VBox.margin>
-                  <Insets bottom="8.0" />
-               </VBox.margin>
-            </TextField>
-            <TextField layoutX="110.0" layoutY="389.0" maxHeight="-Infinity" maxWidth="200.0" promptText="Username" styleClass="border-muted">
                <VBox.margin>
                   <Insets bottom="8.0" />
                </VBox.margin>

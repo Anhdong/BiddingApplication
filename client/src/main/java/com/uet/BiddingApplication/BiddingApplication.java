@@ -17,7 +17,7 @@ public class BiddingApplication extends Application {
         Application.setUserAgentStylesheet(new CupertinoLight().getUserAgentStylesheet());
 
         //Load FXML & create root
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/app/fxml/Auth/RegisterView.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/app/fxml/Auth/LoginView.fxml"));
         Parent root = loader.load();
 
         // Create scene
@@ -25,6 +25,7 @@ public class BiddingApplication extends Application {
 
         //Add custome CSs
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/app/css/main.css")).toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/app/css/font.css")).toExternalForm());
 
         // Create stage
         stage.setTitle("Bidding Application");

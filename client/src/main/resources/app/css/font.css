@@ -1,0 +1,13 @@
+@font-face {
+    font-family: "Gelasio";
+    src: url("/app/font/Gelasio.ttf");
+}
+
+
+
+.main-title {
+    -fx-font-family:"Gelasio";
+    -fx-font-size: 100;
+
+}
+

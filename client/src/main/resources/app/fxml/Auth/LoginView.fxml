@@ -14,16 +14,16 @@
    <children>
       <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="400.0" spacing="4.0" styleClass="rounded-box">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-bold" text="LOG IN">
+            <Text smooth="false" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="main-title" text="LOG IN" textAlignment="CENTER">
                <font>
-                  <Font name="Adwaita Mono" size="38.0" />
+                  <Font name="System Bold" size="35.0" />
                </font>
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Text>
-            <Region prefHeight="80.0" prefWidth="200.0" />
-            <TextField maxHeight="-Infinity" maxWidth="200.0" promptText="Username" styleClass="border-muted">
+            <Region prefHeight="60.0" prefWidth="200.0" />
+            <TextField maxWidth="200.0" promptText="Username" styleClass="border-muted">
                <VBox.margin>
                   <Insets bottom="8.0" />
                </VBox.margin>
