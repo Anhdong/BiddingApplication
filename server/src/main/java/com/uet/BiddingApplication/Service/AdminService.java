@@ -1,6 +1,11 @@
 package com.uet.BiddingApplication.Service;
 
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.List;
+
+import com.uet.BiddingApplication.DAO.Impl.AuctionSessionDAO;
+import com.uet.BiddingApplication.DAO.Impl.UserDAO;
 import com.uet.BiddingApplication.DTO.Request.AdminActionRequestDTO;
 import com.uet.BiddingApplication.Model.User;
 import com.uet.BiddingApplication.Model.AuctionSession;
@@ -28,13 +33,19 @@ public class AdminService {
         return instance;
     }
 
+    // Tách riêng logic sinh mã để đảm bảo Single Responsibility (SRP)
+    private String generateOTP() {
+        SecureRandom random = new SecureRandom();
+        return String.format("%06d", random.nextInt(1000000));
+    }
+
     /**
      * Lấy toàn bộ danh sách người dùng.
      */
     public List<User> getAllUsers(){
         // TODO 1 (Dependencies): Lấy instance của UserDAO.
         // TODO 2 (Output): Trả về danh sách User từ hàm getAllUsers().
-        return null;
+        return UserDAO.getInstance().getAllUsers();
     }
 
     /**
@@ -43,7 +54,7 @@ public class AdminService {
     public List<AuctionSession> getAllSessions(){
         // TODO 1 (Dependencies): Lấy instance của AuctionSessionDAO.
         // TODO 2 (Output): Trả về danh sách phiên.
-        return null;
+        return AuctionSessionDAO.getInstance().getAllSessions(true);
     }
 
     /**
@@ -53,6 +64,19 @@ public class AdminService {
         // TODO 1 (Processing): Sinh mã ngẫu nhiên 6 chữ số.
         // TODO 2 (Side-effect): Lưu OTP vào Cache hoặc DB với thời gian hết hạn.
         // TODO 3 (Output): In ra console để test (hoặc tích hợp gửi Email/SMS sau này).
+
+        // 1. Sinh mã OTP 6 số
+        String otpCode = generateOTP();
+
+        // 2. Tính toán thời gian hết hạn (ví dụ: 5 phút kể từ hiện tại)
+        LocalDateTime expirationTime = LocalDateTime.now().plusMinutes(5);
+
+        // 4. Giả lập gửi OTP bằng cách in ra console để test
+        System.out.println("\n=== THÔNG BÁO HỆ THỐNG ===");
+        System.out.println("Yêu cầu cấp OTP từ Admin ID: " + adminId);
+        System.out.println("Mã OTP của bạn là: " + otpCode);
+        System.out.println("Mã có hiệu lực đến: " + expirationTime);
+        System.out.println("==========================\n");
     }
 
     /**
