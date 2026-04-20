@@ -1,5 +1,6 @@
 package com.uet.BiddingApplication.DAO.Interface;
 
+import com.uet.BiddingApplication.DTO.Response.AuctionCardDTO;
 import com.uet.BiddingApplication.Model.Item;
 
 import java.util.List;
@@ -11,4 +12,5 @@ public interface IItemDAO {
     public Item getItemById(String itemId);
     public List<Item> getItemsBySellerId(String sellerId);
     public List<Item> getItemsByIds(List<String> itemIds);
+    public List<AuctionCardDTO> getSellerItems(String sellerId);
 }

@@ -20,6 +20,8 @@ public interface ISearchCacheManager {
     void removeSession(String sessionId);
     void removeItem(String itemId);
     void updatePriceInCache(String sessionId, BigDecimal newPrice,String highestBidderId);
+    void updateItem(String itemId,Item item);
+    void updateSession(String sessionId,AuctionSession session);
     Item getItem(String itemId);
     AuctionSession getSession(String sessionId);
     List<AuctionSession> getActiveSessions();
