@@ -1,4 +1,4 @@
-package com.uet.BiddingApplication.Server_class;
+package com.uet.BiddingApplication.ServerClass;
 
 import java.io.IOException;
 import java.net.ServerSocket;
