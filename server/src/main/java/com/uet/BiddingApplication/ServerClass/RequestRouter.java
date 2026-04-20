@@ -3,19 +3,15 @@ package com.uet.BiddingApplication.ServerClass;
 import com.uet.BiddingApplication.DTO.Packet.RequestPacket;
 import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
 import com.uet.BiddingApplication.Enum.ActionType;
-//Tiếp nhận yêu cầu từ Handler -> Kiểm tra bảo mật (Token)
-// -> Tra cứu bản đồ RouteRegistry để tìm đúng phòng ban xử lý
-// -> Thực thi code logic -> Nhận kết quả và giao lại cho Handler gửi về.
-// Đồng thời, nó đóng vai trò chốt chặn bắt lỗi tổng, đảm bảo Server không bao giờ bị sập khi luồng xử lý gặp sự cố
-/**
- * Front Controller: Tiếp nhận mọi yêu cầu từ Handler,
- * kiểm tra bảo mật cơ bản và điều hướng sang RouteRegistry.
- */
+// Import BusinessException của bạn vào đây (nếu khác package)
+import com.uet.BiddingApplication.Exception.BusinessException;
+
 public class RequestRouter {
 
     private static volatile RequestRouter instance;
 
-    private RequestRouter() {}
+    private RequestRouter() {
+    }
 
     public static RequestRouter getInstance() {
         if (instance == null) {
@@ -29,56 +25,58 @@ public class RequestRouter {
     }
 
     /**
-     * Hàm điều phối chính
+     * Hàm điều hướng và Lưới hứng lỗi trung tâm của Server
      */
-    public void route(RequestPacket<?> request, ClientConnectionHandler handler) {
-        if (request == null || request.getAction() == null) {
-            System.err.println("[Router] Nhận được gói tin rác hoặc Action bị null.");
-            return;
-        }
-
-        ActionType action = request.getAction();
-        System.out.println("[Router] Đang xử lý lệnh: " + action + " cho User: " + handler.getUserId());
+    public void route(RequestPacket<?> request, ClientConnectionHandler client) {
+        ActionType currentAction = null;
 
         try {
-            // 1. KIỂM TRA BẢO MẬT (TOKEN)
-            // Chỉ kiểm tra Token nếu không phải là Login hoặc Register
-            if (action != ActionType.LOGIN && action != ActionType.REGISTER) {
-                if (!isValidToken(request.getToken())) {
-                    handler.sendPacket(new ResponsePacket<>(action, 401, "Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại!", null));
-                    return;
-                }
+            if (request == null) {
+                // Ném thẳng lỗi kèm lý do (chỉ dùng String)
+                throw new BusinessException("Gói tin yêu cầu không hợp lệ (Null Packet)");
             }
 
-            // 2. LẤY HANDLER TỪ REGISTRY
-            // Thay vì dùng if-else cho PLACE_MANUAL_BID ở đây,
-            // ta nên để RouteRegistry quản lý hết cho sạch code.
-            RouteRegistry.CommandHandler command = RouteRegistry.getHandler(action);
+            currentAction = request.getAction();
 
-            // 3. THỰC THI LOGIC
+            if (currentAction == null) {
+                throw new BusinessException("Gói tin thiếu trường ActionType");
+            }
+
+            // 1. Lấy Handler tương ứng từ RouteRegistry
+            RouteRegistry.CommandHandler command = RouteRegistry.getHandler(currentAction);
+
+            // 2. Thực thi logic nghiệp vụ
             ResponsePacket<?> response = command.handle(request);
 
-            // 4. GỬI PHẢN HỒI (Nếu có)
+            // 3. Nếu xử lý thành công, gửi trả ResponsePacket về Client
             if (response != null) {
-                handler.sendPacket(response);
+                client.sendPacket(response);
             }
 
-        } catch (Exception e) {
-            System.err.println("[Router Error] Lỗi nghiêm trọng khi điều hướng Action " + action + ": " + e.getMessage());
-            e.printStackTrace();
-            // Báo lỗi về cho Client để tránh treo UI
-            handler.sendPacket(new ResponsePacket<>(action, 500, "Lỗi hệ thống phía Server!", null));
-        }
-    }
+        } catch (BusinessException e) {
+            // =========================================================
+            // CHUẨN YÊU CẦU: Đóng gói ResponsePacket với statusCode = 400,
+            // kèm message do Service ném ra.
+            // =========================================================
+            System.out.println("[Router - Business] Từ chối yêu cầu " + currentAction + " của " +
+                    (client.getUserId() != null ? client.getUserId() : "Guest") + ": " + e.getMessage());
 
-    /**
-     * Kiểm tra tính hợp lệ của Token
-     * (Sau này Thành viên 3 sẽ tích hợp SessionManager vào đây)
-     */
-    private boolean isValidToken(String token) {
-        if (token == null || token.isEmpty()) return false;
-        // Tạm thời chấp nhận mọi token không null để test.
-        // Sau này sẽ check trong Map<String, User> của Server.
-        return true;
+            // Trực tiếp gán statusCode 400 và truyền e.getMessage()
+            ResponsePacket<Void> errorResponse = new ResponsePacket<>(currentAction, 400, e.getMessage(), null);
+            client.sendPacket(errorResponse);
+
+        } catch (Exception e) {
+            // =========================================================
+            // CHUẨN YÊU CẦU: Bắt các lỗi hệ thống (NullPointer, rớt DB),
+            // đóng gói status 500, báo "Lỗi máy chủ nội bộ" và ghi log console.
+            // =========================================================
+            System.err.println("[Router - System Error] Lỗi nghiêm trọng khi xử lý " + currentAction +
+                    " từ " + (client.getUserId() != null ? client.getUserId() : "Guest"));
+            e.printStackTrace(); // Ghi log console
+
+            // Trực tiếp gán statusCode 500
+            ResponsePacket<Void> serverErrorResponse = new ResponsePacket<>(currentAction, 500, "Lỗi máy chủ nội bộ", null);
+            client.sendPacket(serverErrorResponse);
+        }
     }
 }

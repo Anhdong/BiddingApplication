@@ -58,4 +58,12 @@ public class BidderService {
 
         return null;
     }
+    /**
+     * Xử lý logic đăng ký tham gia phiên đấu giá của Bidder
+     */
+    public void registerForSession(com.uet.BiddingApplication.DTO.Request.SessionRegisterRequestDTO dto, String userId) {
+        // TODO: Triển khai logic đăng ký tham gia phiên
+        // Gợi ý: Gọi SessionRegistrationDAO.getInstance().registerBidder(...) tại đây
+        System.out.println("Đang xử lý đăng ký phiên: " + dto.getSessionId() + " cho user: " + userId);
+    }
 }

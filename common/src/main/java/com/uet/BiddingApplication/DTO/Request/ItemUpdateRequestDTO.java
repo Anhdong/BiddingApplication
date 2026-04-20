@@ -5,6 +5,7 @@ import com.uet.BiddingApplication.Enum.Category;
 import java.io.Serializable;
 
 public class ItemUpdateRequestDTO  {
+    private String itemId;
     private String name;
     private String description;
     private Category category;
@@ -16,8 +17,9 @@ public class ItemUpdateRequestDTO  {
     public ItemUpdateRequestDTO() {
     }
 
-    public ItemUpdateRequestDTO(String name, String description, Category category, String oldImageURL,
+    public ItemUpdateRequestDTO(String itemId, String name, String description, Category category, String oldImageURL,
                                 byte[] imageBytes, String imageExtension, String attribute) {
+        this.itemId = itemId;
         this.name = name;
         this.description = description;
         this.category = category;
@@ -25,6 +27,14 @@ public class ItemUpdateRequestDTO  {
         this.imageBytes = imageBytes;
         this.imageExtension = imageExtension;
         this.attribute = attribute;
+    }
+
+    public String getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(String itemId) {
+        this.itemId = itemId;
     }
 
     public String getName() {
