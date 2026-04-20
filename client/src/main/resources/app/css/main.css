@@ -1,13 +1,27 @@
 .auth-background {
     /* Đường dẫn đến hình ảnh của bạn */
     -fx-background-image: url("/app/assets/background.jpg");
-
     /* Căn giữa hình ảnh */
     -fx-background-position: center center;
-
     /* Không lặp lại hình ảnh */
     -fx-background-repeat: no-repeat;
-
     /* QUAN TRỌNG: Hiệu ứng Cover (Tự phóng to và crop để lấp đầy) */
     -fx-background-size: cover;
+}
+
+.rounded-box {
+    -fx-background-color: -color-bg-default; /* Hoặc màu bất kỳ như #ffffff */
+    -fx-background-radius: 20;               /* Bo góc cho nền */
+    -fx-border-radius: 20;                   /* Bo góc cho đường viền */
+    -fx-border-color: -color-border-default; /* Phải có viền hoặc nền mới thấy góc */
+    -fx-border-width: 1;
+
+    /* Hiệu ứng đổ bóng */
+    /* drop-shadow(loại-bóng, màu-bóng, độ-nhòe, độ-lan, offset-x, offset-y) */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 5);
+}
+
+.interactive-card:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 15, 0, 0, 8);
+    -fx-translate-y: -2; /* Nhấc nhẹ card lên một chút */
 }

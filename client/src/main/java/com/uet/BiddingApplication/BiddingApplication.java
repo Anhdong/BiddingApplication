@@ -7,6 +7,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.util.Objects;
+
 public class BiddingApplication extends Application {
 
     @Override
@@ -15,14 +17,14 @@ public class BiddingApplication extends Application {
         Application.setUserAgentStylesheet(new CupertinoLight().getUserAgentStylesheet());
 
         //Load FXML & create root
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/app/fxml/Auth/LoginView.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/app/fxml/Auth/RegisterView.fxml"));
         Parent root = loader.load();
 
         // Create scene
         Scene scene = new Scene(root);
 
-        // add custom CSS (optional)
-        // scene.getStylesheets().add(getClass().getResource("/styles/custom.css").toExternalForm());
+        //Add custome CSs
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/app/css/main.css")).toExternalForm());
 
         // Create stage
         stage.setTitle("Bidding Application");

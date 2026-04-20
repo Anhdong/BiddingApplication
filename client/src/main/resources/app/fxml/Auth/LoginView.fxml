@@ -10,9 +10,9 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="800.0" prefWidth="1280.0" styleClass="auth-background" stylesheets="/app/css/main.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="800.0" prefWidth="1280.0" styleClass="auth-background" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="400.0" spacing="4.0" styleClass="bg-default">
+      <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="400.0" spacing="4.0" styleClass="rounded-box">
          <children>
             <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-bold" text="LOG IN">
                <font>
@@ -28,7 +28,7 @@
                   <Insets bottom="8.0" />
                </VBox.margin>
             </TextField>
-            <PasswordField maxWidth="200.0" promptText="Password" styleClass="border-muted">
+            <PasswordField maxWidth="200.0" promptText="Password">
                <font>
                   <Font name="System Bold" size="13.0" />
                </font>
