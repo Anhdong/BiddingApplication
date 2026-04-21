@@ -17,13 +17,13 @@ public class BiddingApplication extends Application {
         Application.setUserAgentStylesheet(new CupertinoLight().getUserAgentStylesheet());
 
         //Load FXML & create root
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/app/fxml/Common/ItemCard.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/app/fxml/MainLayout/MainView.fxml"));
         Parent root = loader.load();
 
         // Create scene
         Scene scene = new Scene(root);
 
-        //Add custome CSs
+        //Add custome CSS
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/app/css/main.css")).toExternalForm());
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/app/css/font.css")).toExternalForm());
 
