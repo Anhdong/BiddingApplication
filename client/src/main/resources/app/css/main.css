@@ -21,7 +21,8 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 5);
 }
 
+/*interactive hover effect*/
 .interactive-card:hover {
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 15, 0, 0, 8);
-    -fx-translate-y: -2; /* Nhấc nhẹ card lên một chút */
+    -fx-translate-y: -1; /* Nhấc nhẹ card lên một chút */
 }
