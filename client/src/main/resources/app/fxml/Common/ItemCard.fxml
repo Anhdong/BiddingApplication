@@ -10,13 +10,13 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="400.0" prefWidth="300.0" spacing="8.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="280.0" prefWidth="210.0" spacing="4.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <ImageView fitHeight="200.0" fitWidth="200.0" nodeOrientation="INHERIT" pickOnBounds="true" styleClass="elevated-4">
+      <ImageView fitHeight="140.0" fitWidth="140.0" nodeOrientation="INHERIT" pickOnBounds="true" styleClass="elevated-4">
          <image>
             <Image url="@../../assets/default-items.png" />
          </image></ImageView>
-      <Label maxWidth="1.7976931348623157E308" styleClass="title-1" text="Name" />
+      <Label maxWidth="1.7976931348623157E308" styleClass="title-3" text="Name" />
       <Label maxWidth="1.7976931348623157E308" text="hh:mm - dd/mm/yyyy">
          <styleClass>
             <String fx:value="text-muted" />
@@ -28,21 +28,21 @@
             <Label maxWidth="1.7976931348623157E308" text="\$100000" HBox.hgrow="NEVER">
                <styleClass>
                   <String fx:value="success" />
-                  <String fx:value="title-2" />
+                  <String fx:value="title-4" />
                </styleClass>
             </Label>
             <Region maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-            <Button alignment="CENTER" minHeight="100.0" minWidth="85.0" mnemonicParsing="false" text="Btn">
+            <Button alignment="CENTER" mnemonicParsing="false" text="Add">
                <styleClass>
-                  <String fx:value="title-3" />
                   <String fx:value="accent" />
+                  <String fx:value="bold" />
                </styleClass>
             </Button>
          </children>
       </HBox>
    </children>
    <padding>
-      <Insets bottom="40.0" left="50.0" right="50.0" top="40.0" />
+      <Insets bottom="18.0" left="28.0" right="28.0" top="18.0" />
    </padding>
    <styleClass>
       <String fx:value="rounded-card" />

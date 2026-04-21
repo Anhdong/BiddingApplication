@@ -20,6 +20,13 @@
     -fx-font-family: "Google Sans";
 }
 
+/*Special font for header*/
+.main-title {
+    -fx-font-family:"Gelasio";
+    -fx-font-size: 64;
+
+}
+
 /* Overwrite AtlantaFx title class with GSans bold to fix font bold */
 .title-1,
 .title-2,
@@ -29,10 +36,7 @@
     -fx-font-weight: bold;
 }
 
-/*Special font for header*/
-.main-title {
-    -fx-font-family:"Gelasio";
-    -fx-font-size: 64;
-
+.bold {
+    -fx-font-weight: bold;
 }
 
