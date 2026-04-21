@@ -9,33 +9,31 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="400.0" prefWidth="300.0" spacing="8.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="400.0" prefWidth="300.0" spacing="8.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <ImageView fitHeight="200.0" fitWidth="200.0" nodeOrientation="INHERIT" pickOnBounds="true" styleClass="elevated-4">
          <image>
-            <Image url="/app/assets/default-items.png" />
+            <Image url="@../../../../../../../../../Downloads/bitmap.png" />
          </image>
       </ImageView>
-      <Label maxWidth="1.7976931348623157E308" styleClass="title-1" text="Name">
-      </Label>
+      <Label maxWidth="1.7976931348623157E308" styleClass="title-2" text="Name" />
       <Label maxWidth="1.7976931348623157E308" text="hh:mm - dd/mm/yyyy">
          <styleClass>
             <String fx:value="text-muted" />
             <String fx:value="text-caption" />
          </styleClass>
       </Label>
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+      <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="100.0" prefWidth="200.0">
          <children>
-            <Label maxWidth="1.7976931348623157E308" text="\$69.9" HBox.hgrow="ALWAYS">
+            <Label text="234" HBox.hgrow="ALWAYS">
                <styleClass>
                   <String fx:value="success" />
                   <String fx:value="title-2" />
                </styleClass>
             </Label>
             <Region prefHeight="66.0" prefWidth="32.0" HBox.hgrow="ALWAYS" />
-            <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="Bid">
+            <Button alignment="CENTER_RIGHT" minWidth="85.0" mnemonicParsing="false" text="Added">
                <styleClass>
                   <String fx:value="title-3" />
                   <String fx:value="accent" />

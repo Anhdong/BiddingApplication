@@ -9,7 +9,7 @@
     -fx-background-size: cover;
 }
 
-.rounded-box {
+.rounded-card {
     -fx-background-color: -color-bg-default; /* Hoặc màu bất kỳ như #ffffff */
     -fx-background-radius: 20;               /* Bo góc cho nền */
     -fx-border-radius: 20;                   /* Bo góc cho đường viền */
