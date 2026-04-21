@@ -14,9 +14,8 @@
    <children>
       <ImageView fitHeight="200.0" fitWidth="200.0" nodeOrientation="INHERIT" pickOnBounds="true" styleClass="elevated-4">
          <image>
-            <Image url="/app/assets/default-items.png" />
-         </image>
-      </ImageView>
+            <Image url="@../../assets/default-items.png" />
+         </image></ImageView>
       <Label maxWidth="1.7976931348623157E308" styleClass="title-1" text="Name" />
       <Label maxWidth="1.7976931348623157E308" text="hh:mm - dd/mm/yyyy">
          <styleClass>
