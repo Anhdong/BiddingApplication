@@ -117,7 +117,7 @@ public class RouteRegistry {
 
         registry.put(ActionType.UPDATE_ITEM, req -> {
             ItemUpdateRequestDTO dto = (ItemUpdateRequestDTO) req.getPayload();
-            SellerService.getInstance().updateItem(dto, dto.getItemId());
+            SellerService.getInstance().updateItem(dto);
             return new ResponsePacket<Void>(ActionType.UPDATE_ITEM, 200, "Cập nhật vật phẩm thành công", null);
         });
 
