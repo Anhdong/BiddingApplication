@@ -49,7 +49,7 @@ public class SellerService {
     /**
      * Cập nhật thông tin vật phẩm (Chỉ hợp lệ khi phiên chưa bắt đầu).
      */
-    public void updateItem(ItemUpdateRequestDTO request, String itemId){
+    public void updateItem(ItemUpdateRequestDTO request){
         // TODO 1 (Input): Nhận thông tin cần sửa từ request.
         // TODO 2 (Processing): Kiểm tra trạng thái phiên, nếu đang RUNNING thì chặn ném Exception.
         // TODO 3 (Side-effect): Gọi ItemDAO.updateItem(...) để ghi xuống cơ sở dữ liệu.
