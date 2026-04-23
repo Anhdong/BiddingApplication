@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface IAuctionSessionDAO {
     boolean insertSession(AuctionSession session);
+    boolean updateSession(AuctionSession session);
     AuctionSession getSessionByItemId(String id);
     AuctionSession getSessionById(String id);
     boolean updatePriceAndWinner(String sessionId, BigDecimal newPrice, String winnerId);

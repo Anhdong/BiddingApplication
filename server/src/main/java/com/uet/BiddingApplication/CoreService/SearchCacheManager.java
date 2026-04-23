@@ -123,6 +123,20 @@ public class SearchCacheManager implements ISearchCacheManager{
     }
 
     @Override
+    public void updateItem(String itemId, Item item) {
+        if (itemId != null && item != null) {
+            itemCache.put(itemId, item);
+        }
+    }
+
+    @Override
+    public void updateSession(String sessionId, AuctionSession session) {
+        if (sessionId != null && session != null) {
+            activeSessionsCache.put(sessionId, session);
+        }
+    }
+
+    @Override
     public AuctionSession getSession(String sessionId) {
         return activeSessionsCache.get(sessionId);
     }

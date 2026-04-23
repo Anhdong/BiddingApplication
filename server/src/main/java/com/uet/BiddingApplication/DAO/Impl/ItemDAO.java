@@ -1,9 +1,12 @@
 package com.uet.BiddingApplication.DAO.Impl;
 
 import com.uet.BiddingApplication.DAO.Interface.IItemDAO;
+import com.uet.BiddingApplication.DTO.Response.AuctionCardDTO;
+import com.uet.BiddingApplication.Enum.SessionStatus;
 import com.uet.BiddingApplication.Model.*;
 import com.uet.BiddingApplication.Utils.DatabaseConnectionPool;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -196,6 +199,73 @@ public class ItemDAO implements IItemDAO {
         return items;
     }
 
+    @Override
+    public List<AuctionCardDTO> getSellerItems(String sellerId) {
+        List<AuctionCardDTO> sellerItems = new ArrayList<>();
+
+        // LEFT JOIN để lấy mọi items của seller.
+        // Đã cập nhật lấy a.id (session_id) và a.start_price cho khớp với AuctionCardDTO
+        String sql = "SELECT " +
+                "   a.id AS session_id,a.item_id, " +
+                "   i.name AS item_name, " +
+                "   i.image_url, " +
+                "   a.start_price, " +
+                "   a.start_time, " +
+                "   a.end_time, " +
+                "   a.status " +
+                "FROM items i " +
+                "LEFT JOIN auction_sessions a ON i.id = a.item_id " +
+                "WHERE i.seller_id = ?::uuid " +
+                "ORDER BY i.name ASC";
+
+        try (Connection conn = DatabaseConnectionPool.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            // Ép kiểu ?::uuid an toàn
+            ps.setString(1, sellerId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    AuctionCardDTO dto = new AuctionCardDTO();
+
+                    // Map từ items
+                    dto.setItemName(rs.getString("item_name"));
+                    dto.setImageURL(rs.getString("image_url"));
+
+                    // Map từ auction_sessions (xử lý an toàn Null nếu item chưa có phiên)
+                    dto.setSessionId(rs.getString("session_id"));
+                    dto.setItemId(rs.getString("item_id"));
+
+                    BigDecimal startPrice = rs.getBigDecimal("start_price");
+                    if (startPrice != null) {
+                        dto.setStartPrice(startPrice);
+                    }
+
+                    Timestamp startTimeTs = rs.getTimestamp("start_time");
+                    if (startTimeTs != null) {
+                        dto.setStartTime(startTimeTs.toLocalDateTime());
+                    }
+
+                    Timestamp endTimeTs = rs.getTimestamp("end_time");
+                    if (endTimeTs != null) {
+                        dto.setEndTime(endTimeTs.toLocalDateTime());
+                    }
+
+                    String statusStr = rs.getString("status");
+                    if (statusStr != null) {
+                        dto.setStatus(SessionStatus.valueOf(statusStr.toUpperCase()));
+                    }
+
+                    sellerItems.add(dto);
+                }
+            }
+        } catch (SQLException e) {
+            // Log chuẩn xác với tên Class (Giả định là ItemDAO hoặc tên class DAO của bạn)
+            System.err.println("[ItemDAO] Lỗi getSellerItems: " + e.getMessage());
+        }
+
+        return sellerItems;
+    }
 
     // --- Helper Method: Tránh lặp lại code ---
     private Item mapRowToItem(ResultSet rs) throws SQLException {
