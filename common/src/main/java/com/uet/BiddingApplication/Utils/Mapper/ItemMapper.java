@@ -44,7 +44,7 @@ public class ItemMapper {
                     electronics.setWarrantyMonths(warranty);
                 } catch (NumberFormatException e) {
                     // PHÒNG THỦ: Tránh sập Server nếu UI gửi lên chuỗi "Mười hai tháng" thay vì số "12"
-                    // throw new BusinessException("Lỗi dữ liệu: Thời gian bảo hành của đồ điện tử phải là một số nguyên (ví dụ: 12).");
+                    throw new BusinessException("Lỗi dữ liệu: Thời gian bảo hành của đồ điện tử phải là một số nguyên (ví dụ: 12).");
                 }
             }
             // Nếu là Tác phẩm nghệ thuật -> Giữ nguyên kiểu String
@@ -91,7 +91,7 @@ public class ItemMapper {
                     electronics.setWarrantyMonths(warranty);
                 } catch (NumberFormatException e) {
                     // PHÒNG THỦ: Tránh sập Server nếu UI gửi lên chuỗi "Mười hai tháng" thay vì số "12"
-                    // throw new BusinessException("Lỗi dữ liệu: Thời gian bảo hành của đồ điện tử phải là một số nguyên (ví dụ: 12).");
+                    throw new BusinessException("Lỗi dữ liệu: Thời gian bảo hành của đồ điện tử phải là một số nguyên (ví dụ: 12).");
                 }
             }
             // Nếu là Tác phẩm nghệ thuật -> Giữ nguyên kiểu String
