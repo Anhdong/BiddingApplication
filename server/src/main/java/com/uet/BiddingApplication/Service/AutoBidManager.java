@@ -75,7 +75,7 @@ public class AutoBidManager {
     /**
      * Kích hoạt kiểm tra và đặt giá tự động khi có một mức giá mới được duyệt.
      */
-    public void triggerAutoBid(String sessionId, BigDecimal currentPrice){
+    public void triggerAutoBid(String sessionId, BigDecimal currentPrice,String highestBidderId){
         // TODO 1 (Input): Nhận sessionId và mức giá hiện tại (currentPrice).
         // TODO 2 (Processing): Lấy người đứng đầu PriorityQueue (peek).
         // TODO 3 (Processing): Kiểm tra điều kiện: (currentPrice + increment) <= maxBid.

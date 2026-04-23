@@ -141,9 +141,9 @@ public class AuctionSessionDAOTest {
                 // Lưu ý: Nếu Interface của bạn chưa có deleteSession, bạn phải tự viết lệnh SQL hoặc xóa tay
                 //sessionDAO.deleteSession(sessionId);
 
-//                itemDAO.deleteItem(itemId);
-//                userDAO.deleteUser(winnerId);
-//                userDAO.deleteUser(sellerId);
+                itemDAO.deleteItem(itemId);
+                userDAO.deleteUser(winnerId);
+                userDAO.deleteUser(sellerId);
                 System.out.println("✅ Dọn dẹp thành công. Trả lại Database sạch sẽ!");
             } catch (Exception cleanUpEx) {
                 System.err.println("❌ Lỗi khi dọn dẹp dữ liệu (Có thể Interface chưa có hàm delete): " + cleanUpEx.getMessage());

@@ -2,11 +2,11 @@ package com.uet.BiddingApplication.DTO.Response;
 
 import com.uet.BiddingApplication.Enum.SessionStatus;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class AuctionCardDTO  {
+    private String itemId;
     private String sessionId;
     private String itemName;
     private String imageURL;
@@ -72,6 +72,14 @@ public class AuctionCardDTO  {
 
     public void setStatus(SessionStatus status) {
         this.status = status;
+    }
+
+    public String getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(String itemId) {
+        this.itemId = itemId;
     }
 
     public AuctionCardDTO(String sessionId, String itemName, String imageURL, BigDecimal startPrice,

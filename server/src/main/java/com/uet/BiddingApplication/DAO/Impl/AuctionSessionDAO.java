@@ -59,22 +59,72 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
     }
 
     @Override
-    public AuctionSession getSessionById(String sessionId) {
-        String sql = "SELECT * FROM auction_sessions WHERE id = ?::uuid";
+    public boolean updateSession(AuctionSession session) {
+        // Chỉ cập nhật thời gian và giá theo đúng nghiệp vụ
+        String sql = "UPDATE auction_sessions SET " +
+                "start_time = ?, " +
+                "end_time = ?, " +
+                "start_price = ?, " +
+                "WHERE id = ?::uuid";
+
         try (Connection conn = DatabaseConnectionPool.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, sessionId);
+            // 1. start_time (Xử lý an toàn Null từ LocalDateTime -> Timestamp)
+            if (session.getStartTime() != null) {
+                ps.setTimestamp(1, Timestamp.valueOf(session.getStartTime()));
+            } else {
+                ps.setNull(1, java.sql.Types.TIMESTAMP);
+            }
+
+            // 2. end_time
+            if (session.getEndTime() != null) {
+                ps.setTimestamp(2, Timestamp.valueOf(session.getEndTime()));
+            } else {
+                ps.setNull(2, java.sql.Types.TIMESTAMP);
+            }
+
+            // 3. start_price
+            ps.setBigDecimal(3, session.getStartPrice());
+
+            // 5. id (Điều kiện WHERE ép kiểu UUID)
+            ps.setString(5, session.getId());
+
+            // Thực thi và trả về true nếu có ít nhất 1 dòng được cập nhật thành công
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.err.println("[AuctionSessionDAO] Lỗi updateSession: " + e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public AuctionSession getSessionByItemId(String ItemId) {
+        String sql = "SELECT * FROM auction_sessions WHERE item_id = ?::uuid";
+        return findSession(sql, ItemId);
+    }
+
+    @Override
+    public AuctionSession getSessionById(String id) {
+        String sql = "SELECT * FROM auction_sessions WHERE id = ?::uuid";
+        return findSession(sql, id);
+    }
+
+    public AuctionSession findSession(String sql,String parameter) {
+        try (Connection conn = DatabaseConnectionPool.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, parameter);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) return mapRowToSession(rs);
             }
         } catch (SQLException e) {
-            System.err.println("[AuctionSessionDAO] Lỗi getSessionById: " + sessionId);
+            System.err.println("[AuctionSessionDAO] Lỗi getSessionById: " + parameter);
             e.printStackTrace();
         }
         return null;
     }
-
     @Override
     public boolean updatePriceAndWinner(String sessionId, BigDecimal newPrice, String winnerId) {
         // Lưu ý: WinnerId có thể null nếu cập nhật giá khởi điểm, nhưng thường hàm này gọi khi có Bid mới.
