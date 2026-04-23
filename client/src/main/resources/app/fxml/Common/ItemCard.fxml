@@ -15,7 +15,8 @@
       <ImageView fitHeight="140.0" fitWidth="140.0" nodeOrientation="INHERIT" pickOnBounds="true" styleClass="elevated-4">
          <image>
             <Image url="@../../assets/default-items.png" />
-         </image></ImageView>
+         </image>
+      </ImageView>
       <Label maxWidth="1.7976931348623157E308" styleClass="title-3" text="Name" />
       <Label maxWidth="1.7976931348623157E308" text="hh:mm - dd/mm/yyyy">
          <styleClass>
@@ -23,7 +24,7 @@
             <String fx:value="text-caption" />
          </styleClass>
       </Label>
-      <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="200.0">
+      <HBox alignment="CENTER" maxWidth="1.7976931348623157E308">
          <children>
             <Label maxWidth="1.7976931348623157E308" text="\$100000" HBox.hgrow="NEVER">
                <styleClass>
@@ -42,7 +43,7 @@
       </HBox>
    </children>
    <padding>
-      <Insets bottom="18.0" left="28.0" right="28.0" top="18.0" />
+      <Insets bottom="12.0" left="28.0" right="28.0" top="12.0" />
    </padding>
    <styleClass>
       <String fx:value="rounded-card" />
