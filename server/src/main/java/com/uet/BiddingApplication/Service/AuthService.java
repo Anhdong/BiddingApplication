@@ -125,54 +125,67 @@ public class AuthService {
 
     /**
      * Xử lý đăng xuất (Xóa phiên làm việc và dọn rác Realtime).
+     * @return true nếu đăng xuất và dọn dẹp thành công.
      */
-    public void logout(String token, String userId) {
-        if (token != null) {
-            userCache.remove(token); // 1. Hủy thẻ từ (Token) khỏi RAM
+    public boolean logout(String token) {
+        if (token == null || token.trim().isEmpty()) {
+            return false;
         }
 
+        // 1. Lấy userId ra TRƯỚC KHI xóa token để có ID dọn dẹp Realtime
+        String userId = userCache.get(token);
+
         if (userId != null) {
-            // 2. Rút người dùng khỏi tất cả các phòng đấu giá đang xem
+            // 2. Hủy thẻ từ (Token) khỏi RAM
+            userCache.remove(token);
+
+            // 3. Dọn dẹp: Rút người dùng khỏi tất cả các phòng đấu giá đang theo dõi
+            // Nhớ import com.uet.BiddingApplication.Service.RealtimeBroadcastService;
             RealtimeBroadcastService.getInstance().unsubscribeFromAll(userId);
+
+            return true;
         }
+
+        return false;
     }
 
     /**
      * Thay đổi mật khẩu người dùng.
+     * @return true nếu cập nhật cơ sở dữ liệu thành công.
      */
-    public void changePassword(PasswordChangeRequestDTO request, String userId) {
-        User user = UserDAO.getInstance().findById(userId);
+    public boolean changePassword(PasswordChangeRequestDTO request, String userId) {
+        // 1. Tìm thông tin user hiện tại (Sử dụng biến instance this.userDAO cho clean)
+        User user = this.userDAO.findById(userId);
         if (user == null) {
             throw new BusinessException("Không tìm thấy thông tin người dùng.");
         }
 
-        if (!checkPassword(request.getOldPassword(), user.getPasswordHash())){
+        // 2. Validate nghiệp vụ: Mật khẩu cũ phải khớp
+        if (!checkPassword(request.getOldPassword(), user.getPasswordHash())) {
             throw new BusinessException("Mật khẩu cũ không chính xác.");
         }
 
-        // Kiểm tra kết quả trả về từ DAO
-        boolean success = UserDAO.getInstance().changePassword(userId, hashPassword(request.getNewPassword()));
-        if (!success) {
-            throw new BusinessException("Lỗi hệ thống: Không thể cập nhật mật khẩu mới.");
-        }
+        // 3. Băm mật khẩu mới, gọi DAO và trả thẳng kết quả boolean cho Router
+        String hashedNewPassword = hashPassword(request.getNewPassword());
+        return this.userDAO.changePassword(userId, hashedNewPassword);
     }
 
     /**
      * Cập nhật thông tin hồ sơ cá nhân.
+     * @return true nếu cập nhật cơ sở dữ liệu thành công.
      */
-    public void updateProfile(ProfileUpdateRequestDTO request, String userId) {
-        User user = UserDAO.getInstance().findById(userId);
-        if (user == null){
+    public boolean updateProfile(ProfileUpdateRequestDTO request, String userId) {
+        // 1. Tìm thông tin user hiện tại
+        User user = this.userDAO.findById(userId);
+        if (user == null) {
             throw new BusinessException("Không tìm thấy thông tin người dùng.");
         }
 
+        // 2. Đổ dữ liệu mới từ request (DTO) vào thực thể (Entity)
         UserMapper.updateEntity(request, user);
 
-        // Kiểm tra kết quả trả về từ DAO
-        boolean success = UserDAO.getInstance().updateProfile(user);
-        if (!success) {
-            throw new BusinessException("Lỗi hệ thống: Không thể cập nhật hồ sơ.");
-        }
+        // 3. Ghi xuống Database và trả thẳng kết quả boolean cho Router
+        return this.userDAO.updateProfile(user);
     }
 
     // --- Các phương thức bổ trợ nội bộ (Helper methods) ---
