@@ -7,58 +7,50 @@ import com.uet.BiddingApplication.Exception.BusinessException;
 import com.uet.BiddingApplication.Model.*;
 import com.uet.BiddingApplication.Utils.Factory.ItemFactory;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
+
 public class ItemMapper {
+
+    // Sử dụng Map để cấu hình Strategy cho từng loại Class con thay cho if-else (instanceof)
+    private static final Map<Class<? extends Item>, BiConsumer<Item, String>> attributeMappers = new HashMap<>();
+
+    static {
+        attributeMappers.put(Electronics.class, (entity, attr) -> {
+            try {
+                ((Electronics) entity).setWarrantyMonths(Integer.parseInt(attr));
+            } catch (NumberFormatException e) {
+                throw new BusinessException("Lỗi dữ liệu: Thời gian bảo hành của đồ điện tử phải là một số nguyên (ví dụ: 12).");
+            }
+        });
+
+        attributeMappers.put(Art.class, (entity, attr) -> {
+            ((Art) entity).setArtistName(attr);
+        });
+
+        attributeMappers.put(Vehicle.class, (entity, attr) -> {
+            ((Vehicle) entity).setCondition(attr);
+        });
+    }
 
     public static Item toEntity(ItemCreateDTO dto, String sellerId, String imageUrl) {
         if (dto == null) return null;
 
-        // 1. Gọi Factory để đúc ra đúng class con (Electronics, Art, hoặc Vehicle)
         Item entity = ItemFactory.createItem(dto.getCategory());
-
-        // 2. Set các trường thông tin cơ bản chung của mọi Item
         entity.setName(dto.getName());
         entity.setDescription(dto.getDescription());
         entity.setSellerId(sellerId);
         entity.setImageURL(imageUrl);
 
-        // Chuyển chuỗi String thành Enum Category để lưu vào Model
-        // (Giả sử Entity Item có hàm setCategory nhận tham số là Enum)
         try {
             entity.setCategory(Category.valueOf(dto.getCategory().toUpperCase()));
-        } catch (IllegalArgumentException e) {
-            // Xử lý nếu Enum không khớp
+        } catch (IllegalArgumentException ignored) {
+            // Xử lý nếu Enum không khớp (Nên ghi log ở đây)
         }
 
-        // 4. XỬ LÝ THUỘC TÍNH ĐẶC THÙ (ATTRIBUTE)
-        String rawAttribute = dto.getAttribute();
-
-        // Chỉ xử lý nếu Client có gửi dữ liệu đặc thù lên
-        if (rawAttribute != null && !rawAttribute.trim().isEmpty()) {
-
-            // Nếu là đồ điện tử -> Ép kiểu String thành int
-            if (entity instanceof Electronics) {
-                Electronics electronics = (Electronics) entity;
-                try {
-                    // Dùng Integer.parseInt để chuyển chuỗi thành số
-                    int warranty = Integer.parseInt(rawAttribute.trim());
-                    electronics.setWarrantyMonths(warranty);
-                } catch (NumberFormatException e) {
-                    // PHÒNG THỦ: Tránh sập Server nếu UI gửi lên chuỗi "Mười hai tháng" thay vì số "12"
-                    throw new BusinessException("Lỗi dữ liệu: Thời gian bảo hành của đồ điện tử phải là một số nguyên (ví dụ: 12).");
-                }
-            }
-            // Nếu là Tác phẩm nghệ thuật -> Giữ nguyên kiểu String
-            else if (entity instanceof Art) {
-                Art art = (Art) entity;
-                art.setArtistName(rawAttribute.trim());
-            }
-            // Nếu là Phương tiện -> Giữ nguyên kiểu String
-            else if (entity instanceof Vehicle) {
-                Vehicle vehicle = (Vehicle) entity;
-                vehicle.setCondition(rawAttribute.trim());
-            }
-            // Lớp Others không có thuộc tính riêng nên hệ thống tự động bỏ qua, không cần viết else.
-        }
+        // Tái sử dụng hàm map thuộc tính đặc thù
+        mapSpecificAttribute(entity, dto.getAttribute());
 
         return entity;
     }
@@ -66,47 +58,31 @@ public class ItemMapper {
     public static Item toEntity(ItemUpdateRequestDTO dto, String imageUrl) {
         if (dto == null) return null;
 
-
-        // 1. Gọi Factory để đúc ra đúng class con (Electronics, Art, hoặc Vehicle)
         Item entity = ItemFactory.createItem(dto.getCategory().toString());
-
-        // 2. Set các trường thông tin cơ bản chung của mọi Item
         entity.setName(dto.getName());
         entity.setDescription(dto.getDescription());
         entity.setImageURL(imageUrl);
         entity.setCategory(dto.getCategory());
 
-        // 4. XỬ LÝ THUỘC TÍNH ĐẶC THÙ (ATTRIBUTE)
-        String rawAttribute = dto.getAttribute();
-
-        // Chỉ xử lý nếu Client có gửi dữ liệu đặc thù lên
-        if (rawAttribute != null && !rawAttribute.trim().isEmpty()) {
-
-            // Nếu là đồ điện tử -> Ép kiểu String thành int
-            if (entity instanceof Electronics) {
-                Electronics electronics = (Electronics) entity;
-                try {
-                    // Dùng Integer.parseInt để chuyển chuỗi thành số
-                    int warranty = Integer.parseInt(rawAttribute.trim());
-                    electronics.setWarrantyMonths(warranty);
-                } catch (NumberFormatException e) {
-                    // PHÒNG THỦ: Tránh sập Server nếu UI gửi lên chuỗi "Mười hai tháng" thay vì số "12"
-                    throw new BusinessException("Lỗi dữ liệu: Thời gian bảo hành của đồ điện tử phải là một số nguyên (ví dụ: 12).");
-                }
-            }
-            // Nếu là Tác phẩm nghệ thuật -> Giữ nguyên kiểu String
-            else if (entity instanceof Art) {
-                Art art = (Art) entity;
-                art.setArtistName(rawAttribute.trim());
-            }
-            // Nếu là Phương tiện -> Giữ nguyên kiểu String
-            else if (entity instanceof Vehicle) {
-                Vehicle vehicle = (Vehicle) entity;
-                vehicle.setCondition(rawAttribute.trim());
-            }
-            // Lớp Others không có thuộc tính riêng nên hệ thống tự động bỏ qua, không cần viết else.
-        }
+        // Tái sử dụng hàm map thuộc tính đặc thù
+        mapSpecificAttribute(entity, dto.getAttribute());
 
         return entity;
+    }
+
+    /**
+     * Hàm helper xử lý chung cho phần thuộc tính đặc thù, tuân thủ nguyên tắc DRY.
+     */
+    private static void mapSpecificAttribute(Item entity, String rawAttribute) {
+        if (rawAttribute == null || rawAttribute.trim().isEmpty()) {
+            return; // Bỏ qua nếu client không gửi dữ liệu đặc thù
+        }
+
+        // Tra cứu chiến lược xử lý tương ứng với Class của entity hiện tại
+        BiConsumer<Item, String> mapper = attributeMappers.get(entity.getClass());
+        if (mapper != null) {
+            mapper.accept(entity, rawAttribute.trim());
+        }
+        // Lớp Others không được đăng ký trong Map nên sẽ tự động bị bỏ qua an toàn.
     }
 }
