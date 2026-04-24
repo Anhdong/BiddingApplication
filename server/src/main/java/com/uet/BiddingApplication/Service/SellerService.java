@@ -89,7 +89,6 @@ public class SellerService {
         }
 
         // 4. Map dữ liệu từ DTO sang Entity
-        // (Có thể áp dụng ItemMapper.updateEntity(...) nếu bạn đã định nghĩa)
         Item updateItem = ItemMapper.toEntity(request, imageURL);
 
         // 5. Cập nhật Database và Đồng bộ RAM (Cache)
