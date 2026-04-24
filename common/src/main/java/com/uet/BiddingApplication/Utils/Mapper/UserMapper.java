@@ -9,16 +9,48 @@ import com.uet.BiddingApplication.Model.Bidder;
 import com.uet.BiddingApplication.Model.Seller;
 import com.uet.BiddingApplication.Model.User;
 
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 public class UserMapper {
 
+    // 1. Map xử lý lấy thuộc tính đặc thù để chuyển thành DTO (toDto)
+    private static final Map<Class<? extends User>, Function<User, String>> dtoSpecialAttrMappers = new HashMap<>();
+
+    // 2. Map xử lý khởi tạo đối tượng dựa trên RoleType (Tránh if-else khởi tạo)
+    private static final Map<RoleType, Supplier<User>> entityFactories = new EnumMap<>(RoleType.class);
+
+    // 3. Map xử lý nạp thuộc tính đặc thù từ String vào Entity (toEntity / updateEntity)
+    private static final Map<Class<? extends User>, BiConsumer<User, String>> entitySpecialAttrMappers = new HashMap<>();
+
+    static {
+        // --- Cấu hình cho toDto ---
+        dtoSpecialAttrMappers.put(Bidder.class, user -> ((Bidder) user).getShippingAddress());
+        dtoSpecialAttrMappers.put(Seller.class, user -> ((Seller) user).getBankAccount());
+        // VÁ LỖ HỔNG BẢO MẬT: Không bao giờ trả về OtpSecretKey cho Client
+        dtoSpecialAttrMappers.put(Admin.class, user -> null);
+
+        // --- Cấu hình Factory tạo Entity ---
+        entityFactories.put(RoleType.BIDDER, Bidder::new);
+        entityFactories.put(RoleType.SELLER, Seller::new);
+        entityFactories.put(RoleType.ADMIN, Admin::new);
+
+        // --- Cấu hình nạp dữ liệu đặc thù vào Entity ---
+        entitySpecialAttrMappers.put(Bidder.class, (user, attr) -> ((Bidder) user).setShippingAddress(attr));
+        entitySpecialAttrMappers.put(Seller.class, (user, attr) -> ((Seller) user).setBankAccount(attr));
+        entitySpecialAttrMappers.put(Admin.class, (user, attr) -> ((Admin) user).setOtpSecretKey(attr));
+    }
+
     /**
-     * Chuyển đổi từ Entity (Database) sang DTO để gửi về Client qua mạng.
+     * Chuyển đổi từ Entity sang DTO để gửi về Client qua mạng.
      */
-    public static UserProfileDTO toDto(User entity) { // [cite: 1087]
-        // Kiểm tra an toàn: Nếu đầu vào null thì trả về null để tránh NullPointerException
+    public static UserProfileDTO toDto(User entity) {
         if (entity == null) return null;
 
-        // Bắt đầu copy các thuộc tính cơ bản chung của mọi User
         UserProfileDTO dto = new UserProfileDTO();
         dto.setId(entity.getId());
         dto.setUsername(entity.getUsername());
@@ -26,51 +58,38 @@ public class UserMapper {
         dto.setPhone(entity.getPhone());
         dto.setRole(entity.getRole());
 
-        // Xử lý specialAttribute dựa trên vai trò thực tế của Entity (OOP Inheritance)
-        if (entity instanceof Bidder) {
-            Bidder bidder = (Bidder) entity;
-            // Gửi địa chỉ giao hàng cho Bidder
-            dto.setSpecialAttribute(bidder.getShippingAddress());
-        } else if (entity instanceof Seller) {
-            Seller seller = (Seller) entity;
-            // TODO (Bảo mật): Cân nhắc xem BankAccount có phải thông tin nhạy cảm không.
-            // Nếu gửi về chỉ để hiển thị cho chính Seller xem thì ổn, nếu gửi cho người khác xem thì nên che đi.
-            dto.setSpecialAttribute(seller.getBankAccount());
-        } else if (entity instanceof Admin) {
-            Admin admin = (Admin) entity;
-            // TODO (Bảo mật NGUY HIỂM): Tuyệt đối KHÔNG gửi OtpSecretKey về Client!
-            // Hãy thay bằng một chuỗi hiển thị quyền hạn, ví dụ: "Super Admin" hoặc bỏ trống.
-            dto.setSpecialAttribute(admin.getOtpSecretKey());
+        // Gắn thuộc tính đặc thù dựa trên Class mà không cần instanceof
+        Function<User, String> attrMapper = dtoSpecialAttrMappers.get(entity.getClass());
+        if (attrMapper != null) {
+            dto.setSpecialAttribute(attrMapper.apply(entity));
         }
 
         return dto;
     }
 
     /**
-     * Chuyển đổi từ DTO (Client gửi lên) thành Entity để xử lý hoặc lưu Database.
+     * Chuyển đổi từ DTO thành Entity.
      */
     public static User toEntity(UserProfileDTO dto) {
         if (dto == null) return null;
 
-        // Lưu ý: Việc khởi tạo User cụ thể (Bidder/Seller) thường do Factory đảm nhận
-        // TODO (Design Pattern): Nên gọi UserFactory.createUser(dto.getRole()) ở đây thay vì if-else
-
-        User entity;
-        // Kiểm tra Role để khởi tạo đúng Class con tương ứng
-        if (dto.getRole() == RoleType.ADMIN){
-            entity = new Admin();
-            ((Admin) entity).setOtpSecretKey(dto.getSpecialAttribute());
-        } else if (dto.getRole() == RoleType.BIDDER) {
-            entity = new Bidder();
-            ((Bidder) entity).setShippingAddress(dto.getSpecialAttribute());
-        } else {
-            entity = new Seller();
-            ((Seller) entity).setBankAccount(dto.getSpecialAttribute());
-        }
-
-        // TODO (Bảo mật): Cân nhắc KHÔNG map ID từ DTO vào Entity nếu đây là thao tác tạo mới tài khoản (tránh Hacker giả mạo ID).
+        User entity = createEntityByRole(dto.getRole(), dto.getSpecialAttribute());
         entity.setId(dto.getId());
+        entity.setUsername(dto.getUsername());
+        entity.setEmail(dto.getEmail());
+        entity.setPhone(dto.getPhone());
+        entity.setRole(dto.getRole());
 
+        return entity;
+    }
+
+    /**
+     * Chuyển đổi từ RegisterRequestDTO thành Entity (Tái sử dụng logic).
+     */
+    public static User toEntity(RegisterRequestDTO dto) {
+        if (dto == null) return null;
+
+        User entity = createEntityByRole(dto.getRole(), dto.getSpecialAttribute());
         entity.setUsername(dto.getUsername());
         entity.setEmail(dto.getEmail());
         entity.setPhone(dto.getPhone());
@@ -81,68 +100,40 @@ public class UserMapper {
 
     /**
      * Cập nhật dữ liệu từ Request DTO vào Entity hiện có (Business Rule)
-     * Không làm thay đổi ID hay các trường không được phép sửa
      */
     public static void updateEntity(ProfileUpdateRequestDTO dto, User entity) {
-        // Kiểm tra an toàn trước khi cập nhật
         if (dto == null || entity == null) return;
 
-        // Chỉ ghi đè (update) nếu Client có gửi dữ liệu mới (khác null)
-        if (dto.getPhone() != null){
-            entity.setPhone(dto.getPhone());
-        }
+        if (dto.getPhone() != null) entity.setPhone(dto.getPhone());
+        if (dto.getUsername() != null) entity.setUsername(dto.getUsername());
 
-        if (dto.getUsername() != null){
-            entity.setUsername(dto.getUsername());
-        }
-
-        // 2. Cập nhật trường đặc thù dựa vào đối tượng thực tế (Entity)
         String newSpecialAttr = dto.getSpecialAttribute();
-
         if (newSpecialAttr != null && !newSpecialAttr.trim().isEmpty()) {
-
-            if (entity instanceof Bidder) {
-                Bidder bidder = (Bidder) entity;
-                // Với Bidder, specialAttribute chính là địa chỉ giao hàng
-                bidder.setShippingAddress(newSpecialAttr);
-
-            } else if (entity instanceof Seller) {
-                Seller seller = (Seller) entity;
-                // Với Seller, specialAttribute là tài khoản ngân hàng
-                seller.setBankAccount(newSpecialAttr);
-
-            } else if (entity instanceof Admin) {
-                Admin admin = (Admin) entity;
-                admin.setOtpSecretKey(newSpecialAttr);
+            BiConsumer<User, String> attrSetter = entitySpecialAttrMappers.get(entity.getClass());
+            if (attrSetter != null) {
+                attrSetter.accept(entity, newSpecialAttr.trim());
             }
         }
     }
 
-    public static User toEntity(RegisterRequestDTO dto) {
-        if (dto == null) return null;
-
-        // Lưu ý: Việc khởi tạo User cụ thể (Bidder/Seller) thường do Factory đảm nhận
-        // TODO (Design Pattern): Nên gọi UserFactory.createUser(dto.getRole()) ở đây thay vì if-else
-
-        User entity;
-        // Kiểm tra Role để khởi tạo đúng Class con tương ứng
-        if (dto.getRole() == RoleType.ADMIN){
-            entity = new Admin();
-            ((Admin) entity).setOtpSecretKey(dto.getSpecialAttribute());
-        } else if (dto.getRole() == RoleType.BIDDER) {
-            entity = new Bidder();
-            ((Bidder) entity).setShippingAddress(dto.getSpecialAttribute());
-        } else {
-            entity = new Seller();
-            ((Seller) entity).setBankAccount(dto.getSpecialAttribute());
+    /**
+     * Helper Method: Gộp chung logic khởi tạo Entity và set thuộc tính đặc thù.
+     * Giải quyết triệt để vi phạm DRY giữa 2 hàm toEntity.
+     */
+    private static User createEntityByRole(RoleType role, String specialAttr) {
+        Supplier<User> factory = entityFactories.get(role);
+        if (factory == null) {
+            throw new IllegalArgumentException("Không hỗ trợ RoleType: " + role);
         }
 
-        entity.setUsername(dto.getUsername());
-        entity.setEmail(dto.getEmail());
-        entity.setPhone(dto.getPhone());
-        entity.setRole(dto.getRole());
+        User entity = factory.get();
 
+        if (specialAttr != null && !specialAttr.trim().isEmpty()) {
+            BiConsumer<User, String> attrSetter = entitySpecialAttrMappers.get(entity.getClass());
+            if (attrSetter != null) {
+                attrSetter.accept(entity, specialAttr.trim());
+            }
+        }
         return entity;
     }
-
 }
