@@ -2,8 +2,13 @@ package com.uet.BiddingApplication.Utils.Mapper;
 
 import com.uet.BiddingApplication.DTO.Request.ItemCreateDTO;
 import com.uet.BiddingApplication.DTO.Request.RelistRequestDTO;
+import com.uet.BiddingApplication.DTO.Request.SessionRegisterRequestDTO;
 import com.uet.BiddingApplication.Model.AuctionSession;
 import com.uet.BiddingApplication.Enum.SessionStatus; // Giả sử em có Enum này
+import com.uet.BiddingApplication.Model.SessionRegistration;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class AuctionSessionMapper {
 
@@ -60,5 +65,16 @@ public class AuctionSessionMapper {
         entity.setStatus(SessionStatus.OPEN);
 
         return entity;
+    }
+
+    public static SessionRegistration toEntity(SessionRegisterRequestDTO requestDTO, String bidderId){
+        // 4. Map dữ liệu sang Entity để lưu
+        SessionRegistration registration = new SessionRegistration();
+        registration.setId(UUID.randomUUID().toString()); // Cấp phát ID mới
+        registration.setBidderId(bidderId);
+        registration.setSessionId(requestDTO.getSessionId());
+        registration.setCreatedAt(LocalDateTime.now()); // Lưu thời điểm đăng ký
+
+        return registration;
     }
 }
