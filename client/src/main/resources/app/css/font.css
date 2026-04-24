@@ -10,9 +10,17 @@
     src: url("/app/fonts/GoogleSans-Bold.ttf");
     -fx-font-weight: bold;
 }
+
 @font-face {
-    font-family: "Gelasio";
-    src: url("/app/fonts/Gelasio.ttf");
+    font-family: "Domine";
+    src: url("/app/fonts/Domine-Regular.ttf");
+    -fx-font-weight: normal;
+}
+
+@font-face {
+    font-family: "Domine";
+    src: url("/app/fonts/Domine-Bold.ttf");
+    -fx-font-weight: bold;
 }
 
 /*Apply GSans to whole system*/
@@ -22,8 +30,8 @@
 
 /*Special font for header*/
 .main-title {
-    -fx-font-family:"Gelasio";
-    -fx-font-size: 64;
+    -fx-font-family:"Domine";
+    -fx-font-size: 50;
 
 }
 
@@ -35,8 +43,3 @@
     -fx-font-family: "Google Sans";
     -fx-font-weight: bold;
 }
-
-.bold {
-    -fx-font-weight: bold;
-}
-

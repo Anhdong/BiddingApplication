@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -16,7 +17,11 @@
    <children>
       <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="400.0" spacing="4.0" styleClass="rounded-card">
          <children>
-            <Label styleClass="main-title" text="SIGN IN" />
+            <Label text="SIGN IN">
+               <styleClass>
+                  <String fx:value="main-title" />
+                  <String fx:value="text-bold" />
+               </styleClass></Label>
             <Region prefHeight="20.0" prefWidth="200.0" />
             <TextField layoutX="110.0" layoutY="389.0" maxHeight="-Infinity" maxWidth="200.0" promptText="Username">
                <VBox.margin>

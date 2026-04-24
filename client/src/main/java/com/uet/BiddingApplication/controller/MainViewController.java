@@ -22,7 +22,7 @@ public class MainViewController {
 
             SidebarSlot.getChildren().setAll(sidebar);
 
-        } catch (IOException e){System.err.println("Cannot load sidebar view.");}
+        } catch (IOException e){System.err.println("[MainViewController] Không tải đc sidebar" );}
     }
 
 }
