@@ -5,6 +5,8 @@ import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
 import com.uet.BiddingApplication.Enum.SessionStatus;
 import com.uet.BiddingApplication.Exception.BusinessException;
 import com.uet.BiddingApplication.Model.AuctionSession;
+import com.uet.BiddingApplication.ServerClass.AuctionServer;
+import com.uet.BiddingApplication.ServerClass.ClientConnectionHandler;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -79,62 +81,82 @@ public class RealtimeBroadcastService {
     /**
      * Xóa user khỏi tất cả các phòng (Dọn rác khi user thoát ra trang chủ).
      */
-    public void unsubscribeFromAll(String userId){
-        // Duyệt qua tất cả các phòng hiện có
-        for (Set<String> roomAudience : roomSubscribers.values()) {
-            // Nếu Set chứa userId này thì xóa đi
-            roomAudience.remove(userId);
-        }
+    public void unsubscribeFromAll(String userId) {
+        if (userId == null) return;
+
+        // Sử dụng entrySet và removeIf để duyệt và xóa an toàn trong môi trường đa luồng
+        roomSubscribers.entrySet().removeIf(entry -> {
+            Set<String> audience = entry.getValue();
+            audience.remove(userId);
+            // Xóa luôn entry này khỏi Map nếu Set đã trống
+            return audience.isEmpty();
+        });
+
+        System.out.println("[INFO] Đã dọn dẹp toàn bộ phòng của User [" + userId + "]");
     }
 
-    /**
-     * Rút user khỏi một phòng cụ thể.
-     */
-    public void unsubscribe(String sessionId, String userId){
+    public void unsubscribe(String sessionId, String userId) {
         if (sessionId == null || userId == null) return;
 
-        Set<String> audience = roomSubscribers.get(sessionId);
-        if (audience != null) {
+        // Xóa an toàn và kiểm tra dọn rác bằng cơ chế của ConcurrentHashMap
+        roomSubscribers.computeIfPresent(sessionId, (key, audience) -> {
             boolean removed = audience.remove(userId);
             if (removed) {
                 System.out.println("[INFO] User [" + userId + "] left room [" + sessionId + "]");
             }
 
-            // MẸO CHỐNG RÒ RỈ BỘ NHỚ (Memory Leak): Xóa luôn phòng nếu không còn ai xem
+            // Trả về null sẽ báo cho ConcurrentHashMap tự động remove cái key (sessionId) này đi
             if (audience.isEmpty()) {
-                roomSubscribers.remove(sessionId);
-                System.out.println("[INFO] Room [" + sessionId + "] is empty and has been removed from memory.");
+                System.out.println("[INFO] Room [" + sessionId + "] is empty and has been removed.");
+                return null;
             }
-        }
+            return audience; // Giữ nguyên phòng nếu vẫn còn người
+        });
     }
 
     /**
      * Phát thanh một gói tin (Packet) đến toàn bộ user trong một phòng.
      */
-    public void broadcast(String sessionId, ResponsePacket<?> packet){
-        // TODO 1 (Input): Nhận sessionId và gói dữ liệu (packet) cần phát.
-        // TODO 2 (Dependencies): Lấy Set các userId đang theo dõi phòng này.
-        // TODO 3 (Processing): Dùng vòng lặp gọi AuctionServer.getInstance().getClientHandler(userId) để lấy luồng mạng.
-        // TODO 4 (Output): Gọi handler.sendPacket(packet) để đẩy dữ liệu xuống.
-//        Set<String> audience = roomSubscribers.get(sessionId);
-//        ClientConnectionHandler handler = AuctionServer.getInstance();
-//        for (String userId : audience){
-//            handler.getClientHandler(userId);
-//        }
-//        handler.sendPacket(packet);
-    }
-    /**
-     * (Nam) : Bổ sung thêm 1 phương thức closeRoom() nữa, tác dụng là xóa phiên đấu giá khỏi map
-     * khi phiên kết thúc
-     */
-    public void closeRoom(String sessionId){
-        AuctionSession session = AuctionSessionDAO.getInstance().getSessionById(sessionId);
+    public void broadcast(String sessionId, ResponsePacket<?> packet) {
+        // 1. Lấy danh sách khán giả đang theo dõi phòng này
+        Set<String> audience = roomSubscribers.get(sessionId);
 
-        if (session.getStatus() == SessionStatus.RUNNING || session.getStatus() == SessionStatus.OPEN){
-            throw new BusinessException("Phiên đang chạy không thể xóa phiên.");
+        // 2. Lập trình phòng thủ (Defensive Programming): Chặn lỗi NullPointer
+        if (audience == null || audience.isEmpty()) {
+            System.out.println("[DEBUG] Phòng [" + sessionId + "] không có khán giả để broadcast.");
+            return;
         }
 
-        roomSubscribers.remove(sessionId);
+        // 3. Lấy trạm phát sóng (Server) ở ngoài vòng lặp để tránh gọi dư thừa
+        AuctionServer server = AuctionServer.getInstance();
+
+        // 4. Duyệt qua từng userId và phát dữ liệu
+        for (String userId : audience) {
+            // Nhờ Server tìm đúng đường ống kết nối mạng của user này
+            ClientConnectionHandler clientHandler = server.getClientHandler(userId);
+
+            // Kiểm tra chắc chắn user còn online thì mới gửi
+            if (clientHandler != null) {
+                clientHandler.sendPacket(packet);
+            } else {
+                // User có thể đã bị rớt mạng hoặc đóng app đột ngột
+                System.out.println("[WARN] Broadcast thất bại: User [" + userId + "] không online.");
+            }
+        }
+    }
+
+    /**
+     * (Nam) : Xóa toàn bộ phòng đấu giá khỏi bộ nhớ khi phiên kết thúc.
+     * Không gọi Database ở đây để đảm bảo tốc độ Realtime.
+     */
+    public void closeRoom(String sessionId) {
+        if (sessionId == null) return;
+
+        Set<String> removedRoom = roomSubscribers.remove(sessionId);
+
+        if (removedRoom != null) {
+            System.out.println("[INFO] Đã đóng phòng phát thanh cho Session [" + sessionId + "]. Giải phóng " + removedRoom.size() + " users.");
+        }
     }
 
     /**
