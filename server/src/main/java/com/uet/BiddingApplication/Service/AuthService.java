@@ -3,6 +3,7 @@ package com.uet.BiddingApplication.Service;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import com.uet.BiddingApplication.DAO.Impl.UserDAO;
+import com.uet.BiddingApplication.DTO.Response.AuthResponseDTO;
 import com.uet.BiddingApplication.DTO.Response.UserProfileDTO;
 import com.uet.BiddingApplication.DTO.Request.RegisterRequestDTO;
 import com.uet.BiddingApplication.DTO.Request.PasswordChangeRequestDTO;
@@ -10,6 +11,8 @@ import com.uet.BiddingApplication.DTO.Request.AuthRequestDTO;
 import com.uet.BiddingApplication.DTO.Request.ProfileUpdateRequestDTO;
 import com.uet.BiddingApplication.Exception.BusinessException;
 import com.uet.BiddingApplication.Model.User;
+import com.uet.BiddingApplication.ServerClass.AuctionServer;
+import com.uet.BiddingApplication.ServerClass.ClientConnectionHandler;
 import com.uet.BiddingApplication.Utils.Mapper.UserMapper;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -57,33 +60,34 @@ public class AuthService {
     /**
      * Xử lý đăng nhập, tạo token và kiểm tra đăng nhập trùng lặp.
      */
-    public UserProfileDTO login(AuthRequestDTO request) {
-        // Kiểm tra thông tin người dùng từ DAO
+    public AuthResponseDTO login(AuthRequestDTO request) {
+        // 1. Kiểm tra thông tin người dùng từ DAO
         User user = UserDAO.getInstance().findByUsername(request.getUsername());
 
-        // Validate lỗi nghiệp vụ: Sai tài khoản hoặc mật khẩu
         if (user == null || !checkPassword(request.getPassword(), user.getPasswordHash())) {
             throw new BusinessException("Tài khoản không tồn tại hoặc sai mật khẩu.");
         }
 
-        // Validate trạng thái tài khoản [cite: 34]
         if (!user.isActive()) {
             throw new BusinessException("Tài khoản của bạn đã bị Admin khóa.");
         }
 
-        // Logic xử lý đăng nhập đa thiết bị [cite: 345, 346]
+        // 2. Logic xử lý đăng nhập đa thiết bị (Đá luồng cũ ra ngoài)
         String userId = String.valueOf(user.getId());
-//        ClientConnectionHandler oldHandler = AuctionServer.getInstance().getClientHandler(userId);
-//        if (oldHandler != null) {
-//            oldHandler.forceClose("Tài khoản đã đăng nhập ở nơi khác");
-//        }
 
-        // Tạo Token và lưu vào Cache RAM [cite: 344]
+        // Đây là tính năng rất hay để chống 1 tài khoản đăng nhập ở 2 máy.
+        ClientConnectionHandler oldHandler = AuctionServer.getInstance().getClientHandler(userId);
+        if (oldHandler != null) {
+            oldHandler.forceClose("Tài khoản đã được đăng nhập trên một thiết bị khác.");
+        }
+
+        // 3. Tạo Token và lưu vào Cache RAM
         String token = UUID.randomUUID().toString();
         userCache.put(token, userId);
 
-        // Map Entity sang DTO và trả về (Router sẽ đóng gói ResponsePacket) [cite: 423]
-        return UserMapper.toDto(user);
+        // 4. FIX BUG: Trả về AuthResponseDTO chứa cả Token và Profile [cite: 679]
+        UserProfileDTO userProfile = UserMapper.toDto(user);
+        return new AuthResponseDTO(token, userProfile);
     }
 
     /**
@@ -120,11 +124,16 @@ public class AuthService {
     }
 
     /**
-     * Xử lý đăng xuất (Xóa phiên làm việc).
+     * Xử lý đăng xuất (Xóa phiên làm việc và dọn rác Realtime).
      */
-    public void logout(String token) {
+    public void logout(String token, String userId) {
         if (token != null) {
-            userCache.remove(token); // Xóa token khỏi RAM
+            userCache.remove(token); // 1. Hủy thẻ từ (Token) khỏi RAM
+        }
+
+        if (userId != null) {
+            // 2. Rút người dùng khỏi tất cả các phòng đấu giá đang xem
+            RealtimeBroadcastService.getInstance().unsubscribeFromAll(userId);
         }
     }
 
@@ -132,30 +141,38 @@ public class AuthService {
      * Thay đổi mật khẩu người dùng.
      */
     public void changePassword(PasswordChangeRequestDTO request, String userId) {
-        // TODO 1: Lấy thông tin user hiện tại từ DB bằng userId
         User user = UserDAO.getInstance().findById(userId);
-        // TODO 2: Xác thực mật khẩu cũ
-        if (!BCrypt.checkpw(request.getOldPassword(), user.getPasswordHash())){
+        if (user == null) {
+            throw new BusinessException("Không tìm thấy thông tin người dùng.");
+        }
+
+        if (!checkPassword(request.getOldPassword(), user.getPasswordHash())){
             throw new BusinessException("Mật khẩu cũ không chính xác.");
         }
-        // TODO 3: Băm mật khẩu mới và gọi userDAO.changePassword(...)
 
-        userDAO.changePassword(userId, hashPassword(request.getNewPassword()));
+        // Kiểm tra kết quả trả về từ DAO
+        boolean success = UserDAO.getInstance().changePassword(userId, hashPassword(request.getNewPassword()));
+        if (!success) {
+            throw new BusinessException("Lỗi hệ thống: Không thể cập nhật mật khẩu mới.");
+        }
     }
 
     /**
      * Cập nhật thông tin hồ sơ cá nhân.
      */
     public void updateProfile(ProfileUpdateRequestDTO request, String userId) {
-        // TODO: Map dữ liệu từ request sang đối tượng User và gọi userDAO.updateProfile(...)
-        User user = userDAO.findById(userId);
-
+        User user = UserDAO.getInstance().findById(userId);
         if (user == null){
             throw new BusinessException("Không tìm thấy thông tin người dùng.");
         }
 
         UserMapper.updateEntity(request, user);
-        userDAO.updateProfile(user);
+
+        // Kiểm tra kết quả trả về từ DAO
+        boolean success = UserDAO.getInstance().updateProfile(user);
+        if (!success) {
+            throw new BusinessException("Lỗi hệ thống: Không thể cập nhật hồ sơ.");
+        }
     }
 
     // --- Các phương thức bổ trợ nội bộ (Helper methods) ---
