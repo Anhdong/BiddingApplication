@@ -10,11 +10,8 @@
 }
 
 .rounded-card {
-    -fx-background-color: -color-bg-default; /* Hoặc màu bất kỳ như #ffffff */
     -fx-background-radius: 20;               /* Bo góc cho nền */
     -fx-border-radius: 20;                   /* Bo góc cho đường viền */
-    -fx-border-color: -color-border-default; /* Phải có viền hoặc nền mới thấy góc */
-    -fx-border-width: 1;
 
     /* Hiệu ứng đổ bóng */
     /* drop-shadow(loại-bóng, màu-bóng, độ-nhòe, độ-lan, offset-x, offset-y) */
