@@ -22,8 +22,11 @@ package com.uet.BiddingApplication.Service;
  *      và 'break' (KẾT THÚC HÀM NGAY LẬP TỨC) để nhường luồng cho Tầng Core xử lý.
  */
 import com.uet.BiddingApplication.CoreService.InMemoryBidServiceImpl;
+import com.uet.BiddingApplication.CoreService.SearchCacheManager;
 import com.uet.BiddingApplication.DTO.Request.BidRequestDTO;
-import com.uet.BiddingApplication.DTO.Response.ResponsePacket;
+import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
+import com.uet.BiddingApplication.Enum.ActionType;
+import com.uet.BiddingApplication.Model.AuctionSession;
 import com.uet.BiddingApplication.Model.AutoBidSetting;
 // Các import giả định tùy theo cấu trúc thư mục của nhóm bạn:
 // import com.uet.BiddingApplication.Network.AuctionServer;
@@ -105,9 +108,6 @@ public class AutoBidManager {
 
     /**
      * Kích hoạt kiểm tra và đặt giá tự động khi có một mức giá mới được duyệt.
-     * @param sessionId ID của phiên.
-     * @param currentPrice Giá hiện tại vừa được ai đó đặt thành công.
-     * @param highestBidderId ID của người vừa đặt giá thành công (để tránh tự đôn giá).
      */
     public void triggerAutoBid(String sessionId, BigDecimal currentPrice, String highestBidderId) {
         ConcurrentLinkedQueue<AutoBidSetting> queue = autoBidQueues.get(sessionId);
@@ -116,59 +116,56 @@ public class AutoBidManager {
             return; // Phòng không có ai đăng ký auto-bid
         }
 
-        // Sử dụng Iterator để có thể an toàn xóa (remove) phần tử trong quá trình duyệt
+        // BỔ SUNG QUAN TRỌNG: Lấy thông tin phiên từ RAM để biết bước giá quy định (bidStep)
+        AuctionSession session = SearchCacheManager.getInstance().getSession(sessionId);
+        if (session == null) return; // Phiên đã kết thúc và bị xóa khỏi RAM
+
         Iterator<AutoBidSetting> iterator = queue.iterator();
 
         while (iterator.hasNext()) {
             AutoBidSetting setting = iterator.next();
 
-            // Tính toán mức giá tiếp theo mà hệ thống định đặt thay cho người này
-            BigDecimal nextBidPrice = currentPrice.add(setting.getIncrement());
+            // --- ĐIỀU KIỆN 1: Đang là người dẫn đầu (Chống tự đôn giá) ---
+            if (setting.getBidderId().equals(highestBidderId)) {
+                continue; // Giữ nguyên vị trí trong Queue và đi tiếp
+            }
 
-            // --- ĐIỀU KIỆN 1: Chạm ngưỡng Max Bid (Hết tiền) ---
+            // --- ĐIỀU KIỆN 2: Tính toán bước giá hợp lệ (CHỐNG ĐỨT GÃY CHUỖI) ---
+            // Đảm bảo increment của người dùng KHÔNG BAO GIỜ nhỏ hơn bidStep của hệ thống
+            BigDecimal validIncrement = setting.getIncrement().max(session.getBidStep());
+            BigDecimal nextBidPrice = currentPrice.add(validIncrement);
+
+            // --- ĐIỀU KIỆN 3: Chạm ngưỡng Max Bid (Hết tiền) ---
             if (setting.getMaxBid().compareTo(nextBidPrice) < 0) {
                 // a) Xóa vĩnh viễn user này khỏi hàng đợi Auto-bid
                 iterator.remove();
 
                 // b) Đóng gói Packet thông báo
-                // (Thay thế 'null' đầu tiên bằng ActionType.CANCEL_AUTO_BID của hệ thống bạn)
                 ResponsePacket<Void> cancelPacket = new ResponsePacket<>(
-                        null,
+                        ActionType.CANCEL_AUTO_BID,
                         400,
-                        "Hệ thống đã ngừng Auto-Bid do số tiền giới hạn (Max Bid) không đủ để trả giá tiếp.",
+                        "Hệ thống đã ngừng Auto-Bid do giới hạn giá tối đa của bạn không đủ để theo vòng mới.",
                         null
                 );
 
-                // c) Gọi đúng phương thức Tech Lead yêu cầu
+                // c) Gửi thông báo riêng rẽ
                 RealtimeBroadcastService.getInstance().sendPrivateMessage(setting.getBidderId(), cancelPacket);
-
                 System.out.println("[INFO] Đã gỡ Auto-Bid của User [" + setting.getBidderId() + "] do chạm ngưỡng maxBid.");
 
-                // d) Dùng 'continue' để xét tiếp người phía sau trong Queue
-                continue;
+                continue; // Vẫn tiếp tục vòng lặp để xét người đủ tiền phía sau!
             }
 
-            // --- ĐIỀU KIỆN 2: Đang là người dẫn đầu (Chống tự đôn giá) ---
-            if (setting.getBidderId().equals(highestBidderId)) {
-                // Không làm gì cả, giữ nguyên vị trí trong Queue và đi tiếp
-                continue;
-            }
-
-            // --- ĐIỀU KIỆN 3: Đủ điều kiện đấu giá ---
-            // Đóng gói request giả lập như Client vừa bấm nút
+            // --- ĐIỀU KIỆN 4: Đủ điều kiện đấu giá ---
             BidRequestDTO autoRequest = new BidRequestDTO();
             autoRequest.setSessionId(sessionId);
             autoRequest.setBidAmount(nextBidPrice);
 
             System.out.println("[INFO] Kích hoạt Auto-Bid cho User [" + setting.getBidderId() + "], giá đặt tự động: " + nextBidPrice);
 
-            // Đẩy lệnh trả giá vào lưới xử lý lõi (Core Tier)
+            // Đẩy lệnh trả giá vào lưới xử lý lõi
             InMemoryBidServiceImpl.getInstance().enqueueBid(autoRequest, setting.getBidderId());
 
-            // Lệnh BREAK CỰC KỲ QUAN TRỌNG:
-            // Mỗi lần có biến động giá, ta chỉ đẩy yêu cầu của 1 NGƯỜI DUY NHẤT (xếp hàng đầu tiên) vào Core.
-            // Nếu giá đó được Core duyệt thành công, Core sẽ gọi lại hàm triggerAutoBid() này
-            // và vòng lặp sẽ tự tìm đến đối thủ tiếp theo. Tránh việc spam 10 request cùng lúc.
+            // BREAK ĐỂ NHƯỜNG LUỒNG, Tránh xả 1 lúc 10 request gây nghẽn Queue
             break;
         }
     }
