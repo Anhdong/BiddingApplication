@@ -93,25 +93,22 @@ public class AuthService {
     /**
      * Xử lý đăng ký tài khoản mới.
      */
-    public void register(RegisterRequestDTO request) {
-        // Validate các lỗi nghiệp vụ sâu cần truy vấn DB [cite: 34]
-        if (UserDAO.getInstance().findByEmail(request.getEmail()) != null){
+    public boolean register(RegisterRequestDTO request) {
+        // 1. Sử dụng biến instance (this.userDAO) thay vì gọi tĩnh
+        if (this.userDAO.findByEmail(request.getEmail()) != null) {
             throw new BusinessException("Email này đã được đăng ký.");
         }
-        if (UserDAO.getInstance().findByUsername(request.getUsername()) != null){
-            throw  new BusinessException("Tên đăng nhập (User Name) đã tồn tại.");
+        if (this.userDAO.findByUsername(request.getUsername()) != null) {
+            throw new BusinessException("Tên đăng nhập (Username) đã tồn tại.");
         }
-        // TODO 1: Băm mật khẩu bằng jBCrypt
+
+        // 2. Băm mật khẩu và map dữ liệu
         String hashedPassWord = hashPassword(request.getPassword());
-        // TODO 2: Khởi tạo đối tượng Entity User mới
         User newUser = UserMapper.toEntity(request);
         newUser.setPasswordHash(hashedPassWord);
-        // TODO 3: Gọi userDAO.insert(newUser) để lưu xuống DB
-        boolean success = userDAO.insertUser(newUser);
 
-        if (!success) {
-            throw new BusinessException("Lỗi hệ thống khi tạo tài khoản.");
-        }
+        // 3. Ghi xuống DB (DB nên có ràng buộc UNIQUE cho email/username)
+        return this.userDAO.insertUser(newUser);
     }
 
     /**
