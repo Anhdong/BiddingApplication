@@ -36,9 +36,10 @@ public class RouteRegistry {
         // ==============================================================================
         // 1. NHÓM XÁC THỰC & CÁ NHÂN (AuthService)
         // ==============================================================================
+
         registry.put(ActionType.LOGIN, req -> {
             AuthRequestDTO dto = (AuthRequestDTO) req.getPayload();
-            UserProfileDTO result = AuthService.getInstance().login(dto);
+            UserProfileDTO result = AuthService.getInstance().login(dto).getUserProfile();
             return new ResponsePacket<Object>(ActionType.LOGIN, 200, "Đăng nhập thành công", result);
         });
 
@@ -78,20 +79,22 @@ public class RouteRegistry {
             return new ResponsePacket<Object>(ActionType.GET_ALL_SESSIONS, 200, "Lấy danh sách phiên đấu giá thành công", result);
         });
 
+        /*
         registry.put(ActionType.REQUEST_OTP, req -> {
             AdminService.getInstance().requestOtp(req.getUserId());
             return new ResponsePacket<Void>(ActionType.REQUEST_OTP, 200, "OTP đã được in ra Console", null);
         });
+        */
 
         registry.put(ActionType.BAN_USER_WITH_OTP, req -> {
             AdminActionRequestDTO dto = (AdminActionRequestDTO) req.getPayload();
-            AdminService.getInstance().banUser(dto);
+            AdminService.getInstance().banUser(dto, req.getUserId());
             return new ResponsePacket<Void>(ActionType.BAN_USER_WITH_OTP, 200, "Đã khóa tài khoản thành công", null);
         });
 
         registry.put(ActionType.CANCEL_SESSION_WITH_OTP, req -> {
             AdminActionRequestDTO dto = (AdminActionRequestDTO) req.getPayload();
-            AdminService.getInstance().cancelSession(dto);
+            AdminService.getInstance().cancelSession(dto, req.getUserId());
             return new ResponsePacket<Void>(ActionType.CANCEL_SESSION_WITH_OTP, 200, "Đã hủy phiên đấu giá khẩn cấp", null);
         });
 
@@ -100,13 +103,13 @@ public class RouteRegistry {
         // ==============================================================================
         registry.put(ActionType.CREATE_ITEM, req -> {
             ItemCreateDTO dto = (ItemCreateDTO) req.getPayload();
-            ItemManagementService.getInstance().createItemAndOpenSession(dto);
+            ItemManagementService.getInstance().createItemAndOpenSession(dto, req.getUserId());
             return new ResponsePacket<Void>(ActionType.CREATE_ITEM, 200, "Đã tạo vật phẩm và mở phiên", null);
         });
 
         registry.put(ActionType.RELIST_ITEM, req -> {
             RelistRequestDTO dto = (RelistRequestDTO) req.getPayload();
-            ItemManagementService.getInstance().relistUnsoldItem(dto);
+            ItemManagementService.getInstance().relistUnsoldItem(dto, req.getUserId());
             return new ResponsePacket<Void>(ActionType.RELIST_ITEM, 200, "Đăng bán lại thành công", null);
         });
 
@@ -127,6 +130,15 @@ public class RouteRegistry {
             return new ResponsePacket<Void>(ActionType.DELETE_ITEM, 200, "Đã xóa vật phẩm thành công", null);
         });
 
+        /*
+        // TODO: Chờ triển khai
+        registry.put(ActionType.GET_SELLER_ITEMS, req -> {
+            // Lấy danh sách các vật phẩm của Seller
+            // Object result = SellerService.getInstance().getSellerItems(req.getUserId());
+            return new ResponsePacket<Object>(ActionType.GET_SELLER_ITEMS, 200, "Lấy danh sách vật phẩm thành công", null);
+        });
+        */
+
         // ==============================================================================
         // 4. NHÓM NGƯỜI MUA (BidderService & AuctionService)
         // ==============================================================================
@@ -136,7 +148,8 @@ public class RouteRegistry {
             BidderService.getInstance().registerForSession(dto, req.getUserId());
             return new ResponsePacket<Void>(ActionType.PRE_REGISTER_SESSION, 200, "Đăng ký tham gia phiên thành công", null);
         });
-         */
+        */
+
         registry.put(ActionType.GET_REGISTERED_SESSIONS, req -> {
             Object result = BidderService.getInstance().getRegisteredSessions(req.getUserId());
             return new ResponsePacket<Object>(ActionType.GET_REGISTERED_SESSIONS, 200, "OK", result);
@@ -159,6 +172,37 @@ public class RouteRegistry {
             return new ResponsePacket<Object>(ActionType.GET_SESSION_DETAIL, 200, "OK", result);
         });
 
+        /*
+        // TODO: Chờ triển khai
+        registry.put(ActionType.SEARCH_ITEMS, req -> {
+            // Tìm kiếm và lọc theo Keyword/Category/Price
+            // SearchRequestDTO dto = (SearchRequestDTO) req.getPayload();
+            // Object result = AuctionService.getInstance().searchItems(dto);
+            return new ResponsePacket<Object>(ActionType.SEARCH_ITEMS, 200, "Kết quả tìm kiếm", null);
+        });
+
+        registry.put(ActionType.DELETE_REGISTER_SESSION, req -> {
+            // Bấm nút "Hủy đăng ký trước"
+            // SessionTargetRequestDTO dto = (SessionTargetRequestDTO) req.getPayload();
+            // BidderService.getInstance().cancelSessionRegistration(dto.getSessionId(), req.getUserId());
+            return new ResponsePacket<Void>(ActionType.DELETE_REGISTER_SESSION, 200, "Đã hủy đăng ký trước thành công", null);
+        });
+
+        registry.put(ActionType.JOIN_SESSION, req -> {
+            // Xử lý khi Bidder nhấn nút vào phòng
+            // SessionTargetRequestDTO dto = (SessionTargetRequestDTO) req.getPayload();
+            // BidderService.getInstance().joinSession(dto.getSessionId(), req.getUserId());
+            return new ResponsePacket<Void>(ActionType.JOIN_SESSION, 200, "Đã vào phòng thành công", null);
+        });
+
+        registry.put(ActionType.LEAVE_SESSION, req -> {
+            // Xử lý khi Bidder chủ động thoát phòng
+            // SessionTargetRequestDTO dto = (SessionTargetRequestDTO) req.getPayload();
+            // BidderService.getInstance().leaveSession(dto.getSessionId(), req.getUserId());
+            return new ResponsePacket<Void>(ActionType.LEAVE_SESSION, 200, "Đã thoát phòng", null);
+        });
+        */
+
         // ==============================================================================
         // 5. NHÓM CỐT LÕI ĐẤU GIÁ (AutoBidManager & AuctionService)
         // ==============================================================================
@@ -171,7 +215,6 @@ public class RouteRegistry {
         });
         */
         registry.put(ActionType.REGISTER_AUTO_BID, req -> {
-            // Lưu ý: Nếu trong tương lai bạn dùng AutoBidRegisterDTO thay vì AutoBidSetting thì sửa ép kiểu ở đây
             AutoBidSetting setting = (AutoBidSetting) req.getPayload();
             AutoBidManager.getInstance().registerAutoBid(setting);
             return new ResponsePacket<Void>(ActionType.REGISTER_AUTO_BID, 200, "Đã cài đặt trả giá tự động", null);
