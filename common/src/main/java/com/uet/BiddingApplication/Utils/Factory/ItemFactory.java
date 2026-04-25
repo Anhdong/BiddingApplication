@@ -1,10 +1,7 @@
 package com.uet.BiddingApplication.Utils.Factory;
 
 import com.uet.BiddingApplication.Exception.BusinessException;
-import com.uet.BiddingApplication.Model.Item;
-import com.uet.BiddingApplication.Model.Electronics;
-import com.uet.BiddingApplication.Model.Art;
-import com.uet.BiddingApplication.Model.Vehicle;
+import com.uet.BiddingApplication.Model.*;
 
 public class ItemFactory {
 
@@ -30,6 +27,8 @@ public class ItemFactory {
                 return new Art();
             case "VEHICLE":
                 return new Vehicle();
+            case "OTHERS":
+                return  new Others();
             default:
                 throw new BusinessException("Hệ thống chưa hỗ trợ loại sản phẩm: " + categoryType);
         }
