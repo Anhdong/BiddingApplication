@@ -1,16 +1,185 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
-
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
 
 <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="800.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
    <center>
-      <ImageView fitHeight="477.0" fitWidth="752.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
-         <image>
-            <Image url="@../../assets/default-items.png" />
-         </image>
-      </ImageView>
+      <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="40.0" styleClass="bg-neutral-subtle" BorderPane.alignment="CENTER">
+         <children>
+            <VBox maxWidth="480.0" prefWidth="480.0" spacing="15.0">
+               <children>
+                  <StackPane prefHeight="480.0" prefWidth="480.0">
+                     <children>
+                        <ImageView fitHeight="480.0" fitWidth="480.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../assets/default-items.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                     <styleClass>
+                        <String fx:value="rounded-card" />
+                        <String fx:value="bg-default" />
+                     </styleClass>
+                  </StackPane>
+                  <Label maxWidth="1.7976931348623157E308" text="ItemName">
+                     <styleClass>
+                        <String fx:value="main-title" />
+                        <String fx:value="text-bold" />
+                     </styleClass></Label>
+                  <VBox maxWidth="480.0" prefWidth="480.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="JUSTIFY" wrappingWidth="440.0" />
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
+                     <styleClass>
+                        <String fx:value="rounded-card" />
+                        <String fx:value="bg-default" />
+                     </styleClass>
+                  </VBox>
+               </children>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </VBox>
+            <VBox prefWidth="400.0" spacing="20.0">
+               <children>
+                  <VBox prefWidth="400.0" spacing="5.0">
+                     <children>
+                        <Label text="Time left">
+                           <styleClass>
+                              <String fx:value="text-muted" />
+                              <String fx:value="text-bold" />
+                           </styleClass></Label>
+                        <Label text="hh:mm:ss">
+                           <styleClass>
+                              <String fx:value="title-1" />
+                              <String fx:value="danger" />
+                           </styleClass>
+                        </Label>
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <styleClass>
+                        <String fx:value="rounded-card" />
+                        <String fx:value="bg-default" />
+                     </styleClass>
+                  </VBox>
+                  <VBox prefWidth="400.0" spacing="5.0">
+                     <children>
+                        <Label text="Current bid">
+                           <styleClass>
+                              <String fx:value="text-muted" />
+                              <String fx:value="text-bold" />
+                           </styleClass></Label>
+                        <Label text="\$0">
+                           <styleClass>
+                              <String fx:value="main-title" />
+                              <String fx:value="success" />
+                           </styleClass>
+                        </Label>
+                        <Label text="Bidder Name">
+                           <styleClass>
+                              <String fx:value="text-muted" />
+                              <String fx:value="text-bold" />
+                           </styleClass></Label>
+                        <LineChart horizontalGridLinesVisible="false" horizontalZeroLineVisible="false" legendVisible="false" prefHeight="0.0" prefWidth="360.0" verticalGridLinesVisible="false" verticalZeroLineVisible="false">
+                          <xAxis>
+                            <CategoryAxis side="BOTTOM" />
+                          </xAxis>
+                          <yAxis>
+                            <NumberAxis side="LEFT" />
+                          </yAxis>
+                        </LineChart>
+                     </children>
+                     <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <styleClass>
+                        <String fx:value="rounded-card" />
+                        <String fx:value="bg-default" />
+                     </styleClass>
+                  </VBox>
+                  <HBox prefWidth="400.0" spacing="20.0">
+                     <children>
+                        <ToggleButton mnemonicParsing="false" styleClass="text-bold" text="Auto Bid" />
+                        <TextField promptText="Max Bid Amount">
+                           <styleClass>
+                              <String fx:value="rounded" />
+                              <String fx:value="text-bold" />
+                           </styleClass></TextField>
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
+                     </padding>
+                     <styleClass>
+                        <String fx:value="rounded-card" />
+                        <String fx:value="bg-default" />
+                     </styleClass>
+                  </HBox>
+                  <VBox alignment="CENTER_LEFT" prefHeight="420.0" prefWidth="400.0" spacing="10.0">
+                     <padding>
+                        <Insets bottom="15.0" left="25.0" right="25.0" top="20.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <styleClass>
+                        <String fx:value="rounded-card" />
+                        <String fx:value="bg-default" />
+                     </styleClass>
+                     <children>
+                        <Label styleClass="title-1" text="\$0" />
+                        <Label styleClass="title-1" text="x" />
+                        <Spinner editable="true" prefWidth="150.0" styleClass="title-1" />
+                        <Separator prefWidth="200.0" />
+                        <Label text="\$0">
+                           <styleClass>
+                              <String fx:value="title-1" />
+                              <String fx:value="success" />
+                           </styleClass></Label>
+                        <Button mnemonicParsing="false" text="BID">
+                           <styleClass>
+                              <String fx:value="title-3" />
+                              <String fx:value="accent" />
+                           </styleClass>
+                        </Button>
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+         </padding>
+      </HBox>
    </center>
 </BorderPane>
