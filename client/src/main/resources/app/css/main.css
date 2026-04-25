@@ -15,7 +15,7 @@
 
     /* Hiệu ứng đổ bóng */
     /* drop-shadow(loại-bóng, màu-bóng, độ-nhòe, độ-lan, offset-x, offset-y) */
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 5);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);
 }
 
 /*interactive hover effect*/
