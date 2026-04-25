@@ -1,5 +1,6 @@
 package com.uet.BiddingApplication.Utils.Factory;
 
+import com.uet.BiddingApplication.Exception.BusinessException;
 import com.uet.BiddingApplication.Model.Item;
 import com.uet.BiddingApplication.Model.Electronics;
 import com.uet.BiddingApplication.Model.Art;
@@ -16,7 +17,7 @@ public class ItemFactory {
      */
     public static Item createItem(String categoryType) {
         if (categoryType == null || categoryType.trim().isEmpty()) {
-            throw new IllegalArgumentException("Loại sản phẩm (Category) không được để trống.");
+            throw new BusinessException("Loại sản phẩm (Category) không được để trống.");
         }
 
         // Chuyển về chữ in hoa để so sánh tránh lỗi gõ phím (case-insensitive)
@@ -30,7 +31,7 @@ public class ItemFactory {
             case "VEHICLE":
                 return new Vehicle();
             default:
-                throw new IllegalArgumentException("Hệ thống chưa hỗ trợ loại sản phẩm: " + categoryType);
+                throw new BusinessException("Hệ thống chưa hỗ trợ loại sản phẩm: " + categoryType);
         }
     }
 }
