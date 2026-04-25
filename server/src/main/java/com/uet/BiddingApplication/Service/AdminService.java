@@ -77,7 +77,7 @@ public class AdminService {
         }
 
         // 2. Fail-Fast: Xác thực quyền Admin và lấy OTP độc nhất từ đối tượng Admin
-        User currentUser = UserDAO.getInstance().findById(adminId); [cite: 1120]
+        User currentUser = UserDAO.getInstance().findById(adminId);
         if (!(currentUser instanceof Admin admin)) {
             throw new BusinessException("Bạn không có quyền thực hiện hành động này.");
         }
@@ -88,7 +88,7 @@ public class AdminService {
         }
 
         // 3. Fail-Fast & Bảo vệ nghiệp vụ: Kiểm tra người dùng mục tiêu
-        User targetUser = UserDAO.getInstance().findById(request.getTargetId()); [cite: 1120]
+        User targetUser = UserDAO.getInstance().findById(request.getTargetId());
         if (targetUser == null) {
             throw new BusinessException("Người dùng cần khóa không tồn tại.");
         }
