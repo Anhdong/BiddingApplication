@@ -131,9 +131,9 @@ public class RouteRegistry {
         });
 
         /*
-        // TODO: Chờ triển khai
+        // TODO: Cần viết hàm getSellerItems trong SellerService
         registry.put(ActionType.GET_SELLER_ITEMS, req -> {
-            // Lấy danh sách các vật phẩm của Seller
+            // Lấy danh sách các vật phẩm của Seller (Dựa theo PacketTypeRegistry sẽ trả về List<AuctionCardDTO>)
             // Object result = SellerService.getInstance().getSellerItems(req.getUserId());
             return new ResponsePacket<Object>(ActionType.GET_SELLER_ITEMS, 200, "Lấy danh sách vật phẩm thành công", null);
         });
@@ -142,13 +142,13 @@ public class RouteRegistry {
         // ==============================================================================
         // 4. NHÓM NGƯỜI MUA (BidderService & AuctionService)
         // ==============================================================================
-        /*
+
+        // ĐÃ HOÀN THIỆN: Ánh xạ vào hàm registerSession của BidderService
         registry.put(ActionType.PRE_REGISTER_SESSION, req -> {
             SessionRegisterRequestDTO dto = (SessionRegisterRequestDTO) req.getPayload();
-            BidderService.getInstance().registerForSession(dto, req.getUserId());
+            BidderService.getInstance().registerSession(dto, req.getUserId());
             return new ResponsePacket<Void>(ActionType.PRE_REGISTER_SESSION, 200, "Đăng ký tham gia phiên thành công", null);
         });
-        */
 
         registry.put(ActionType.GET_REGISTERED_SESSIONS, req -> {
             Object result = BidderService.getInstance().getRegisteredSessions(req.getUserId());
@@ -173,17 +173,17 @@ public class RouteRegistry {
         });
 
         /*
-        // TODO: Chờ triển khai
+        // TODO: Cần hoàn thiện các hàm xử lý trong AuctionService / BidderService
         registry.put(ActionType.SEARCH_ITEMS, req -> {
-            // Tìm kiếm và lọc theo Keyword/Category/Price
-            // SearchRequestDTO dto = (SearchRequestDTO) req.getPayload();
+            // Tìm kiếm và lọc theo Keyword/Category/Price (Dựa theo PacketTypeRegistry, dùng chung SessionFilterRequestDTO)
+            // SessionFilterRequestDTO dto = (SessionFilterRequestDTO) req.getPayload();
             // Object result = AuctionService.getInstance().searchItems(dto);
             return new ResponsePacket<Object>(ActionType.SEARCH_ITEMS, 200, "Kết quả tìm kiếm", null);
         });
 
         registry.put(ActionType.DELETE_REGISTER_SESSION, req -> {
             // Bấm nút "Hủy đăng ký trước"
-            // SessionTargetRequestDTO dto = (SessionTargetRequestDTO) req.getPayload();
+            // SessionRegisterRequestDTO dto = (SessionRegisterRequestDTO) req.getPayload();
             // BidderService.getInstance().cancelSessionRegistration(dto.getSessionId(), req.getUserId());
             return new ResponsePacket<Void>(ActionType.DELETE_REGISTER_SESSION, 200, "Đã hủy đăng ký trước thành công", null);
         });
@@ -208,6 +208,7 @@ public class RouteRegistry {
         // ==============================================================================
 
         /*
+        // TODO: Chờ triển khai hàm placeManualBid trong AuctionService
         registry.put(ActionType.PLACE_MANUAL_BID, req -> {
             BidRequestDTO dto = (BidRequestDTO) req.getPayload();
             AuctionService.getInstance().placeManualBid(dto, req.getUserId());
@@ -215,6 +216,9 @@ public class RouteRegistry {
         });
         */
         registry.put(ActionType.REGISTER_AUTO_BID, req -> {
+            // Lưu ý: Dựa vào PacketTypeRegistry, payload hiện tại có vẻ là AutoBidRegisterDTO chứ không phải AutoBidSetting.
+            // Ép kiểu ở đây có thể gây lỗi ClassCastException trong tương lai nếu RequestParser mapping sang DTO.
+            // Mình giữ nguyên theo file cũ của bạn, nhưng nếu lỗi hãy đổi AutoBidSetting -> AutoBidRegisterDTO.
             AutoBidSetting setting = (AutoBidSetting) req.getPayload();
             AutoBidManager.getInstance().registerAutoBid(setting);
             return new ResponsePacket<Void>(ActionType.REGISTER_AUTO_BID, 200, "Đã cài đặt trả giá tự động", null);
