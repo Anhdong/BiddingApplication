@@ -61,7 +61,7 @@
                   <Insets />
                </HBox.margin>
             </VBox>
-            <VBox prefWidth="400.0" spacing="20.0">
+            <VBox prefWidth="400.0" spacing="15.0">
                <children>
                   <VBox prefWidth="400.0" spacing="8.0">
                      <children>
@@ -89,7 +89,7 @@
                         <String fx:value="bg-default" />
                      </styleClass>
                   </VBox>
-                  <VBox prefWidth="400.0" spacing="10.0">
+                  <VBox prefWidth="400.0" spacing="8.0">
                      <children>
                         <Label text="Current bid">
                            <styleClass>
@@ -119,7 +119,7 @@
                         </LineChart>
                      </children>
                      <padding>
-                        <Insets bottom="15.0" left="25.0" right="25.0" top="15.0" />
+                        <Insets bottom="10.0" left="25.0" right="25.0" top="15.0" />
                      </padding>
                      <VBox.margin>
                         <Insets />
@@ -129,8 +129,14 @@
                         <String fx:value="bg-default" />
                      </styleClass>
                   </VBox>
-                  <VBox prefWidth="400.0" spacing="15.0">
+                  <VBox prefWidth="400.0" spacing="10.0">
                      <children>
+                        <Label text="Auto">
+                           <styleClass>
+                              <String fx:value="text-muted" />
+                              <String fx:value="text-bold" />
+                           </styleClass>
+                        </Label>
                         <TextField maxWidth="1.7976931348623157E308" prefHeight="40.0" prefWidth="350.0" promptText="Bid Increment">
                            <VBox.margin>
                               <Insets />
@@ -146,7 +152,7 @@
                               <String fx:value="rounded" />
                            </styleClass>
                         </TextField>
-                        <ToggleButton maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="40.0" text="Auto Bid">
+                        <ToggleButton maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="40.0" text="Disabled">
                            <styleClass>
                               <String fx:value="text-bold" />
                               <String fx:value="rounded-card" />
@@ -160,7 +166,7 @@
                         <String fx:value="bg-default" />
                      </styleClass>
                   </VBox>
-                  <VBox alignment="CENTER_LEFT" prefWidth="400.0" spacing="20.0">
+                  <VBox alignment="CENTER_LEFT" prefWidth="400.0" spacing="10.0">
                      <padding>
                         <Insets bottom="20.0" left="25.0" right="25.0" top="20.0" />
                      </padding>
@@ -172,6 +178,12 @@
                         <String fx:value="bg-default" />
                      </styleClass>
                      <children>
+                        <Label text="Manual">
+                           <styleClass>
+                              <String fx:value="text-muted" />
+                              <String fx:value="text-bold" />
+                           </styleClass>
+                        </Label>
                         <TextField maxWidth="1.7976931348623157E308" prefHeight="40.0" promptText="Bid Amount" styleClass="rounded" />
                         <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="40.0" text="BID">
                            <styleClass>
