@@ -23,4 +23,9 @@ public class Vehicle extends Item{
     public void setCondition(String condition) {
         this.condition = condition;
     }
+
+    @Override
+    public String getDisplayAttributes() {
+        return "Tình trạng: " + (this.condition != null ? this.condition : "Chưa rõ");
+    }
 }

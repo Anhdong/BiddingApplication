@@ -19,11 +19,12 @@ public class GsonPacketParser {
     public static String serialize(Object packet) {
         return gson.toJson(packet) + "\n"; // Chuẩn NDJSON
     }
-
+    //chuyển đối tượng -> JSON , kết thúc lệnh bằng dấu /n
     /**
      * Dùng cho Server khi nhận Request từ Client
      */
     public static RequestPacket<?> deserializeRequest(String jsonLine) {
+        //đoch chuổix Json từ client gửi , thực hiện các thao tác để trả về 1 requestpacket
         try {
             JsonObject jsonObject = JsonParser.parseString(jsonLine).getAsJsonObject();
             ActionType action = ActionType.valueOf(jsonObject.get("action").getAsString());

@@ -12,4 +12,9 @@ public class Others extends Item{
                   Category category, String imageURL, String sellerId) {
         super(id, createdAt, name, description, category, imageURL, sellerId);
     }
+
+    @Override
+    public String getDisplayAttributes() {
+        return ""; // Hoặc return "Không có thông số đặc biệt";
+    }
 }
