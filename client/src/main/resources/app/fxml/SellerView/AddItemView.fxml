@@ -30,7 +30,7 @@
                         </ImageView>
                      </children>
                      <styleClass>
-                        <String fx:value="rounded-card" />
+                        <String fx:value="rounded" />
                         <String fx:value="bg-default" />
                      </styleClass>
                   </StackPane>
@@ -82,7 +82,7 @@
                         <Insets />
                      </VBox.margin>
                      <styleClass>
-                        <String fx:value="rounded-card" />
+                        <String fx:value="rounded" />
                         <String fx:value="bg-default" />
                      </styleClass>
                   </VBox>
@@ -94,10 +94,10 @@
                               <String fx:value="title-4" />
                            </styleClass>
                         </Label>
-                        <ChoiceBox maxWidth="1.7976931348623157E308" styleClass="rounded-card" />
+                        <ChoiceBox maxWidth="1.7976931348623157E308" styleClass="rounded" />
                      </children>
                      <styleClass>
-                        <String fx:value="rounded-card" />
+                        <String fx:value="rounded" />
                         <String fx:value="bg-default" />
                      </styleClass>
                      <padding>
@@ -112,7 +112,7 @@
                         <Insets />
                      </VBox.margin>
                      <styleClass>
-                        <String fx:value="rounded-card" />
+                        <String fx:value="rounded" />
                         <String fx:value="bg-default" />
                      </styleClass>
                      <children>

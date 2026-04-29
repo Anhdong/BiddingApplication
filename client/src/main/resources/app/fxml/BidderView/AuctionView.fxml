@@ -31,7 +31,7 @@
                         </ImageView>
                      </children>
                      <styleClass>
-                        <String fx:value="rounded-card" />
+                        <String fx:value="rounded" />
                         <String fx:value="bg-default" />
                      </styleClass>
                   </StackPane>
@@ -52,7 +52,7 @@
                         <Insets bottom="15.0" left="15.0" right="25.0" top="15.0" />
                      </padding>
                      <styleClass>
-                        <String fx:value="rounded-card" />
+                        <String fx:value="rounded" />
                         <String fx:value="bg-default" />
                      </styleClass>
                   </VBox>
@@ -85,7 +85,7 @@
                         <Insets />
                      </VBox.margin>
                      <styleClass>
-                        <String fx:value="rounded-card" />
+                        <String fx:value="rounded" />
                         <String fx:value="bg-default" />
                      </styleClass>
                   </VBox>
@@ -125,7 +125,7 @@
                         <Insets />
                      </VBox.margin>
                      <styleClass>
-                        <String fx:value="rounded-card" />
+                        <String fx:value="rounded" />
                         <String fx:value="bg-default" />
                      </styleClass>
                   </VBox>
@@ -155,14 +155,14 @@
                         <ToggleButton maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="40.0" text="Disabled">
                            <styleClass>
                               <String fx:value="text-bold" />
-                              <String fx:value="rounded-card" />
+                              <String fx:value="rounded" />
                            </styleClass></ToggleButton>
                      </children>
                      <padding>
                         <Insets bottom="15.0" left="25.0" right="25.0" top="15.0" />
                      </padding>
                      <styleClass>
-                        <String fx:value="rounded-card" />
+                        <String fx:value="rounded" />
                         <String fx:value="bg-default" />
                      </styleClass>
                   </VBox>
@@ -174,7 +174,7 @@
                         <Insets />
                      </VBox.margin>
                      <styleClass>
-                        <String fx:value="rounded-card" />
+                        <String fx:value="rounded" />
                         <String fx:value="bg-default" />
                      </styleClass>
                      <children>
@@ -184,7 +184,12 @@
                               <String fx:value="text-bold" />
                            </styleClass>
                         </Label>
-                        <TextField maxWidth="1.7976931348623157E308" prefHeight="40.0" promptText="Bid Amount" styleClass="rounded" />
+                        <TextField maxWidth="1.7976931348623157E308" prefHeight="40.0" promptText="Bid Amount">
+                           <styleClass>
+                              <String fx:value="text-bold" />
+                              <String fx:value="rounded" />
+                           </styleClass>
+                        </TextField>
                         <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="40.0" text="BID">
                            <styleClass>
                               <String fx:value="title-3" />

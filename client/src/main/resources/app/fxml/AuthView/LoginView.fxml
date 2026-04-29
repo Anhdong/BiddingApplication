@@ -11,11 +11,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="800.0" prefWidth="1280.0" styleClass="auth-background" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="800.0" prefWidth="1280.0" styleClass="auth-background" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.uet.BiddingApplication.controller.AuthController.LoginController">
    <children>
       <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="400.0" spacing="4.0">
          <children>
-            <Label text="LOG IN">
+            <Label text="SIGN IN">
                <styleClass>
                   <String fx:value="main-title" />
                   <String fx:value="text-bold" />
@@ -39,11 +39,12 @@
                   <Insets top="16.0" />
                </VBox.margin>
             </Button>
-            <Label styleClass="text-subtle" text="Don't have an account yet? Sign in here" />
+            <Label onMouseClicked="#SwitchToRegister" styleClass="text-subtle" text="Don't have an account yet? Register here" />
          </children>
          <styleClass>
-            <String fx:value="rounded-card" />
+            <String fx:value="rounded" />
             <String fx:value="bg-default" />
+            <String fx:value="elevated" />
          </styleClass>
       </VBox>
    </children>

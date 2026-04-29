@@ -33,26 +33,17 @@
             <Insets bottom="10.0" />
          </VBox.margin>
       </Separator>
-      <ToggleButton maxHeight="80.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="80.0" text="Browse">
+      <ToggleButton maxHeight="80.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="80.0" text="Items">
+         <styleClass>
+            <String fx:value="flat" />
+            <String fx:value="title-3" />
+         </styleClass>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
          <toggleGroup>
             <ToggleGroup fx:id="Navigation" />
          </toggleGroup>
-         <styleClass>
-            <String fx:value="flat" />
-            <String fx:value="title-3" />
-         </styleClass>
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-      </ToggleButton>
-      <ToggleButton maxHeight="80.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="80.0" text="Watchlist" toggleGroup="$Navigation">
-         <styleClass>
-            <String fx:value="flat" />
-            <String fx:value="title-3" />
-         </styleClass>
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
       </ToggleButton>
       <ToggleButton maxHeight="80.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="80.0" text="History" toggleGroup="$Navigation">
          <styleClass>

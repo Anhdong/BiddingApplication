@@ -46,7 +46,7 @@
       <Insets bottom="12.0" left="28.0" right="28.0" top="12.0" />
    </padding>
    <styleClass>
-      <String fx:value="rounded-card" />
+      <String fx:value="rounded" />
       <String fx:value="interactive-card" />
    </styleClass>
 </VBox>
