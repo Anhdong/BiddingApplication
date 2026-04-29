@@ -17,7 +17,7 @@
    <children>
       <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="400.0" spacing="4.0">
          <children>
-            <Label text="SIGN IN">
+            <Label text="SIGN UP">
                <styleClass>
                   <String fx:value="main-title" />
                   <String fx:value="text-bold" />
