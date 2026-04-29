@@ -20,8 +20,8 @@
 
 /*interactive hover effect*/
 .interactive-card:hover {
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 15, 0, 0, 8);
-    -fx-translate-y: -1; /* Nhấc nhẹ card lên một chút */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 15, 0, 0, 8);
+    -fx-translate-y: -0.5; /* Nhấc nhẹ card lên một chút */
 }
 
 /*Rewrite Atlantafx flat class*/

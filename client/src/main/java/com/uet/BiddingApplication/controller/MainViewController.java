@@ -17,7 +17,7 @@ public class MainViewController {
     @FXML
     public void initialize() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/app/fxml/MainLayout/BidderSidebar.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/app/fxml/SidebarView/BidderSidebar.fxml"));
             Parent sidebar = loader.load();
 
             SidebarSlot.getChildren().setAll(sidebar);

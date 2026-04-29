@@ -2,9 +2,10 @@
 
 <?import java.lang.String?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
@@ -45,37 +46,37 @@
                   <Insets />
                </HBox.margin>
             </VBox>
-            <VBox prefWidth="400.0" spacing="30.0">
+            <VBox prefWidth="400.0" spacing="20.0">
                <children>
-                  <VBox prefWidth="400.0" spacing="20.0">
+                  <VBox prefWidth="400.0" spacing="15.0">
                      <children>
                         <Label text="Start Price">
                            <styleClass>
                               <String fx:value="text-muted" />
-                              <String fx:value="title-3" />
+                              <String fx:value="title-4" />
                            </styleClass>
                         </Label>
                         <TextField promptText="\$0">
                            <styleClass>
                               <String fx:value="rounded" />
-                              <String fx:value="title-1" />
+                              <String fx:value="title-3" />
                            </styleClass>
                         </TextField>
-                        <Label text="Bid Increment">
+                        <Label text="Minimum Bid Increment">
                            <styleClass>
                               <String fx:value="text-muted" />
-                              <String fx:value="title-3" />
+                              <String fx:value="title-4" />
                            </styleClass>
                         </Label>
                         <TextField promptText="\$0">
                            <styleClass>
                               <String fx:value="rounded" />
-                              <String fx:value="title-1" />
+                              <String fx:value="title-3" />
                            </styleClass>
                         </TextField>
                      </children>
                      <padding>
-                        <Insets bottom="20.0" left="25.0" right="25.0" top="20.0" />
+                        <Insets bottom="15.0" left="25.0" right="25.0" top="10.0" />
                      </padding>
                      <VBox.margin>
                         <Insets />
@@ -85,9 +86,27 @@
                         <String fx:value="bg-default" />
                      </styleClass>
                   </VBox>
-                  <VBox prefHeight="420.0" prefWidth="400.0" spacing="20.0">
+                  <VBox prefWidth="400.0" spacing="8.0">
+                     <children>
+                        <Label prefHeight="4.0" prefWidth="101.0" text="Category">
+                           <styleClass>
+                              <String fx:value="text-muted" />
+                              <String fx:value="title-4" />
+                           </styleClass>
+                        </Label>
+                        <ChoiceBox maxWidth="1.7976931348623157E308" styleClass="rounded-card" />
+                     </children>
+                     <styleClass>
+                        <String fx:value="rounded-card" />
+                        <String fx:value="bg-default" />
+                     </styleClass>
                      <padding>
-                        <Insets bottom="30.0" left="25.0" right="25.0" top="30.0" />
+                        <Insets bottom="15.0" left="25.0" right="25.0" top="10.0" />
+                     </padding>
+                  </VBox>
+                  <VBox prefWidth="400.0" spacing="10.0">
+                     <padding>
+                        <Insets bottom="25.0" left="25.0" right="25.0" top="20.0" />
                      </padding>
                      <VBox.margin>
                         <Insets />
@@ -100,39 +119,46 @@
                         <Label text="Date">
                            <styleClass>
                               <String fx:value="text-muted" />
-                              <String fx:value="title-3" />
+                              <String fx:value="title-4" />
                            </styleClass>
                         </Label>
-                        <DatePicker />
-                        <Separator prefWidth="200.0" />
+                        <DatePicker maxWidth="1.7976931348623157E308" />
                         <Label layoutX="35.0" layoutY="30.0" text="Start Time">
                            <styleClass>
                               <String fx:value="text-muted" />
-                              <String fx:value="title-3" />
+                              <String fx:value="title-4" />
                            </styleClass>
                         </Label>
-                        <HBox prefHeight="80.0" prefWidth="350.0" spacing="10.0">
+                        <HBox prefHeight="60.0" prefWidth="350.0" spacing="32.0">
                            <children>
-                              <Spinner editable="true" prefHeight="80.0" prefWidth="138.0" style="-fx-font-size: 50;" styleClass="title-1" />
-                              <Label prefHeight="80.0" styleClass="title-1" text="  :  " textAlignment="CENTER" />
-                              <Spinner editable="true" layoutX="10.0" layoutY="10.0" prefHeight="80.0" prefWidth="138.0" style="-fx-font-size: 50;" styleClass="title-1" />
+                              <Spinner editable="true" prefHeight="60.0" prefWidth="138.0" styleClass="title-2" />
+                              <Label prefHeight="60.0" styleClass="title-2" text=":" textAlignment="CENTER" />
+                              <Spinner editable="true" layoutX="10.0" layoutY="10.0" prefHeight="60.0" prefWidth="138.0" styleClass="title-2" />
                            </children>
                         </HBox>
                         <Label layoutX="35.0" layoutY="105.0" text="End Time">
                            <styleClass>
                               <String fx:value="text-muted" />
-                              <String fx:value="title-3" />
+                              <String fx:value="title-4" />
                            </styleClass>
                         </Label>
-                        <HBox layoutX="35.0" layoutY="174.0" prefHeight="80.0" prefWidth="350.0" spacing="10.0">
+                        <HBox layoutX="35.0" layoutY="174.0" prefHeight="60.0" prefWidth="350.0" spacing="32.0">
                            <children>
-                              <Spinner editable="true" prefHeight="80.0" prefWidth="138.0" style="-fx-font-size: 50;" styleClass="title-1" />
-                              <Label prefHeight="80.0" styleClass="title-1" text="  :  " textAlignment="CENTER" />
-                              <Spinner editable="true" layoutX="10.0" layoutY="10.0" prefHeight="80.0" prefWidth="138.0" style="-fx-font-size: 50;" styleClass="title-1" />
+                              <Spinner editable="true" prefHeight="60.0" prefWidth="138.0" styleClass="title-2" />
+                              <Label prefHeight="60.0" styleClass="title-2" text=":" textAlignment="CENTER" />
+                              <Spinner editable="true" layoutX="10.0" layoutY="10.0" prefHeight="60.0" prefWidth="138.0" styleClass="title-2" />
                            </children>
                         </HBox>
                      </children>
                   </VBox>
+                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="50.0" text="Add">
+                     <styleClass>
+                        <String fx:value="title-1" />
+                        <String fx:value="accent" />
+                        <String fx:value="rounded" />
+                        <String fx:value="interactive-card" />
+                     </styleClass>
+                  </Button>
                </children>
             </VBox>
          </children>
