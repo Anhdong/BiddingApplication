@@ -9,18 +9,20 @@
     -fx-background-size: cover;
 }
 
-.rounded-card {
+/*Overwrite .rounded*/
+.rounded {
     -fx-background-radius: 20;               /* Bo góc cho nền */
     -fx-border-radius: 20;                   /* Bo góc cho đường viền */
+}
 
-    /* Hiệu ứng đổ bóng */
+.elevated {
     /* drop-shadow(loại-bóng, màu-bóng, độ-nhòe, độ-lan, offset-x, offset-y) */
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 20, 0, 0, 5);
 }
 
 /*interactive hover effect*/
 .interactive-card:hover {
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 15, 0, 0, 8);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 15, 0, 0, 5);
     -fx-translate-y: -0.5; /* Nhấc nhẹ card lên một chút */
 }
 
