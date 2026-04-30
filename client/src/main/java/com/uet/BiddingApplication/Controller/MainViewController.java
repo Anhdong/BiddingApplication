@@ -1,5 +1,6 @@
-package com.uet.BiddingApplication.Controller.Util;
+package com.uet.BiddingApplication.Controller;
 
+import com.uet.BiddingApplication.Controller.Enum.ViewPath;
 import com.uet.BiddingApplication.Enum.RoleType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,37 +22,37 @@ public class MainViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setupUserInterface(RoleType.SELLER);
-        setContentSlot("/app/fxml/BidderView/AuctionView.fxml");
+        setContentSlot(ViewPath.BIDDER_AUCTION);
 
     }
 
     public void setupUserInterface(RoleType role) {
         //Check role
-        String sidebarPath = null;
+        ViewPath sidebarPath = null;
         switch (role){
             case RoleType.BIDDER:
-                sidebarPath = "/app/fxml/SidebarView/BidderSidebar.fxml";
+                sidebarPath = ViewPath.BIDDER_SIDEBAR;
                 break;
             case RoleType.SELLER:
-                sidebarPath = "/app/fxml/SidebarView/SellerSidebar.fxml";
+                sidebarPath = ViewPath.SELLER_SIDEBAR;
                 break;
             case RoleType.ADMIN:
-                sidebarPath = "/app/fxml/SidebarView/AdminSidebar.fxml";
+                sidebarPath = ViewPath.ADMIN_SIDEBAR;
                 break;
             default:
                 throw new RuntimeException("Role Invalid");
         }
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(sidebarPath));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(sidebarPath.getPath()));
             Parent sidebar = loader.load();
             SidebarSlot.getChildren().setAll(sidebar);
         } catch (Exception e) {e.printStackTrace();}
 
     }
 
-    public void setContentSlot(String fxmlPath) {
+    public void setContentSlot(ViewPath fxmlPath) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath.getPath()));
             Parent content = loader.load();
 
             ContentSlot.getChildren().setAll(content);

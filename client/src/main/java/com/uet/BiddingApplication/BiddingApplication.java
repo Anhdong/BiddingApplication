@@ -1,6 +1,7 @@
 package com.uet.BiddingApplication;
 
 import atlantafx.base.theme.CupertinoLight;
+import com.uet.BiddingApplication.Controller.Enum.ViewPath;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -17,7 +18,7 @@ public class BiddingApplication extends Application {
         Application.setUserAgentStylesheet(new CupertinoLight().getUserAgentStylesheet());
 
         //Load FXML & create root
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/app/fxml/AuthView/LoginView.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(ViewPath.LOGIN.getPath()));
         Parent root = loader.load();
 
         // Create scene
