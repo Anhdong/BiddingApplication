@@ -1,5 +1,6 @@
 package com.uet.BiddingApplication.CoreService;
 
+import com.uet.BiddingApplication.Config.AppConfig;
 import com.uet.BiddingApplication.DAO.Impl.AuctionSessionDAO;
 import com.uet.BiddingApplication.DAO.Impl.BidDAO;
 import com.uet.BiddingApplication.DAO.Interface.IAuctionSessionDAO;
@@ -25,8 +26,8 @@ import java.util.concurrent.*;
 
 public class InMemoryBidServiceImpl implements BidProcessingService {
 
-    private static final InMemoryBidServiceImpl instance = new InMemoryBidServiceImpl();
-    private static final int WORKER_POOL_SIZE = 8;
+    private static  InMemoryBidServiceImpl instance;
+    private static final int WORKER_POOL_SIZE = AppConfig.getWorkerPoolSize();
 
     private final List<BlockingQueue<BidTask>> workerQueues;
     private final ExecutorService workerPool;
@@ -64,6 +65,13 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
     }
 
     public static InMemoryBidServiceImpl getInstance() {
+        if(instance == null) {
+            synchronized (InMemoryBidServiceImpl.class) {
+                if(instance == null) {
+                    instance = new InMemoryBidServiceImpl();
+                }
+            }
+        }
         return instance;
     }
 
