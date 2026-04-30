@@ -4,16 +4,14 @@ import java.time.LocalDateTime;
 
 public class SessionTargetDTO {
         private String sessionId;
-        private  LocalDateTime startTime;
-        private LocalDateTime endTime ;// Để client tính toán thời gian chạy của Progress Bar
+        private long remainingMillis;
 
     public SessionTargetDTO() {
     }
 
-    public SessionTargetDTO(String sessionId, LocalDateTime startTime, LocalDateTime endTime) {
+    public SessionTargetDTO(String sessionId,long remainingMillis) {
         this.sessionId = sessionId;
-        this.startTime = startTime;
-        this.endTime = endTime;
+        this.remainingMillis = remainingMillis;
     }
 
     public String getSessionId() {
@@ -24,19 +22,11 @@ public class SessionTargetDTO {
         this.sessionId = sessionId;
     }
 
-    public LocalDateTime getStartTime() {
-        return startTime;
+    public long getRemainingMillis() {
+        return remainingMillis;
     }
 
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public LocalDateTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
+    public void setRemainingMillis(long remainingMillis) {
+        this.remainingMillis = remainingMillis;
     }
 }

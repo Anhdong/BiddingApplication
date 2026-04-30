@@ -6,11 +6,11 @@ import java.time.LocalDateTime;
 
 public class RealtimeUpdateDTO  {
     private BidHistoryDTO lastBid;
-    private LocalDateTime newEndTime; // Sẽ NULL nếu không có gia hạn, có giá trị nếu Anti-sniping kích hoạt
+    private long remainingMillis; // Sẽ NULL nếu không có gia hạn, có giá trị nếu Anti-sniping kích hoạt
 
-    public RealtimeUpdateDTO(BidHistoryDTO lastBid, LocalDateTime newEndTime) {
+    public RealtimeUpdateDTO(BidHistoryDTO lastBid, long remainingMillis) {
         this.lastBid = lastBid;
-        this.newEndTime = newEndTime;
+        this.remainingMillis = remainingMillis;
     }
 
     public RealtimeUpdateDTO() {
@@ -24,11 +24,11 @@ public class RealtimeUpdateDTO  {
         this.lastBid = lastBid;
     }
 
-    public LocalDateTime getNewEndTime() {
-        return newEndTime;
+    public long getRemainingMillis() {
+        return remainingMillis;
     }
 
-    public void setNewEndTime(LocalDateTime newEndTime) {
-        this.newEndTime = newEndTime;
+    public void setRemainingMillis(long remainingMillis) {
+        this.remainingMillis = remainingMillis;
     }
 }
