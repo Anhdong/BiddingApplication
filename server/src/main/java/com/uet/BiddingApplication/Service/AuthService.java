@@ -78,7 +78,7 @@ public class AuthService {
         // Đây là tính năng rất hay để chống 1 tài khoản đăng nhập ở 2 máy.
         ClientConnectionHandler oldHandler = AuctionServer.getInstance().getClientHandler(userId);
         if (oldHandler != null) {
-            oldHandler.forceClose();
+            oldHandler.forceClose("Tài khoản đã bị đăng nhập ở nơi khác !");
         }
 
         // 3. Tạo Token và lưu vào Cache RAM
