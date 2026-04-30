@@ -1,4 +1,4 @@
-package com.uet.BiddingApplication.Controller.Enum;
+package com.uet.BiddingApplication.Enum;
 
 public enum ViewPath {
     //AUTH

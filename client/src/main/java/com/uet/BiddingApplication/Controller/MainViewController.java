@@ -1,6 +1,6 @@
 package com.uet.BiddingApplication.Controller;
 
-import com.uet.BiddingApplication.Controller.Enum.ViewPath;
+import com.uet.BiddingApplication.Enum.ViewPath;
 import com.uet.BiddingApplication.Enum.RoleType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -54,7 +54,7 @@ public class MainViewController implements Initializable {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(pathEnum.getPath()));
                 return loader.load();
             } catch (IOException e) {
-                System.out.print("[MainViewController] Không thể thiết lập giao diện nội dung.");
+                System.out.println("[MainViewController] Không thể thiết lập giao diện nội dung.");
                 return null;
             }
         });

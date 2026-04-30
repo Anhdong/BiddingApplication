@@ -1,7 +1,7 @@
 package com.uet.BiddingApplication;
 
 import atlantafx.base.theme.CupertinoLight;
-import com.uet.BiddingApplication.Controller.Enum.ViewPath;
+import com.uet.BiddingApplication.Enum.ViewPath;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

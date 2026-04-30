@@ -1,4 +1,4 @@
-package com.uet.BiddingApplication.Session.Session;
+package com.uet.BiddingApplication.Session;
 
 import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
 import com.uet.BiddingApplication.Utils.GsonPacketParser;

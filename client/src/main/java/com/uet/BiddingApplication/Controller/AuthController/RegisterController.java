@@ -1,6 +1,6 @@
 package com.uet.BiddingApplication.Controller.AuthController;
 
-import com.uet.BiddingApplication.Controller.Enum.ViewPath;
+import com.uet.BiddingApplication.Enum.ViewPath;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
