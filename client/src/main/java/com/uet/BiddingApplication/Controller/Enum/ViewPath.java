@@ -2,8 +2,11 @@ package com.uet.BiddingApplication.Controller.Enum;
 
 public enum ViewPath {
     //AUTH
-    LOGIN("/app/fxml/AuthView/RegisterView.fxml"),
-    REGISTER("/app/fxml/AuthView/LoginView.fxml"),
+    LOGIN("/app/fxml/AuthView/LoginView.fxml"),
+    REGISTER("/app/fxml/AuthView/RegisterView.fxml"),
+
+    //MAINVIEW
+    MAIN("/app/fxml/MainView.fxml"),
 
     //SIDEBAR
     BIDDER_SIDEBAR("/app/fxml/SidebarView/BidderSidebar.fxml"),
