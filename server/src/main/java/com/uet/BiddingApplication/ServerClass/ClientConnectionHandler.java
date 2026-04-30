@@ -2,7 +2,6 @@ package com.uet.BiddingApplication.ServerClass;
 
 import com.uet.BiddingApplication.DTO.Packet.RequestPacket;
 import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
-// Sửa Import này để dùng đúng bộ Parser ở Utils
 import com.uet.BiddingApplication.Utils.GsonPacketParser;
 
 import java.io.BufferedReader;
@@ -20,8 +19,9 @@ public class ClientConnectionHandler implements Runnable {
     private PrintWriter out;
 
     private String userId;
-//Lắng nghe chuỗi JSON từ mạng -> Dịch thành Java Object
-// -> Giao cho Router xử lý -> Nhận kết quả -> Dịch lại thành JSON -> Gửi trả Client
+
+    // Lắng nghe chuỗi JSON từ mạng -> Dịch thành Java Object
+    // -> Giao cho Router xử lý -> Nhận kết quả -> Dịch lại thành JSON -> Gửi trả Client
     public ClientConnectionHandler(Socket socket, AuctionServer server) {
         this.socket = socket;
         this.server = server;
@@ -31,7 +31,7 @@ public class ClientConnectionHandler implements Runnable {
             this.out = new PrintWriter(socket.getOutputStream(), true);
         } catch (IOException e) {
             e.printStackTrace();
-            forceClose();
+            forceClose("Lỗi khởi tạo luồng I/O: " + e.getMessage());
         }
     }
 
@@ -42,18 +42,20 @@ public class ClientConnectionHandler implements Runnable {
             while ((jsonLine = in.readLine()) != null) {
                 System.out.println("[Server nhận từ " + (userId != null ? userId : "Guest") + "] " + jsonLine);
 
-                // SỬA TẠI ĐÂY: Dùng hàm deserializeRequest từ bản Utils
+                // Dùng hàm deserializeRequest từ bản Utils
                 RequestPacket<?> requestPacket = GsonPacketParser.deserializeRequest(jsonLine);
 
                 if (requestPacket != null) {
-                    // Không cần Import RequestRouter vì nó cùng package Server_class
+                    // Chuyển cho Router xử lý
                     RequestRouter.getInstance().route(requestPacket, this);
                 }
             }
         } catch (Exception e) {
-            System.err.println("[Handler] Kết nối với " + userId + " bị ngắt: " + e.getMessage());
+            System.err.println("[Handler] Kết nối với " + (userId != null ? userId : "Guest") + " gặp lỗi: " + e.getMessage());
         } finally {
-            forceClose();
+            // Khi vòng lặp while kết thúc (Client ngắt kết nối) hoặc văng Exception
+            forceClose("Luồng đọc dữ liệu kết thúc (Client ngắt kết nối hoặc lỗi mạng)");
+
             // Hủy đăng ký client khi ngắt kết nối
             if (server != null && userId != null) {
                 server.unregisterClient(userId);
@@ -67,27 +69,41 @@ public class ClientConnectionHandler implements Runnable {
     public synchronized void sendPacket(ResponsePacket<?> packet) {
         if (out == null) return;
         try {
-            // SỬA TẠI ĐÂY: Dùng hàm serialize tập trung ở Utils cho đồng bộ
+            // Dùng hàm serialize tập trung ở Utils cho đồng bộ
             String jsonStr = GsonPacketParser.serialize(packet);
             out.print(jsonStr);
-            out.flush();
+            out.flush(); // Đẩy dữ liệu đi ngay lập tức
         } catch (Exception e) {
             System.err.println("[Handler] Lỗi gửi gói tin: " + e.getMessage());
         }
     }
 
-    public void forceClose() {
+    /**
+     * Đóng kết nối bắt buộc và ghi nhận lý do
+     */
+    public void forceClose(String reason) {
+        System.out.println("[Handler] Đóng kết nối Socket của " + (userId != null ? userId : "Guest") + " - Lý do: " + reason);
         try {
             if (in != null) in.close();
             if (out != null) out.close();
             if (socket != null && !socket.isClosed()) socket.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("[Handler] Lỗi khi đóng socket: " + e.getMessage());
         }
     }
 
+    /**
+     * Hàm mặc định để đóng kết nối (Giữ nguyên tương thích với code cũ)
+     */
     public void closeConnection() {
-        forceClose();
+        forceClose("Server chủ động yêu cầu đóng kết nối (Không rõ lý do cụ thể)");
+    }
+
+    /**
+     * Hàm đóng kết nối có kèm lý do (Dùng khi Kick/Ban user)
+     */
+    public void closeConnection(String reason) {
+        forceClose(reason);
     }
 
     public String getUserId() {
