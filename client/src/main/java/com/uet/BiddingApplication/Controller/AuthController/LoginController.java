@@ -1,4 +1,4 @@
-package com.uet.BiddingApplication.controller.AuthController;
+package com.uet.BiddingApplication.Controller.Util.AuthController;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
