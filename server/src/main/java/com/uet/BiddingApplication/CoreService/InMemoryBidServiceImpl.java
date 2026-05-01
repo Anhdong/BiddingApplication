@@ -19,6 +19,7 @@ import com.uet.BiddingApplication.Service.RealtimeBroadcastService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -155,7 +156,10 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
 
                 RealtimeUpdateDTO updateData = new RealtimeUpdateDTO();
                 updateData.setLastBid(newHistory);
-                if(isUpdateTime) {updateData.setNewEndTime(session.getEndTime());}
+                if(isUpdateTime) {
+                    long newEndTime=session.getEndTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+                    updateData.setRemainingMillis(newEndTime-System.currentTimeMillis());
+                }
 
                 ResponsePacket<RealtimeUpdateDTO> packet = new ResponsePacket<>(
                         ActionType.REALTIME_PRICE_UPDATE, 200, "Có giá mới", updateData
@@ -283,11 +287,13 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
             searchCacheManager.removeSession(sessionId);
 
             // 4. Phát thanh giải tán phòng với lý do cụ thể
+            SessionTargetDTO sessionTargetDTO = new SessionTargetDTO();
+            sessionTargetDTO.setSessionId(sessionId);
             ResponsePacket<SessionTargetDTO> cancelPacket = new ResponsePacket<>(
                     ActionType.REALTIME_SESSION_CANCELED,
                     403,
                     "Phiên đấu giá đã bị Admin hủy: " + reason,
-                    new SessionTargetDTO(sessionId,null,null)
+                    sessionTargetDTO
             );
 
             realtimeBroadcastService.broadcast(sessionId, cancelPacket);
