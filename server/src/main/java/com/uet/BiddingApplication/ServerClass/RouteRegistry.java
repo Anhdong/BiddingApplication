@@ -1,5 +1,6 @@
 package com.uet.BiddingApplication.ServerClass;
 
+import com.uet.BiddingApplication.CoreService.InMemoryBidServiceImpl;
 import com.uet.BiddingApplication.DTO.Packet.RequestPacket;
 import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
 import com.uet.BiddingApplication.Enum.ActionType;
@@ -170,7 +171,7 @@ public class RouteRegistry {
         });
 
         registry.put(ActionType.SEARCH_ITEMS, req -> {
-            // TODO: AuctionService chưa có hàm searchItems
+            // TODO: AuctionService chưa có hàm se  archItems
             // SessionFilterRequestDTO filter = (SessionFilterRequestDTO) req.getPayload();
             // Object result = AuctionService.getInstance().searchItems(filter);
             return new ResponsePacket<>(ActionType.SEARCH_ITEMS, 200, "Tính năng tìm kiếm chưa được hỗ trợ", null);
@@ -201,10 +202,10 @@ public class RouteRegistry {
         // ==============================================================================
 
         registry.put(ActionType.PLACE_MANUAL_BID, req -> {
-            // TODO: AuctionService chưa có hàm placeManualBid
-            // BidRequestDTO dto = (BidRequestDTO) req.getPayload();
-            // AuctionService.getInstance().placeManualBid(dto, req.getUserId());
-            return new ResponsePacket<>(ActionType.PLACE_MANUAL_BID, 200, "Chưa hỗ trợ đặt giá thủ công", null);
+            BidRequestDTO dto = (BidRequestDTO) req.getPayload();
+            InMemoryBidServiceImpl.getInstance().enqueueBid(dto, req.getUserId());
+
+            return new ResponsePacket<>(ActionType.PLACE_MANUAL_BID, 200, "Yêu cầu trả giá đã được ghi nhận. Vui lòng chờ xử lý.", null);
         });
 
         registry.put(ActionType.REGISTER_AUTO_BID, req -> {
