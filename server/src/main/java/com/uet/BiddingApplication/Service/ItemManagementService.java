@@ -1,6 +1,7 @@
 package com.uet.BiddingApplication.Service;
 
 import com.uet.BiddingApplication.CoreService.SearchCacheManager;
+import com.uet.BiddingApplication.CoreService.SessionStartScheduler;
 import com.uet.BiddingApplication.DAO.Impl.AuctionSessionDAO;
 import com.uet.BiddingApplication.DAO.Impl.ItemDAO;
 import com.uet.BiddingApplication.DTO.Request.ItemCreateDTO;
@@ -82,6 +83,9 @@ public class ItemManagementService {
         // Việc này đảm bảo các Bidder khác thấy ngay sản phẩm mới mà không cần chạm DB [cite: 1153, 1175]
         SearchCacheManager.getInstance().addSessionAndItem(newSession, newItem);
 
+        // 7. [THÊM MỚI] Kích hoạt Scheduler đếm ngược thời gian mở phiên
+        SessionStartScheduler.getInstance().scheduleStart(newSession.getId(), newSession.getStartTime());
+
         // Trả về true nếu toàn bộ quy trình hoàn tất không có lỗi [cite: 674]
         return true;
     }
@@ -140,6 +144,8 @@ public class ItemManagementService {
             }
 
             SearchCacheManager.getInstance().addSessionAndItem(oldSession, item);
+            // [THÊM MỚI] Lên lịch lại thời gian mở phiên (Scheduler sẽ tự hủy lịch cũ nếu có)
+            SessionStartScheduler.getInstance().scheduleStart(oldSession.getId(), oldSession.getStartTime());
             return true;
 
         } else if (currentStatus == SessionStatus.FINISHED || currentStatus == SessionStatus.CANCELED) {
@@ -152,6 +158,8 @@ public class ItemManagementService {
             }
 
             SearchCacheManager.getInstance().addSessionAndItem(newSession, item);
+            // [THÊM MỚI] Lên lịch thời gian mở phiên cho phiên vừa tạo lại
+            SessionStartScheduler.getInstance().scheduleStart(newSession.getId(), newSession.getStartTime());
             return true;
 
         } else {
