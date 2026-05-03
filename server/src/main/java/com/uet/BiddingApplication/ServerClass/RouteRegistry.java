@@ -1,6 +1,8 @@
 package com.uet.BiddingApplication.ServerClass;
 
 import com.uet.BiddingApplication.CoreService.InMemoryBidServiceImpl;
+import com.uet.BiddingApplication.CoreService.ItemSearchService;
+import com.uet.BiddingApplication.Enum.Category;
 import com.uet.BiddingApplication.DTO.Packet.RequestPacket;
 import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
 import com.uet.BiddingApplication.Enum.ActionType;
@@ -132,9 +134,8 @@ public class RouteRegistry {
         });
 
         registry.put(ActionType.GET_SELLER_ITEMS, req -> {
-            // TODO: SellerService chưa có hàm getSellerItems
-            // Object result = SellerService.getInstance().getSellerItems(req.getUserId());
-            return new ResponsePacket<>(ActionType.GET_SELLER_ITEMS, 200, "Chưa hỗ trợ lấy danh sách vật phẩm", null);
+            Object result = SellerService.getInstance().getItemsBySellerId(req.getUserId());
+            return new ResponsePacket<>(ActionType.GET_SELLER_ITEMS, 200, "Lấy danh sách vật phẩm thành công", result);
         });
 
         // ==============================================================================
@@ -171,10 +172,17 @@ public class RouteRegistry {
         });
 
         registry.put(ActionType.SEARCH_ITEMS, req -> {
-            // TODO: AuctionService chưa có hàm se  archItems
-            // SessionFilterRequestDTO filter = (SessionFilterRequestDTO) req.getPayload();
-            // Object result = AuctionService.getInstance().searchItems(filter);
-            return new ResponsePacket<>(ActionType.SEARCH_ITEMS, 200, "Tính năng tìm kiếm chưa được hỗ trợ", null);
+            SessionFilterRequestDTO filter = (SessionFilterRequestDTO) req.getPayload();
+            String categoryStr = filter.getCategory();
+            Category category = (categoryStr == null || categoryStr.equalsIgnoreCase("ALL"))
+                    ? null
+                    : Category.valueOf(categoryStr.toUpperCase());
+            Object result = ItemSearchService.getInstance().searchActiveAuctions(
+                    null, // SessionFilterRequestDTO không có keyword
+                    category,
+                    filter.getTimeSortOption()
+            );
+            return new ResponsePacket<>(ActionType.SEARCH_ITEMS, 200, "OK", result);
         });
 
         registry.put(ActionType.GET_SESSION_DETAIL, req -> {
@@ -184,17 +192,15 @@ public class RouteRegistry {
         });
 
         registry.put(ActionType.JOIN_SESSION, req -> {
-            // TODO: BidderService chưa có hàm joinSession
-            // SessionTargetRequestDTO dto = (SessionTargetRequestDTO) req.getPayload();
-            // BidderService.getInstance().joinSession(dto.getSessionId(), req.getUserId());
-            return new ResponsePacket<>(ActionType.JOIN_SESSION, 200, "Chưa hỗ trợ tham gia phòng", null);
+            SessionTargetRequestDTO dto = (SessionTargetRequestDTO) req.getPayload();
+            AuctionRoomSyncDTO result = BidderService.getInstance().joinSession(dto, req.getUserId());
+            return new ResponsePacket<>(ActionType.JOIN_SESSION, 200, "Tham gia phòng đấu giá thành công", result);
         });
 
         registry.put(ActionType.LEAVE_SESSION, req -> {
-            // TODO: BidderService chưa có hàm leaveSession
-            // SessionTargetRequestDTO dto = (SessionTargetRequestDTO) req.getPayload();
-            // BidderService.getInstance().leaveSession(dto.getSessionId(), req.getUserId());
-            return new ResponsePacket<>(ActionType.LEAVE_SESSION, 200, "Chưa hỗ trợ thoát phòng", null);
+            SessionTargetRequestDTO dto = (SessionTargetRequestDTO) req.getPayload();
+            BidderService.getInstance().leaveSession(dto, req.getUserId());
+            return new ResponsePacket<>(ActionType.LEAVE_SESSION, 200, "Đã thoát khỏi phòng đấu giá", null);
         });
 
         // ==============================================================================
@@ -247,3 +253,4 @@ public class RouteRegistry {
         });
     }
 }
+
