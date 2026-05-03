@@ -215,10 +215,17 @@ public class RouteRegistry {
         });
 
         registry.put(ActionType.REGISTER_AUTO_BID, req -> {
-            // TODO: Cần viết hàm map từ AutoBidRegisterDTO sang AutoBidSetting để gọi AutoBidManager
-            // AutoBidRegisterDTO dto = (AutoBidRegisterDTO) req.getPayload();
-            // AutoBidManager.getInstance().registerAutoBid(setting);
-            return new ResponsePacket<>(ActionType.REGISTER_AUTO_BID, 200, "Tính năng Auto-bid đang bảo trì", null);
+            AutoBidRegisterDTO dto = (AutoBidRegisterDTO) req.getPayload();
+            AutoBidSetting setting = new AutoBidSetting(
+                    java.util.UUID.randomUUID().toString(),
+                    java.time.LocalDateTime.now(),
+                    req.getUserId(),
+                    dto.getSessionId(),
+                    dto.getMaxBid(),
+                    dto.getIncrement()
+            );
+            AutoBidManager.getInstance().registerAutoBid(setting);
+            return new ResponsePacket<>(ActionType.REGISTER_AUTO_BID, 200, "Đã đăng ký trả giá tự động", null);
         });
 
         registry.put(ActionType.CANCEL_AUTO_BID, req -> {
@@ -253,4 +260,3 @@ public class RouteRegistry {
         });
     }
 }
-
