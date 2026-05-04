@@ -123,6 +123,53 @@ public class BidderService {
 
 
     /**
+     * Hủy đăng ký tham gia một phiên đấu giá.
+     *
+     * @param request DTO chứa mã phiên cần hủy đăng ký
+     * @param bidderId ID của user đang thực hiện request (lấy từ Token)
+     * @return true nếu hủy thành công
+     */
+    public boolean cancelSessionRegistration(SessionRegisterRequestDTO request, String bidderId){
+        // 1. Kiểm tra tính hợp lệ của đầu vào (Fail-fast)
+        if (bidderId == null || bidderId.trim().isEmpty()) {
+            throw new BusinessException("Mã người dùng (Bidder ID) không hợp lệ.");
+        }
+        if (request == null || request.getSessionId() == null || request.getSessionId().trim().isEmpty()) {
+            throw new BusinessException("Mã phiên đấu giá (Session ID) không được để trống.");
+        }
+
+        String sessionId = request.getSessionId();
+
+        // 2. Ràng buộc nghiệp vụ: Kiểm tra trạng thái phiên đấu giá
+        AuctionSession session = AuctionSessionDAO.getInstance().getSessionById(sessionId);
+        if (session == null) {
+            throw new BusinessException("Phiên đấu giá không tồn tại trong hệ thống.");
+        }
+
+        // Theo luồng logic: OPEN (Đăng ký) -> RUNNING (Đấu giá) -> FINISHED
+        if (session.getStatus() != SessionStatus.OPEN) {
+            throw new BusinessException("Không thể đăng ký! Phiên đấu giá này hiện không ở trạng thái mở đăng ký.");
+        }
+
+        // 3. Ràng buộc nghiệp vụ: Chống hủy đăng ký trùng lặp
+        boolean isAlreadyRegistered = SessionRegistrationDAO.getInstance().checkRegistration(bidderId, sessionId);
+        if (!isAlreadyRegistered) {
+            throw new BusinessException("Bạn đã hủy đăng ký tham gia phiên đấu giá này từ trước rồi.");
+        }
+
+        // 4. Ghi xuống Cơ sở dữ liệu
+        boolean isSuccess = SessionRegistrationDAO.getInstance().deleteRegistration(bidderId, sessionId);
+
+        if (isSuccess) {
+            return true;
+        } else {
+            // Lỗi này xảy ra khi Database từ chối (VD: lỗi khóa ngoại, đứt kết nối...)
+            throw new BusinessException("Lỗi hệ thống: Không thể ghi nhận yêu cầu hủy đăng ký của bạn lúc này.");
+        }
+    }
+
+
+    /**
      * Thoát khỏi phòng đấu giá (Leave Room), ngừng nhận sự kiện realtime.
      *
      * @param request DTO chứa ID của phiên đấu giá cần rời khỏi.
