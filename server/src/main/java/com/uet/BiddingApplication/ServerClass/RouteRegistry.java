@@ -20,6 +20,7 @@ import com.uet.BiddingApplication.Service.SellerService;
 import com.uet.BiddingApplication.Service.RealtimeBroadcastService;
 import com.uet.BiddingApplication.Service.AutoBidManager;
 import com.uet.BiddingApplication.Service.AuctionService;
+import com.uet.BiddingApplication.Utils.Mapper.AutoBidMapper;
 import com.uet.BiddingApplication.Exception.BusinessException;
 
 import java.util.EnumMap;
@@ -215,14 +216,7 @@ public class RouteRegistry {
 
         registry.put(ActionType.REGISTER_AUTO_BID, req -> {
             AutoBidRegisterDTO dto = (AutoBidRegisterDTO) req.getPayload();
-            AutoBidSetting setting = new AutoBidSetting(
-                    java.util.UUID.randomUUID().toString(),
-                    java.time.LocalDateTime.now(),
-                    req.getUserId(),
-                    dto.getSessionId(),
-                    dto.getMaxBid(),
-                    dto.getIncrement()
-            );
+            AutoBidSetting setting = AutoBidMapper.toEntity(dto, req.getUserId());
             AutoBidManager.getInstance().registerAutoBid(setting);
             return new ResponsePacket<>(ActionType.REGISTER_AUTO_BID, 200, "Đã đăng ký trả giá tự động", null);
         });
