@@ -62,7 +62,7 @@ public class AuthService {
      */
     public AuthResponseDTO login(AuthRequestDTO request) {
         // 1. Kiểm tra thông tin người dùng từ DAO
-        User user = UserDAO.getInstance().findByUsername(request.getUsername());
+        User user = this.userDAO.findByUsername(request.getUsername());
 
         if (user == null || !checkPassword(request.getPassword(), user.getPasswordHash())) {
             throw new BusinessException("Tài khoản không tồn tại hoặc sai mật khẩu.");
