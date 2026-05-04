@@ -149,10 +149,9 @@ public class RouteRegistry {
         });
 
         registry.put(ActionType.DELETE_REGISTER_SESSION, req -> {
-            // TODO: BidderService chưa có hàm hủy đăng ký trước
-            // SessionRegisterRequestDTO dto = (SessionRegisterRequestDTO) req.getPayload();
-            // BidderService.getInstance().cancelSessionRegistration(dto.getSessionId(), req.getUserId());
-            return new ResponsePacket<>(ActionType.DELETE_REGISTER_SESSION, 200, "Chưa hỗ trợ tính năng hủy đăng ký", null);
+            SessionRegisterRequestDTO dto = (SessionRegisterRequestDTO) req.getPayload();
+            BidderService.getInstance().cancelSessionRegistration(dto, req.getUserId());
+            return new ResponsePacket<>(ActionType.DELETE_REGISTER_SESSION, 200, "Hủy đăng ký tham gia phiên thành công", null);
         });
 
         registry.put(ActionType.GET_REGISTERED_SESSIONS, req -> {
@@ -178,7 +177,7 @@ public class RouteRegistry {
                     ? null
                     : Category.valueOf(categoryStr.toUpperCase());
             Object result = ItemSearchService.getInstance().searchActiveAuctions(
-                    null, // SessionFilterRequestDTO không có keyword
+                    filter.getKeyword(),
                     category,
                     filter.getTimeSortOption()
             );
