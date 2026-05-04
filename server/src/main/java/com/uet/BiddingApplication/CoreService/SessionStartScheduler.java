@@ -11,6 +11,7 @@ import com.uet.BiddingApplication.Model.AuctionSession;
 import com.uet.BiddingApplication.Service.RealtimeBroadcastService;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.*;
@@ -73,14 +74,12 @@ public class SessionStartScheduler implements ISessionStartScheduler {
             InMemoryBidServiceImpl.getInstance().startSessionProcessor(sessionId);
 
             // 4. Bắn Realtime cho các Client đang ở ngoài sảnh hoặc đang chờ trong phòng biết
-            SessionTargetDTO sessionStartDTO = new SessionTargetDTO(
-                    sessionId,
-                    session.getStartTime(),
-                    session.getEndTime()
-
-            );
+            long endTime=session.getEndTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            SessionTargetDTO sessionTargetDTO = new SessionTargetDTO();
+            sessionTargetDTO.setSessionId(sessionId);
+            sessionTargetDTO.setRemainingMillis(endTime-System.currentTimeMillis());
             ResponsePacket<SessionTargetDTO> packet = new ResponsePacket<>(
-                    ActionType.REALTIME_SESSION_STARTED, 200, "Phiên đấu giá đã bắt đầu!",sessionStartDTO
+                    ActionType.REALTIME_SESSION_STARTED, 200, "Phiên đấu giá đã bắt đầu!",sessionTargetDTO
             );
             RealtimeBroadcastService.getInstance().broadcast(sessionId, packet);
 

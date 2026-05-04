@@ -4,13 +4,18 @@ import java.util.List;
 
 import com.uet.BiddingApplication.DAO.Impl.AuctionSessionDAO;
 import com.uet.BiddingApplication.DAO.Impl.BidDAO;
+import com.uet.BiddingApplication.DAO.Impl.ItemDAO;
 import com.uet.BiddingApplication.DAO.Impl.SessionRegistrationDAO;
 import com.uet.BiddingApplication.DTO.Request.SessionRegisterRequestDTO;
+import com.uet.BiddingApplication.DTO.Request.SessionTargetRequestDTO;
 import com.uet.BiddingApplication.DTO.Response.AuctionCardDTO;
+import com.uet.BiddingApplication.DTO.Response.AuctionRoomSyncDTO;
+import com.uet.BiddingApplication.DTO.Response.BidHistoryDTO;
 import com.uet.BiddingApplication.DTO.Response.BidderHistoryResponseDTO;
 import com.uet.BiddingApplication.Enum.SessionStatus;
 import com.uet.BiddingApplication.Exception.BusinessException;
 import com.uet.BiddingApplication.Model.AuctionSession;
+import com.uet.BiddingApplication.Model.Item;
 import com.uet.BiddingApplication.Model.SessionRegistration;
 import com.uet.BiddingApplication.Utils.Mapper.AuctionSessionMapper;
 
@@ -114,5 +119,93 @@ public class BidderService {
             // Lỗi này xảy ra khi Database từ chối (VD: lỗi khóa ngoại, đứt kết nối...)
             throw new BusinessException("Lỗi hệ thống: Không thể ghi nhận yêu cầu đăng ký của bạn lúc này.");
         }
+    }
+
+
+    /**
+     * Thoát khỏi phòng đấu giá (Leave Room), ngừng nhận sự kiện realtime.
+     *
+     * @param request DTO chứa ID của phiên đấu giá cần rời khỏi.
+     * @param bidderId ID của user.
+     */
+    public void leaveSession(SessionTargetRequestDTO request, String bidderId) {
+        // 1. Fail-fast: Kiểm tra tham số truyền vào
+        if (bidderId == null || bidderId.trim().isEmpty()) {
+            throw new BusinessException("Mã người dùng không hợp lệ.");
+        }
+        if (request == null || request.getSessionId() == null || request.getSessionId().trim().isEmpty()) {
+            throw new BusinessException("Mã phiên đấu giá (Session ID) không được để trống.");
+        }
+
+        // 2. Xóa user khỏi phòng phát thanh Realtime
+        String sessionId = request.getSessionId();
+        RealtimeBroadcastService.getInstance().unsubscribe(sessionId, bidderId);
+    }
+
+    /**
+     * Tham gia vào phòng đấu giá (Join Room) để nhận sự kiện realtime
+     * và đồng bộ dữ liệu giao diện ban đầu.
+     *
+     * @param request DTO chứa ID của phiên đấu giá.
+     * @param bidderId ID của user (từ token).
+     * @return DTO chứa thông tin đồng bộ toàn diện của phòng đấu giá.
+     */
+    public AuctionRoomSyncDTO joinSession(SessionTargetRequestDTO request, String bidderId) {
+        // 1. Fail-fast
+        if (bidderId == null || bidderId.trim().isEmpty()) {
+            throw new BusinessException("Mã người dùng không hợp lệ.");
+        }
+        if (request == null || request.getSessionId() == null || request.getSessionId().trim().isEmpty()) {
+            throw new BusinessException("Mã phiên đấu giá không được để trống.");
+        }
+
+        String sessionId = request.getSessionId();
+
+        // 2. Lấy thông tin Session từ DB
+        AuctionSession session = AuctionSessionDAO.getInstance().getSessionById(sessionId);
+        if (session == null) {
+            throw new BusinessException("Không tìm thấy phiên đấu giá này.");
+        }
+
+        // 3. Kiểm tra trạng thái
+        if (session.getStatus() == SessionStatus.FINISHED || session.getStatus() == SessionStatus.CANCELED) {
+            throw new BusinessException("Phiên đấu giá đã kết thúc hoặc bị hủy.");
+        }
+
+        // ==========================================
+        // 4. QUÁ TRÌNH GOM DỮ LIỆU (DATA AGGREGATION)
+        // ==========================================
+
+        // 4.1. Lấy Image URL thông qua itemId (Fix: getImageUrl -> getImageURL)
+        String imageURL = null;
+        String itemId = session.getItemId();
+        if (itemId != null) {
+            Item item = ItemDAO.getInstance().getItemById(itemId);
+            if (item != null) {
+                imageURL = item.getImageURL();
+            }
+        }
+
+        // 4.2. Lấy Lịch sử đấu giá (Fix: getHistoryBySessionId -> getRecentBids)
+        List<BidHistoryDTO> sessionHistory = BidDAO.getInstance().getRecentBids(sessionId);
+
+        // 4.3. Xác định người đang dẫn đầu (Fix warning: get(0) -> getFirst())
+        String highestBidderName = null;
+        if (sessionHistory != null && !sessionHistory.isEmpty()) {
+            highestBidderName = sessionHistory.getFirst().getBidderName();
+        }
+
+        // 5. Mở luồng Realtime
+        RealtimeBroadcastService.getInstance().subscribe(sessionId, bidderId);
+
+        // 6. Trả về đúng DTO mà Client mong đợi theo Registry (Fix: getSessionId -> getId)
+        return new AuctionRoomSyncDTO(
+                session.getId(),
+                imageURL,
+                session.getCurrentPrice(),
+                session.getEndTime(),
+                sessionHistory,
+                highestBidderName
+        );
     }
 }

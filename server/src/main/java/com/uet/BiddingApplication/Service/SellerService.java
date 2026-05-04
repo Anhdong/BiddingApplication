@@ -1,5 +1,6 @@
 package com.uet.BiddingApplication.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.uet.BiddingApplication.CoreService.SearchCacheManager;
@@ -143,5 +144,19 @@ public class SellerService {
         } else {
             throw new BusinessException("Lỗi hệ thống: Không thể xóa vật phẩm khỏi cơ sở dữ liệu.");
         }
+    }
+    /**
+     * Lấy danh sách các sản phẩm mà Seller đã đăng tải để hiển thị lên kho quản lý.
+     */
+    public List<Item> getItemsBySellerId(String sellerId) {
+        // Kiểm tra đầu vào (Fail-fast validation)
+        if (sellerId == null || sellerId.trim().isEmpty()) {
+            throw new BusinessException("Mã định danh người bán (Seller ID) không hợp lệ.");
+        }
+
+        // Gọi DAO để lấy danh sách Entity Item
+        List<Item> items = ItemDAO.getInstance().getItemsBySellerId(sellerId);
+
+        return items != null ? items : new ArrayList<>();
     }
 }
