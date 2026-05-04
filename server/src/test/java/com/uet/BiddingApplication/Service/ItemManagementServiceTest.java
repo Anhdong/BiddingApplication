@@ -89,7 +89,7 @@ public class ItemManagementServiceTest {
         LocalDateTime endTime = LocalDateTime.now().plusDays(2);
 
         ItemCreateDTO request = new ItemCreateDTO("Laptop", "Gaming", "ELECTRONICS",
-                new byte[]{1, 2, 3}, "png", new BigDecimal("1000"), startTime, endTime, "12 months");
+                new byte[]{1, 2, 3}, "png", new BigDecimal("1000"), startTime, endTime, "12");
 
         when(mockStorageService.uploadImage(any(byte[].class), anyString())).thenReturn("http://image.url");
         when(mockItemDAO.insertItem(any(Item.class))).thenReturn(true);

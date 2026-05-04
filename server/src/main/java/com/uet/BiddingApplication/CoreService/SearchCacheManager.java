@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SearchCacheManager implements ISearchCacheManager{
 
-    private static final SearchCacheManager INSTANCE = new SearchCacheManager();
+    private static SearchCacheManager instance;
 
     private final ConcurrentHashMap<String, AuctionSession> activeSessionsCache;
     private final ConcurrentHashMap<String, Item> itemCache;
@@ -27,7 +27,14 @@ public class SearchCacheManager implements ISearchCacheManager{
     }
 
     public static SearchCacheManager getInstance() {
-        return INSTANCE;
+        if (instance == null) {
+            synchronized (SearchCacheManager.class) {
+                if (instance == null) {
+                    instance = new SearchCacheManager();
+                }
+            }
+        }
+        return instance;
     }
 
     // =========================================================================
