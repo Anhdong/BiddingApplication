@@ -18,7 +18,7 @@ import java.util.concurrent.*;
 
 public class SessionStartScheduler implements ISessionStartScheduler {
 
-    private static final SessionStartScheduler INSTANCE = new SessionStartScheduler();
+    private static SessionStartScheduler instance;
 
     // 1 luồng là quá đủ vì chỉ làm nhiệm vụ "Bóp cò" (Trigger)
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -29,7 +29,14 @@ public class SessionStartScheduler implements ISessionStartScheduler {
     private SessionStartScheduler() {}
 
     public static SessionStartScheduler getInstance() {
-        return INSTANCE;
+        if (instance == null) {
+            synchronized (SessionStartScheduler.class) {
+                if (instance == null) {
+                    instance=new SessionStartScheduler();
+                }
+            }
+        }
+        return instance;
     }
 
     /**

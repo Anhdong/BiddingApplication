@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="40.0" styleClass="bg-neutral-subtle">
+         <children>
+            <VBox maxWidth="480.0" prefWidth="480.0" spacing="15.0">
+               <children>
+                  <StackPane prefHeight="480.0" prefWidth="480.0">
+                     <children>
+                        <ImageView fitHeight="480.0" fitWidth="480.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../assets/add-item.png" />
+                           </image>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </ImageView>
+                     </children>
+                     <styleClass>
+                        <String fx:value="rounded" />
+                        <String fx:value="bg-default" />
+                     </styleClass>
+                  </StackPane>
+                  <TextField maxWidth="1.7976931348623157E308" promptText="Product Name">
+                     <styleClass>
+                        <String fx:value="rounded" />
+                        <String fx:value="title-1" />
+                     </styleClass>
+                  </TextField>
+                  <TextArea prefWidth="480.0" promptText="Description" />
+               </children>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </VBox>
+            <VBox prefWidth="400.0" spacing="20.0">
+               <children>
+                  <VBox prefWidth="400.0" spacing="15.0">
+                     <children>
+                        <Label text="Start Price">
+                           <styleClass>
+                              <String fx:value="text-muted" />
+                              <String fx:value="title-4" />
+                           </styleClass>
+                        </Label>
+                        <TextField promptText="\$0">
+                           <styleClass>
+                              <String fx:value="rounded" />
+                              <String fx:value="title-3" />
+                           </styleClass>
+                        </TextField>
+                        <Label text="Minimum Bid Increment">
+                           <styleClass>
+                              <String fx:value="text-muted" />
+                              <String fx:value="title-4" />
+                           </styleClass>
+                        </Label>
+                        <TextField promptText="\$0">
+                           <styleClass>
+                              <String fx:value="rounded" />
+                              <String fx:value="title-3" />
+                           </styleClass>
+                        </TextField>
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="25.0" right="25.0" top="10.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <styleClass>
+                        <String fx:value="rounded" />
+                        <String fx:value="bg-default" />
+                     </styleClass>
+                  </VBox>
+                  <VBox prefWidth="400.0" spacing="8.0">
+                     <children>
+                        <Label prefHeight="4.0" prefWidth="101.0" text="Category">
+                           <styleClass>
+                              <String fx:value="text-muted" />
+                              <String fx:value="title-4" />
+                           </styleClass>
+                        </Label>
+                        <ChoiceBox maxWidth="1.7976931348623157E308" styleClass="rounded" />
+                     </children>
+                     <styleClass>
+                        <String fx:value="rounded" />
+                        <String fx:value="bg-default" />
+                     </styleClass>
+                     <padding>
+                        <Insets bottom="15.0" left="25.0" right="25.0" top="10.0" />
+                     </padding>
+                  </VBox>
+                  <VBox prefWidth="400.0" spacing="10.0">
+                     <padding>
+                        <Insets bottom="25.0" left="25.0" right="25.0" top="20.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <styleClass>
+                        <String fx:value="rounded" />
+                        <String fx:value="bg-default" />
+                     </styleClass>
+                     <children>
+                        <Label text="Date">
+                           <styleClass>
+                              <String fx:value="text-muted" />
+                              <String fx:value="title-4" />
+                           </styleClass>
+                        </Label>
+                        <DatePicker maxWidth="1.7976931348623157E308" />
+                        <Label layoutX="35.0" layoutY="30.0" text="Start Time">
+                           <styleClass>
+                              <String fx:value="text-muted" />
+                              <String fx:value="title-4" />
+                           </styleClass>
+                        </Label>
+                        <HBox prefHeight="60.0" prefWidth="350.0" spacing="32.0">
+                           <children>
+                              <Spinner editable="true" prefHeight="60.0" prefWidth="138.0" styleClass="title-2" />
+                              <Label prefHeight="60.0" styleClass="title-2" text=":" textAlignment="CENTER" />
+                              <Spinner editable="true" layoutX="10.0" layoutY="10.0" prefHeight="60.0" prefWidth="138.0" styleClass="title-2" />
+                           </children>
+                        </HBox>
+                        <Label layoutX="35.0" layoutY="105.0" text="End Time">
+                           <styleClass>
+                              <String fx:value="text-muted" />
+                              <String fx:value="title-4" />
+                           </styleClass>
+                        </Label>
+                        <HBox layoutX="35.0" layoutY="174.0" prefHeight="60.0" prefWidth="350.0" spacing="32.0">
+                           <children>
+                              <Spinner editable="true" prefHeight="60.0" prefWidth="138.0" styleClass="title-2" />
+                              <Label prefHeight="60.0" styleClass="title-2" text=":" textAlignment="CENTER" />
+                              <Spinner editable="true" layoutX="10.0" layoutY="10.0" prefHeight="60.0" prefWidth="138.0" styleClass="title-2" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="50.0" text="Add">
+                     <styleClass>
+                        <String fx:value="title-1" />
+                        <String fx:value="accent" />
+                        <String fx:value="rounded" />
+                        <String fx:value="interactive-card" />
+                     </styleClass>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+               </children>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+         </padding>
+      </HBox>
+   </children>
+</StackPane>

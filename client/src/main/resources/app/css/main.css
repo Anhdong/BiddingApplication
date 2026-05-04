@@ -1,0 +1,35 @@
+.auth-background {
+    /* Đường dẫn đến hình ảnh của bạn */
+    -fx-background-image: url("/app/assets/background.jpg");
+    /* Căn giữa hình ảnh */
+    -fx-background-position: center center;
+    /* Không lặp lại hình ảnh */
+    -fx-background-repeat: no-repeat;
+    /* QUAN TRỌNG: Hiệu ứng Cover (Tự phóng to và crop để lấp đầy) */
+    -fx-background-size: cover;
+}
+
+/*Overwrite .rounded*/
+.rounded {
+    -fx-background-radius: 20;               /* Bo góc cho nền */
+    -fx-border-radius: 20;                   /* Bo góc cho đường viền */
+}
+
+.elevated {
+    /* drop-shadow(loại-bóng, màu-bóng, độ-nhòe, độ-lan, offset-x, offset-y) */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 20, 0, 0, 5);
+}
+
+/*interactive hover effect*/
+.interactive-card:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 15, 0, 0, 5);
+    -fx-translate-y: -0.5; /* Nhấc nhẹ card lên một chút */
+}
+
+/*Rewrite Atlantafx flat class*/
+.flat {
+    -fx-background-radius: 6px; /* Clean, slightly rounded corners */
+    -fx-border-radius: 6px;
+    -fx-effect: none; /* Removes any default JavaFX drop shadows */
+    -fx-background-insets: 0; /* Removes default 3D borders */
+}

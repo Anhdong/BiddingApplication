@@ -1,0 +1,45 @@
+/*import fonts*/
+@font-face {
+    font-family: "Google Sans";
+    src: url("/app/fonts/GoogleSans-Regular.ttf");
+    -fx-font-weight: normal;
+}
+
+@font-face {
+    font-family: "Google Sans";
+    src: url("/app/fonts/GoogleSans-Bold.ttf");
+    -fx-font-weight: bold;
+}
+
+@font-face {
+    font-family: "Domine";
+    src: url("/app/fonts/Domine-Regular.ttf");
+    -fx-font-weight: normal;
+}
+
+@font-face {
+    font-family: "Domine";
+    src: url("/app/fonts/Domine-Bold.ttf");
+    -fx-font-weight: bold;
+}
+
+/*Apply GSans to whole system*/
+.root {
+    -fx-font-family: "Google Sans";
+}
+
+/*Special font for header*/
+.main-title {
+    -fx-font-family:"Domine";
+    -fx-font-size: 50;
+
+}
+
+/* Overwrite AtlantaFx title class with GSans bold to fix font bold */
+.title-1,
+.title-2,
+.title-3,
+.title-4 {
+    -fx-font-family: "Google Sans";
+    -fx-font-weight: bold;
+}

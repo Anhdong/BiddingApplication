@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="800.0" prefWidth="1280.0" styleClass="auth-background" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.uet.BiddingApplication.Controller.AuthController.LoginController">
+   <children>
+      <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="400.0" spacing="4.0">
+         <children>
+            <Label text="SIGN IN">
+               <styleClass>
+                  <String fx:value="main-title" />
+                  <String fx:value="text-bold" />
+               </styleClass></Label>
+            <Region prefHeight="40.0" prefWidth="200.0" />
+            <TextField maxWidth="200.0" promptText="Username">
+               <VBox.margin>
+                  <Insets bottom="8.0" />
+               </VBox.margin>
+            </TextField>
+            <PasswordField maxWidth="200.0" promptText="Password">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="8.0" />
+               </VBox.margin>
+            </PasswordField>
+            <Button defaultButton="true" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" prefWidth="200.0" styleClass="title-3" text="Get started">
+               <VBox.margin>
+                  <Insets top="16.0" />
+               </VBox.margin>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Label onMouseClicked="#SwitchToRegister" styleClass="text-subtle" text="Don't have an account yet? Register here">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></Label>
+         </children>
+         <styleClass>
+            <String fx:value="rounded" />
+            <String fx:value="bg-default" />
+            <String fx:value="elevated" />
+         </styleClass>
+      </VBox>
+   </children>
+</StackPane>
