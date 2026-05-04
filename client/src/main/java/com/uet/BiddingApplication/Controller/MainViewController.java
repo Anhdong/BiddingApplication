@@ -43,7 +43,7 @@ public class MainViewController implements Initializable {
         // Gán instance bằng chính object này khi giao diện load xong
         instance = this;
 
-        setupUserInterface(RoleType.SELLER);
+        setupUserInterface(RoleType.BIDDER);
         loadView(ViewPath.BIDDER_AUCTION);
     }
 
