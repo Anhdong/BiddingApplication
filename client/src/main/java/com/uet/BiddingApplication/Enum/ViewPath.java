@@ -9,8 +9,8 @@ public enum ViewPath {
     MAIN("/app/fxml/MainView.fxml", false),
 
     // SIDEBAR (Các thành phần này thường load 1 lần gắn cứng vào mép màn hình, không qua hệ thống chuyển tab)
-    BIDDER_SIDEBAR("/app/fxml/SidebarView/BidderSidebar.fxml", false),
-    SELLER_SIDEBAR("/app/fxml/SidebarView/SellerSidebar.fxml", false),
+    BIDDER_SIDEBAR("/app/fxml/SidebarView/BidderSidebarView.fxml", false),
+    SELLER_SIDEBAR("/app/fxml/SidebarView/SellerSidebarView.fxml", false),
     ADMIN_SIDEBAR("/app/fxml/SidebarView/AdminSidebar.fxml", false),
 
     // BIDDER
