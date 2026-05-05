@@ -34,16 +34,33 @@ public class ServerConnection {
         return instance;
     }
 
+    // -------------------------------------------------------------------------
+    // THÊM MỚI: Tự động lấy host+port từ GitHub Gist rồi kết nối
+    // Gọi method này thay cho connect(host, port) khi dùng Ngrok
+    // -------------------------------------------------------------------------
+    public void connectFromRemoteConfig() {
+        try {
+            System.out.println("[ServerConnection] Đang tải cấu hình từ Gist...");
+            RemoteConfigFetcher.ServerAddress addr = RemoteConfigFetcher.fetch();
+            System.out.println("[ServerConnection] Cấu hình nhận được: " + addr);
+            connect(addr.host, addr.port);
+        } catch (Exception e) {
+            System.err.println("[ServerConnection] Không thể tải cấu hình: " + e.getMessage());
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Giữ nguyên — giờ được gọi bởi cả connectFromRemoteConfig() lẫn code cũ
+    // -------------------------------------------------------------------------
     public void connect(String host, int port) {
         try {
             this.socket = new Socket(host, port);
             this.out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true);
             this.in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
 
-            // Khởi tạo và chạy Luồng Lắng Nghe độc lập
             this.listenerThread = new ResponseListenerThread(in);
             this.threadHandle = new Thread(listenerThread);
-            this.threadHandle.setDaemon(true); // Tự động chết khi app đóng
+            this.threadHandle.setDaemon(true);
             this.threadHandle.start();
 
             System.out.println("Đã kết nối Server thành công và bật luồng lắng nghe!");
@@ -54,32 +71,22 @@ public class ServerConnection {
 
     public void disconnect() {
         try {
-            // 1. Ra lệnh cho luồng nghe dừng lại
-            if (listenerThread != null) {
-                listenerThread.stopListening();
-            }
-            // 2. Ép luồng dừng hẳn (nếu đang bị block ở readLine)
-            if (threadHandle != null) {
-                threadHandle.interrupt();
-            }
-            // 3. Đóng ống nước và Socket
+            if (listenerThread != null) listenerThread.stopListening();
+            if (threadHandle != null) threadHandle.interrupt();
             if (in != null) in.close();
             if (out != null) out.close();
             if (socket != null && !socket.isClosed()) socket.close();
-
             System.out.println("Đã ngắt kết nối an toàn.");
         } catch (Exception e) {
             System.err.println("Lỗi khi ngắt kết nối: " + e.getMessage());
         }
     }
 
-    // Hàm thay thế cho out.print() rải rác ở khắp nơi
     public void sendRequest(RequestPacket<?> request) {
         if (out != null) {
             try {
                 String jsonStr = GsonPacketParser.serialize(request);
                 out.println(jsonStr);
-                // System.out.println("[Client -> Server] Đã gửi: " + jsonStr);
             } catch (Exception e) {
                 System.err.println("Lỗi đóng gói dữ liệu: " + e.getMessage());
             }
