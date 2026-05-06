@@ -13,6 +13,10 @@ public enum ViewPath {
     SELLER_SIDEBAR("/app/fxml/SidebarView/SellerSidebarView.fxml", false),
     ADMIN_SIDEBAR("/app/fxml/SidebarView/AdminSidebar.fxml", false),
 
+    //COMMON
+    ITEM_CARD("/app/fxml/CommonView/ItemCardView.fxml",false),
+    ITEM_DETAIL("/app/fxml/CommonView/ItemDetailView.fxml",false),
+
     // BIDDER
     BIDDER_BROWSE("/app/fxml/BidderView/BidderBrowseView.fxml", false),   // CACHE: Cần mượt mà, giữ trạng thái Socket ngầm
     //ADD later
@@ -23,7 +27,7 @@ public enum ViewPath {
     // SELLER
     //SELLER_ITEMS
     SELLER_ITEMS("",true),
-    SELLER_ADD_ITEM("/app/fxml/SellerView/SellerAddItemView.fxml", true)  // CACHE: Để người dùng gõ dở thông tin lỡ ấn sang tab khác không bị mất form
+    SELLER_ITEM_FORM("/app/fxml/SellerView/SellerItemFormView.fxml", true)  // CACHE: Để người dùng gõ dở thông tin lỡ ấn sang tab khác không bị mất form
 
     // ADMIN
     ;
