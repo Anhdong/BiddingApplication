@@ -14,16 +14,16 @@ public enum ViewPath {
     ADMIN_SIDEBAR("/app/fxml/SidebarView/AdminSidebar.fxml", false),
 
     // BIDDER
-    BIDDER_BROWSE("/app/fxml/BidderView/BrowseView.fxml", false),   // CACHE: Cần mượt mà, giữ trạng thái Socket ngầm
+    BIDDER_BROWSE("/app/fxml/BidderView/BidderBrowseView.fxml", false),   // CACHE: Cần mượt mà, giữ trạng thái Socket ngầm
     //ADD later
     BIDDER_WATCHLIST("",true),
-    BIDDER_HISTORY("/app/fxml/BidderView/HistoryView.fxml", false),  // CACHE: Danh sách tĩnh, ít khi thay đổi
-    BIDDER_AUCTION("/app/fxml/BidderView/AuctionView.fxml", false), // KHÔNG CACHE: Phải load mới 100% mỗi khi vào 1 phòng đấu giá khác nhau
+    BIDDER_HISTORY("/app/fxml/BidderView/BidderHistoryView.fxml", false),  // CACHE: Danh sách tĩnh, ít khi thay đổi
+    BIDDER_AUCTION("/app/fxml/BidderView/BidderAuctionView.fxml", false), // KHÔNG CACHE: Phải load mới 100% mỗi khi vào 1 phòng đấu giá khác nhau
 
     // SELLER
     //SELLER_ITEMS
     SELLER_ITEMS("",true),
-    SELLER_ADD_ITEM("/app/fxml/SellerView/AddItemView.fxml", true)  // CACHE: Để người dùng gõ dở thông tin lỡ ấn sang tab khác không bị mất form
+    SELLER_ADD_ITEM("/app/fxml/SellerView/SellerAddItemView.fxml", true)  // CACHE: Để người dùng gõ dở thông tin lỡ ấn sang tab khác không bị mất form
 
     // ADMIN
     ;
