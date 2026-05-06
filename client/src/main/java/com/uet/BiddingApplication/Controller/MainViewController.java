@@ -42,25 +42,23 @@ public class MainViewController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // Gán instance bằng chính object này khi giao diện load xong
         instance = this;
-
         setupUserInterface(RoleType.BIDDER);
-        loadView(ViewPath.BIDDER_AUCTION);
     }
 
     public void setupUserInterface(RoleType role) {
-        //Check role
-        ViewPath sidebarPath = switch (role) {
-            case RoleType.BIDDER -> ViewPath.BIDDER_SIDEBAR;
-            case RoleType.SELLER -> ViewPath.SELLER_SIDEBAR;
-            case RoleType.ADMIN  -> ViewPath.ADMIN_SIDEBAR;
-        };
-
         try { //set Sidebar
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(sidebarPath.getPath()));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(ViewPath.getSidebarView(role).getPath()));
             Parent sidebar = loader.load();
             SidebarSlot.getChildren().setAll(sidebar);
         } catch (Exception e) {
             System.err.println("[MainViewController] Thiết lập Sidebar không thành công: " + e.getMessage());
+        }
+        try { //set defaultView
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(ViewPath.getDefaultView(role).getPath()));
+            Parent defaultView = loader.load();
+            ContentSlot.getChildren().setAll(defaultView);
+        } catch (Exception e) {
+            System.err.println("[MainViewController] Thiết lập default View không thành công: " + e.getMessage());
         }
     }
 

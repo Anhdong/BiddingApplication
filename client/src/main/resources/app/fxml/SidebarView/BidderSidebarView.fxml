@@ -33,7 +33,7 @@
             <Insets bottom="10.0" />
          </VBox.margin>
       </Separator>
-      <ToggleButton maxHeight="80.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="80.0" text="Browse">
+      <ToggleButton fx:id="btnBrowse" maxHeight="80.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleBrowse" prefHeight="80.0" selected="true" text="Browse">
          <styleClass>
             <String fx:value="flat" />
             <String fx:value="title-3" />
@@ -45,7 +45,7 @@
             <ToggleGroup fx:id="sidebarGroup" />
          </toggleGroup>
       </ToggleButton>
-      <ToggleButton maxHeight="80.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="80.0" text="Watchlist" toggleGroup="$sidebarGroup">
+      <ToggleButton fx:id="btnWatchlist" maxHeight="80.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleWatchlist" prefHeight="80.0" text="Watchlist" toggleGroup="$sidebarGroup">
          <styleClass>
             <String fx:value="flat" />
             <String fx:value="title-3" />
@@ -54,7 +54,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </ToggleButton>
-      <ToggleButton maxHeight="80.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="80.0" text="History" toggleGroup="$sidebarGroup">
+      <ToggleButton fx:id="btnHistory" maxHeight="80.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleHistory" prefHeight="80.0" text="History" toggleGroup="$sidebarGroup">
          <styleClass>
             <String fx:value="flat" />
             <String fx:value="title-3" />
