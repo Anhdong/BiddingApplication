@@ -1,0 +1,24 @@
+.root {
+    /* --- 1. BẢNG MÀU CHỦ ĐẠO (ACCENT) --- */
+    -color-accent-emphasis: #7c4dff; /* Tím chính (Vibrant Purple) */
+    -color-accent-fg:       #ffffff; /* Chữ trắng trên nền tím */
+    -color-accent-muted:    rgba(124, 77, 255, 0.7); /* Tím khi Hover */
+    -color-accent-subtle:   rgba(124, 77, 255, 0.15); /* Tím nhạt cho Selection */
+
+    /* --- 2. ĐÈ MÀU TRẠNG THÁI NÚT (FIX LỖI NHẤN RA MÀU XANH) --- */
+    -color-btn-bg-hover:    #9575cd; /* Tím nhạt hơn khi di chuột */
+    -color-btn-bg-pressed:  #5e35b1; /* Tím đậm hơn khi nhấn vào */
+    -color-btn-border-focused: -color-accent-emphasis;
+
+    /* --- 3. ĐỒNG BỘ CÁC THÀNH PHẦN KHÁC (CHECKBOX, RADIO, FOCUS) --- */
+    -fx-accent:             -color-accent-emphasis;
+    -color-fg-accent:       -color-accent-emphasis;
+
+    /* --- 4. TÙY CHỈNH NỀN DARK (CHO ĐÚNG CHẤT CUPERTINO) --- */
+    -color-bg-default:      #1c1c1e; /* Màu nền đen xám của iOS */
+}
+
+/* Ép tất cả các nút có class .accent hoặc .button phải dùng màu này khi nhấn */
+.button:focused, .button:armed {
+    -fx-background-color: -color-btn-bg-pressed;
+}

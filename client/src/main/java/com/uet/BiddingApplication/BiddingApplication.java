@@ -25,13 +25,14 @@ public class BiddingApplication extends Application {
         Application.setUserAgentStylesheet(new CupertinoDark().getUserAgentStylesheet());
 
         //Load FXML & create root
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(ViewPath.ITEM_CARD.getPath()));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(ViewPath.LOGIN.getPath()));
         Parent root = loader.load();
 
         // Create scene
         Scene scene = new Scene(root);
 
         //Add custome CSS
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/app/css/brand.css")).toExternalForm());
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/app/css/main.css")).toExternalForm());
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/app/css/font.css")).toExternalForm());
 
