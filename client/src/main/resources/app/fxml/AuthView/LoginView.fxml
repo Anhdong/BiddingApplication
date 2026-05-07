@@ -22,12 +22,12 @@
                   <String fx:value="text-bold" />
                </styleClass></Label>
             <Region prefHeight="40.0" prefWidth="200.0" />
-            <TextField maxWidth="200.0" promptText="Username">
+            <TextField fx:id="txtUsername" maxWidth="200.0" promptText="Username">
                <VBox.margin>
                   <Insets bottom="8.0" />
                </VBox.margin>
             </TextField>
-            <PasswordField maxWidth="200.0" promptText="Password">
+            <PasswordField fx:id="txtPassword" maxWidth="200.0" promptText="Password">
                <font>
                   <Font name="System Bold" size="13.0" />
                </font>
@@ -35,7 +35,7 @@
                   <Insets bottom="8.0" />
                </VBox.margin>
             </PasswordField>
-            <Button defaultButton="true" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" prefWidth="200.0" styleClass="title-3" text="Get started">
+            <Button defaultButton="true" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#handleLogin" prefWidth="200.0" styleClass="title-3" text="Get started">
                <VBox.margin>
                   <Insets top="16.0" />
                </VBox.margin>
@@ -43,7 +43,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Label onMouseClicked="#SwitchToRegister" styleClass="text-subtle" text="Don't have an account yet? Register here">
+            <Label onMouseClicked="#switchToRegister" styleClass="accent" text="Don't have an account yet? Register here">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></Label>

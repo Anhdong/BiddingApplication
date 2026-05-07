@@ -24,48 +24,48 @@
                   <String fx:value="text-bold" />
                </styleClass></Label>
             <Region prefHeight="20.0" prefWidth="200.0" />
-            <TextField layoutX="110.0" layoutY="389.0" maxHeight="-Infinity" maxWidth="200.0" promptText="Username">
+            <TextField fx:id="txtUsername" layoutX="110.0" layoutY="389.0" maxHeight="-Infinity" maxWidth="200.0" promptText="Username">
                <VBox.margin>
                   <Insets bottom="8.0" />
                </VBox.margin>
             </TextField>
-            <TextField maxHeight="-Infinity" maxWidth="200.0" promptText="Email">
+            <TextField fx:id="txtEmail" maxHeight="-Infinity" maxWidth="200.0" promptText="Email">
                <VBox.margin>
                   <Insets bottom="8.0" />
                </VBox.margin>
             </TextField>
-            <TextField layoutX="110.0" layoutY="266.0" maxHeight="-Infinity" maxWidth="200.0" promptText="Telephone">
+            <TextField fx:id="txtPhoneNumber" layoutX="110.0" layoutY="266.0" maxHeight="-Infinity" maxWidth="200.0" promptText="Phone Number">
                <VBox.margin>
                   <Insets bottom="8.0" />
                </VBox.margin>
             </TextField>
-            <PasswordField maxWidth="200.0" promptText="Password">
+            <PasswordField fx:id="txtPassword" maxWidth="200.0" promptText="Password">
                <VBox.margin>
                   <Insets bottom="8.0" />
                </VBox.margin>
             </PasswordField>
             <HBox alignment="CENTER">
                <children>
-                  <RadioButton mnemonicParsing="false" text="Bidder">
+                  <RadioButton fx:id="rbBidder" mnemonicParsing="false" text="Bidder">
                      <toggleGroup>
-                        <ToggleGroup fx:id="RoleSelection" />
+                        <ToggleGroup fx:id="roleGroup" />
                      </toggleGroup>
                   </RadioButton>
                   <Region HBox.hgrow="ALWAYS" />
-                  <RadioButton mnemonicParsing="false" text="Seller" toggleGroup="$RoleSelection" />
+                  <RadioButton fx:id="rbSeller" mnemonicParsing="false" text="Seller" toggleGroup="$roleGroup" />
                </children>
                <VBox.margin>
                   <Insets left="125.0" right="125.0" />
                </VBox.margin>
             </HBox>
-            <Button defaultButton="true" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" prefWidth="200.0" styleClass="title-3" text="Get started">
+            <Button defaultButton="true" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#handleRegister" prefWidth="200.0" styleClass="title-3" text="Get started">
                <VBox.margin>
                   <Insets top="16.0" />
                </VBox.margin>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></Button>
-            <Label onMouseClicked="#SwitchToLogin" styleClass="text-subtle" text="Already have an account? Login here">
+            <Label onMouseClicked="#switchToLogin" styleClass="accent" text="Already have an account? Login here">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></Label>
