@@ -10,6 +10,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="200.0" prefHeight="800.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.uet.BiddingApplication.Controller.SidebarController.BidderSidebarController">
    <children>
@@ -34,16 +35,19 @@
          </VBox.margin>
       </Separator>
       <ToggleButton fx:id="btnBrowse" maxHeight="80.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleBrowse" prefHeight="80.0" selected="true" text="Browse">
-         <styleClass>
-            <String fx:value="flat" />
-            <String fx:value="title-3" />
-         </styleClass>
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
          <toggleGroup>
             <ToggleGroup fx:id="sidebarGroup" />
          </toggleGroup>
+         <graphic>
+            <FontIcon iconLiteral="mdi2e-earth" styleClass="medium-icon" text="󰇧" />
+         </graphic>
+         <styleClass>
+            <String fx:value="flat" />
+            <String fx:value="title-3" />
+         </styleClass>
       </ToggleButton>
       <ToggleButton fx:id="btnWatchlist" maxHeight="80.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleWatchlist" prefHeight="80.0" text="Watchlist" toggleGroup="$sidebarGroup">
          <styleClass>
@@ -53,6 +57,9 @@
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
+         <graphic>
+            <FontIcon iconLiteral="mdi2c-cart" styleClass="medium-icon" />
+         </graphic>
       </ToggleButton>
       <ToggleButton fx:id="btnHistory" maxHeight="80.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleHistory" prefHeight="80.0" text="History" toggleGroup="$sidebarGroup">
          <styleClass>
@@ -62,6 +69,9 @@
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
+         <graphic>
+            <FontIcon iconLiteral="mdi2h-history" styleClass="medium-icon" />
+         </graphic>
       </ToggleButton>
    </children>
 </VBox>

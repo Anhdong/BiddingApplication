@@ -4,9 +4,9 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.StackPane?>
 
-<StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1080.0" styleClass="bg-neutral-subtle" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <TableView prefHeight="800.0" prefWidth="1080.0" styleClass="bg-default">
+      <TableView prefHeight="800.0" prefWidth="1080.0">
         <columns>
           <TableColumn editable="false" prefWidth="188.0" text="Name" />
             <TableColumn editable="false" prefWidth="255.0" text="My Highest Bid" />

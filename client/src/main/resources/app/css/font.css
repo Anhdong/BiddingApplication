@@ -43,3 +43,12 @@
     -fx-font-family: "Google Sans";
     -fx-font-weight: bold;
 }
+.small-icon{
+    -fx-icon-size: 16px;
+}
+.medium-icon{
+    -fx-icon-size: 24px;
+}
+.large-icon{
+    -fx-icon-size: 32px;
+}
