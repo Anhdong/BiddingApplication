@@ -6,6 +6,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.util.Objects;
@@ -24,7 +25,7 @@ public class BiddingApplication extends Application {
         Application.setUserAgentStylesheet(new CupertinoDark().getUserAgentStylesheet());
 
         //Load FXML & create root
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(ViewPath.MAIN.getPath()));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(ViewPath.LOGIN.getPath()));
         Parent root = loader.load();
 
         // Create scene
@@ -37,6 +38,8 @@ public class BiddingApplication extends Application {
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/app/css/font.css")).toExternalForm());
 
         // Create stage
+        Image appIcon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/app/assets/logo.png")));
+        stage.getIcons().add(appIcon);
         stage.setTitle("Bidding Application");
         stage.setScene(scene);
 
