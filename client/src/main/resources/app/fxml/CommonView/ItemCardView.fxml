@@ -11,15 +11,15 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="280.0" prefWidth="210.0" spacing="5.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:id="vbxCard" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="280.0" prefWidth="210.0" spacing="5.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <ImageView fx:id="imgItem" fitHeight="140.0" fitWidth="140.0" nodeOrientation="INHERIT" pickOnBounds="true" styleClass="elevated-4">
          <image>
             <Image url="@../../assets/default-items.png" />
          </image>
       </ImageView>
-      <Label maxWidth="1.7976931348623157E308" styleClass="title-3" text="Name" />
-      <Label maxWidth="1.7976931348623157E308" text="hh:mm - dd/mm/yyyy">
+      <Label fx:id="lblName" maxWidth="1.7976931348623157E308" styleClass="title-3" text="Name" />
+      <Label fx:id="lblDate" maxWidth="1.7976931348623157E308" text="hh:mm - dd/mm/yyyy">
          <styleClass>
             <String fx:value="text-muted" />
             <String fx:value="text-caption" />
@@ -27,14 +27,14 @@
       </Label>
       <HBox alignment="CENTER" maxWidth="1.7976931348623157E308">
          <children>
-            <Label maxWidth="1.7976931348623157E308" text="\$0" HBox.hgrow="NEVER">
+            <Label fx:id="lblPrice" maxWidth="1.7976931348623157E308" text="\$0" HBox.hgrow="NEVER">
                <styleClass>
                   <String fx:value="success" />
                   <String fx:value="title-4" />
                </styleClass>
             </Label>
             <Region maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-            <Button alignment="CENTER" mnemonicParsing="false" text="Btn">
+            <Button fx:id="btnAction" alignment="CENTER" mnemonicParsing="false" text="Btn">
                <styleClass>
                   <String fx:value="accent" />
                   <String fx:value="bold" />
