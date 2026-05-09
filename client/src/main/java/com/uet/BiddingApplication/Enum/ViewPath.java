@@ -18,10 +18,10 @@ public enum ViewPath {
     ITEM_DETAIL("/app/fxml/CommonView/ItemDetailView.fxml",false),
 
     // BIDDER
-    BIDDER_BROWSE("/app/fxml/BidderView/BidderBrowseView.fxml", false),   // CACHE: Cần mượt mà, giữ trạng thái Socket ngầm
+    BIDDER_BROWSE("/app/fxml/BidderView/BidderBrowseView.fxml", true),   // CACHE: Cần mượt mà, giữ trạng thái Socket ngầm
     //ADD later
     BIDDER_WATCHLIST("",true),
-    BIDDER_HISTORY("/app/fxml/BidderView/BidderHistoryView.fxml", false),  // CACHE: Danh sách tĩnh, ít khi thay đổi
+    BIDDER_HISTORY("/app/fxml/BidderView/BidderHistoryView.fxml", true),  // CACHE: Danh sách tĩnh, ít khi thay đổi
     BIDDER_AUCTION("/app/fxml/BidderView/BidderAuctionView.fxml", false), // KHÔNG CACHE: Phải load mới 100% mỗi khi vào 1 phòng đấu giá khác nhau
 
     // SELLER

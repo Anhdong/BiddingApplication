@@ -4,7 +4,7 @@ import javafx.scene.control.Alert;
 
 public class AlertUtil {
     public static void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.ERROR); // Thay đổi Type tùy ý
+        Alert alert = new Alert(Alert.AlertType.NONE); // Thay đổi Type tùy ý
         alert.setTitle(title);
         alert.setHeaderText(null); // Để null nếu không muốn có dòng tiêu đề phụ
         alert.setContentText(content);
