@@ -6,14 +6,14 @@
 
 <StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1080.0" styleClass="bg-neutral-subtle" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <TableView prefHeight="800.0" prefWidth="1080.0">
+      <TableView prefHeight="800.0" prefWidth="1080.0" styleClass="bg-default">
         <columns>
-          <TableColumn editable="false" prefWidth="180.0" style="-fx-alignment: CENTER;" styleClass="text-bold" text="Name" />
-          <TableColumn editable="false" prefWidth="115.0" styleClass="text-bold" text="Winner" />
-            <TableColumn editable="false" prefWidth="215.0" styleClass="text-bold" text="Final Price" />
-            <TableColumn editable="false" prefWidth="215.0" styleClass="text-bold" text="My Highest Bid" />
-            <TableColumn editable="false" prefWidth="100.0" styleClass="text-bold" text="Status" />
-            <TableColumn editable="false" minWidth="0.0" prefWidth="200.0" styleClass="text-bold" text="Time/Date" />
+          <TableColumn editable="false" prefWidth="180.0" text="Name" />
+          <TableColumn editable="false" prefWidth="115.0" text="Winner" />
+            <TableColumn editable="false" prefWidth="215.0" text="Final Price" />
+            <TableColumn editable="false" prefWidth="215.0" text="My Highest Bid" />
+            <TableColumn editable="false" prefWidth="100.0" text="Status" />
+            <TableColumn editable="false" minWidth="0.0" prefWidth="200.0" text="Time/Date" />
         </columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

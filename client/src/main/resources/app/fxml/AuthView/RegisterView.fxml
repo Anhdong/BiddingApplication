@@ -65,7 +65,7 @@
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></Button>
-            <Label onMouseClicked="#switchToLogin" styleClass="accent" text="Already have an account? Login here">
+            <Label onMouseClicked="#switchToLogin" text="Already have an account? Login here">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></Label>

@@ -1,0 +1,22 @@
+/* Định dạng chung cho tiêu đề bảng (Header) */
+.table-view .column-header {
+    -fx-background-color: -color-bg-subtle; /* Màu Gluon Grey */
+    -fx-border-color: -color-border-default;
+}
+
+.table-view .column-header .label {
+    -fx-alignment: CENTER;           /* Căn giữa */
+    -fx-text-fill: -color-accent-emphasis; /* Tiêu đề màu Cam Liquid Lava */
+    -fx-font-weight: bold;
+}
+
+/* Định dạng các ô nội dung */
+.table-view .table-cell {
+    -fx-font-size: 13px;
+    -fx-text-fill: -color-fg-default; /* Màu chữ Snow */
+}
+
+/* Màu khi chọn dòng (Row Selection) */
+.table-view .table-row-cell:selected {
+    -fx-background-color: -color-accent-subtle; /* Cam nhạt */
+}
