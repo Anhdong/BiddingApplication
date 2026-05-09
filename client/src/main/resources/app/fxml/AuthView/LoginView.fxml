@@ -43,7 +43,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Label onMouseClicked="#switchToRegister" styleClass="accent" text="Don't have an account yet? Register here">
+            <Label onMouseClicked="#switchToRegister" text="Don't have an account yet? Register here">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></Label>
