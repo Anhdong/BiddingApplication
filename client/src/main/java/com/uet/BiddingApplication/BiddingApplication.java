@@ -1,7 +1,6 @@
 package com.uet.BiddingApplication;
 
 import atlantafx.base.theme.CupertinoDark;
-import atlantafx.base.theme.CupertinoLight;
 import com.uet.BiddingApplication.Enum.ViewPath;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -25,7 +24,7 @@ public class BiddingApplication extends Application {
         Application.setUserAgentStylesheet(new CupertinoDark().getUserAgentStylesheet());
 
         //Load FXML & create root
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(ViewPath.LOGIN.getPath()));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(ViewPath.BIDDER_HISTORY.getPath()));
         Parent root = loader.load();
 
         // Create scene
@@ -34,6 +33,7 @@ public class BiddingApplication extends Application {
         //Add custome CSS
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/app/css/brand.css")).toExternalForm());
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/app/css/main.css")).toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/app/css/table.css")).toExternalForm());
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/app/css/font.css")).toExternalForm());
 
         // Create stage
