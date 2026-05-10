@@ -2,7 +2,6 @@ package com.uet.BiddingApplication.DTO.Response;
 
 import com.uet.BiddingApplication.Enum.SessionStatus;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
