@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDAO implements IUserDAO {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(UserDAO.class);
     // Singleton Pattern
     private static volatile UserDAO instance;
 
@@ -90,8 +91,8 @@ public class UserDAO implements IUserDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("[UserDAO] Lỗi khi tìm user theo username: " + username);
-            e.printStackTrace();
+            log.error("[UserDAO] Lỗi khi tìm user theo username: " + username);
+            log.error("Đã xảy ra lỗi Exception:", e);
         }
         return null; // Trả về null nếu không tìm thấy
     }
@@ -105,8 +106,8 @@ public class UserDAO implements IUserDAO {
                 if (rs.next()) return mapRowToUser(rs);
             }
         } catch (SQLException e) {
-            System.err.println("[UserDAO] Lỗi findByEmail: " + email);
-            e.printStackTrace();
+            log.error("[UserDAO] Lỗi findByEmail: " + email);
+            log.error("Đã xảy ra lỗi Exception:", e);
         }
         return null;
     }
@@ -122,8 +123,8 @@ public class UserDAO implements IUserDAO {
                 if (rs.next()) return mapRowToUser(rs);
             }
         } catch (SQLException | IllegalArgumentException e) {
-            System.err.println("[UserDAO] Lỗi findById (Sai format UUID hoặc lỗi DB): " + userId);
-            e.printStackTrace();
+            log.error("[UserDAO] Lỗi findById (Sai format UUID hoặc lỗi DB): " + userId);
+            log.error("Đã xảy ra lỗi Exception:", e);
         }
         return null;
     }
@@ -166,8 +167,8 @@ public class UserDAO implements IUserDAO {
 
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println("[UserDAO] Lỗi insertUser: " + user.getUsername());
-            e.printStackTrace();
+            log.error("[UserDAO] Lỗi insertUser: " + user.getUsername());
+            log.error("Đã xảy ra lỗi Exception:", e);
         }
         return false;
     }
@@ -189,8 +190,8 @@ public class UserDAO implements IUserDAO {
 
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println("[UserDAO] Lỗi updateProfile cho User ID: " + user.getId());
-            e.printStackTrace();
+            log.error("[UserDAO] Lỗi updateProfile cho User ID: " + user.getId());
+            log.error("Đã xảy ra lỗi Exception:", e);
         }
         return false;
     }
@@ -205,8 +206,8 @@ public class UserDAO implements IUserDAO {
 
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println("[UserDAO] Lỗi changePassword cho User ID: " + userId);
-            e.printStackTrace();
+            log.error("[UserDAO] Lỗi changePassword cho User ID: " + userId);
+            log.error("Đã xảy ra lỗi Exception:", e);
         }
         return false;
     }
@@ -221,8 +222,8 @@ public class UserDAO implements IUserDAO {
 
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println("[UserDAO] Lỗi updateStatus cho User ID: " + userId);
-            e.printStackTrace();
+            log.error("[UserDAO] Lỗi updateStatus cho User ID: " + userId);
+            log.error("Đã xảy ra lỗi Exception:", e);
         }
         return false;
     }
@@ -243,8 +244,8 @@ public class UserDAO implements IUserDAO {
                 list.add(mapRowToUser(rs));
             }
         } catch (SQLException e) {
-            System.err.println("[UserDAO] Lỗi getAllUsers");
-            e.printStackTrace();
+            log.error("[UserDAO] Lỗi getAllUsers");
+            log.error("Đã xảy ra lỗi Exception:", e);
         }
         return list;
     }
@@ -291,8 +292,8 @@ public class UserDAO implements IUserDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("[UserDAO] Lỗi searchUsers");
-            e.printStackTrace();
+            log.error("[UserDAO] Lỗi searchUsers");
+            log.error("Đã xảy ra lỗi Exception:", e);
         }
         return list;
     }
@@ -306,8 +307,8 @@ public class UserDAO implements IUserDAO {
             return ps.executeUpdate() > 0;
         }
         catch(SQLException e){
-            System.err.println("[UserDAO] Lỗi deleteUser");
-            e.printStackTrace();
+            log.error("[UserDAO] Lỗi deleteUser");
+            log.error("Đã xảy ra lỗi Exception:", e);
         }
         return false;
     }
