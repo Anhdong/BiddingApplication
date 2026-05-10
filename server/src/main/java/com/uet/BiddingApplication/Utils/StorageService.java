@@ -11,6 +11,7 @@ import java.time.Duration;
 import java.util.UUID;
 
 public class StorageService {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(StorageService.class);
     private static volatile StorageService instance;
 
     private final String Url;
@@ -33,7 +34,7 @@ public class StorageService {
         }
 
         if (!fileFound) {
-            System.err.println("⚠️ Cảnh báo: Không tìm thấy file .env ở bất kỳ thư mục dự kiến nào!");
+            log.error("⚠️ Cảnh báo: Không tìm thấy file .env ở bất kỳ thư mục dự kiến nào!");
         }
         //Đọc file .env
         Dotenv dotenv = Dotenv.configure().directory(directory).ignoreIfMissing().load();
@@ -79,7 +80,7 @@ public class StorageService {
         if (response.statusCode() == 200 || response.statusCode() == 201) {
             return String.format("%s/storage/v1/object/public/%s/%s", Url, bucketName, uniqueFileName);
         } else {
-            System.err.println("[Storage Error] Body: " + response.body());
+            log.error("[Storage Error] Body: " + response.body());
             throw new RuntimeException("Tải ảnh thất bại. Status Code: " + response.statusCode());
         }
     }
@@ -122,14 +123,14 @@ public class StorageService {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() == 200 || response.statusCode() == 204) {
-                System.out.println("[Storage Info] Đã dọn dẹp ảnh cũ thành công: " + fileName);
+                log.info("[Storage Info] Đã dọn dẹp ảnh cũ thành công: " + fileName);
             } else {
-                System.err.println("[Storage Warning] Không thể xóa ảnh cũ. Status: " + response.statusCode() + ", Body: " + response.body());
+                log.error("[Storage Warning] Không thể xóa ảnh cũ. Status: " + response.statusCode() + ", Body: " + response.body());
             }
 
         } catch (Exception e) {
-            System.err.println("[Storage Error] Lỗi khi cố gắng xóa ảnh cũ: " + publicUrl);
-            e.printStackTrace();
+            log.error("[Storage Error] Lỗi khi cố gắng xóa ảnh cũ: " + publicUrl);
+            log.error("Đã xảy ra lỗi Exception:", e);
             // LƯU Ý: Ta chỉ in log chứ không throw Exception làm sập luồng Update Item.
             // Vì việc xóa file rác thất bại không nên cản trở việc User cập nhật thông tin thành công.
         }

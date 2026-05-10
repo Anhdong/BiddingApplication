@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class ItemDAO implements IItemDAO {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ItemDAO.class);
 
     // --- Singleton Pattern ---
     private static volatile ItemDAO instance;
@@ -81,8 +82,8 @@ public class ItemDAO implements IItemDAO {
             return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            System.err.println("[ItemDAO] Lỗi insertItem: " + item.getName());
-            e.printStackTrace();
+            log.error("[ItemDAO] Lỗi insertItem: " + item.getName());
+            log.error("Đã xảy ra lỗi Exception:", e);
         }
         return false;
     }
@@ -113,8 +114,8 @@ public class ItemDAO implements IItemDAO {
             return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            System.err.println("[ItemDAO] Lỗi updateItem cho ID: " + item.getId());
-            e.printStackTrace();
+            log.error("[ItemDAO] Lỗi updateItem cho ID: " + item.getId());
+            log.error("Đã xảy ra lỗi Exception:", e);
         }
         return false;
     }
@@ -130,8 +131,8 @@ public class ItemDAO implements IItemDAO {
             return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            System.err.println("[ItemDAO] Lỗi deleteItem ID: " + itemId);
-            e.printStackTrace();
+            log.error("[ItemDAO] Lỗi deleteItem ID: " + itemId);
+            log.error("Đã xảy ra lỗi Exception:", e);
         }
         return false;
     }
@@ -150,8 +151,8 @@ public class ItemDAO implements IItemDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("[ItemDAO] Lỗi getItemById: " + itemId);
-            e.printStackTrace();
+            log.error("[ItemDAO] Lỗi getItemById: " + itemId);
+            log.error("Đã xảy ra lỗi Exception:", e);
         }
         return null;
     }
@@ -171,8 +172,8 @@ public class ItemDAO implements IItemDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("[ItemDAO] Lỗi getItemsBySellerId: " + sellerId);
-            e.printStackTrace();
+            log.error("[ItemDAO] Lỗi getItemsBySellerId: " + sellerId);
+            log.error("Đã xảy ra lỗi Exception:", e);
         }
         return items;
     }
@@ -193,8 +194,8 @@ public class ItemDAO implements IItemDAO {
                 }
             }
         }catch (SQLException e){
-            System.err.println("[ItemDAO] Lỗi getItemsByIds: ");
-            e.printStackTrace();
+            log.error("[ItemDAO] Lỗi getItemsByIds: ");
+            log.error("Đã xảy ra lỗi Exception:", e);
         }
         return items;
     }
@@ -261,7 +262,7 @@ public class ItemDAO implements IItemDAO {
             }
         } catch (SQLException e) {
             // Log chuẩn xác với tên Class (Giả định là ItemDAO hoặc tên class DAO của bạn)
-            System.err.println("[ItemDAO] Lỗi getSellerItems: " + e.getMessage());
+            log.error("[ItemDAO] Lỗi getSellerItems: " + e.getMessage());
         }
 
         return sellerItems;
