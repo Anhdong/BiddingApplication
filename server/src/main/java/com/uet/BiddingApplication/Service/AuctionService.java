@@ -25,6 +25,7 @@ import java.util.List;
  * Áp dụng mẫu thiết kế Singleton.
  */
 public class AuctionService {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AuctionService.class);
 
     // Khởi tạo Singleton an toàn đa luồng
     private static volatile AuctionService instance = null;

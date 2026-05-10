@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class DatabaseConnectionPool {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(DatabaseConnectionPool.class);
     private static final HikariDataSource dataSource = initDataSource();
     private static HikariDataSource initDataSource() {
         //kiểm tra file .env nằm ở đâu
@@ -25,7 +26,7 @@ public class DatabaseConnectionPool {
         }
 
         if (!fileFound) {
-            System.err.println("⚠️ Cảnh báo: Không tìm thấy file .env ở bất kỳ thư mục dự kiến nào!");
+            log.error("⚠️ Cảnh báo: Không tìm thấy file .env ở bất kỳ thư mục dự kiến nào!");
         }
 
         //Đọc file .env
@@ -52,7 +53,7 @@ public class DatabaseConnectionPool {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if (ds != null && !ds.isClosed()) {
                 ds.close();
-                System.out.println("Hệ thống tắt: Đã giải phóng Pool thành công.");
+                log.info("Hệ thống tắt: Đã giải phóng Pool thành công.");
             }
         }));
 

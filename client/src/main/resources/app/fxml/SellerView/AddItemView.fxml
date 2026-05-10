@@ -155,7 +155,7 @@
                         </HBox>
                      </children>
                   </VBox>
-                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="50.0" text="Button">
+                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="50.0" text="Add">
                      <styleClass>
                         <String fx:value="title-1" />
                         <String fx:value="accent" />

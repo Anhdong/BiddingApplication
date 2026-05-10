@@ -16,6 +16,7 @@ import java.net.Socket;
  * Được thiết kế Thread-safe để chạy mượt mà trong CachedThreadPool.
  */
 public class ClientConnectionHandler implements Runnable {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ClientConnectionHandler.class);
 
     private final Socket socket;
     private final AuctionServer server;
@@ -36,7 +37,7 @@ public class ClientConnectionHandler implements Runnable {
             this.in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
             this.out = new PrintWriter(socket.getOutputStream(), true);
         } catch (IOException e) {
-            System.err.println("[Handler] Lỗi khởi tạo luồng I/O: " + e.getMessage());
+            log.error("[Handler] Lỗi khởi tạo luồng I/O: " + e.getMessage());
             forceClose("Lỗi khởi tạo luồng I/O");
         }
     }
@@ -47,7 +48,7 @@ public class ClientConnectionHandler implements Runnable {
             String jsonLine;
             // Lặp vô hạn để nhận lệnh từ Client cho đến khi mất kết nối
             while ((jsonLine = in.readLine()) != null) {
-                System.out.println("[Server nhận từ " + (userId != null ? userId : "Guest") + "] " + jsonLine);
+                log.info("[Server nhận từ " + (userId != null ? userId : "Guest") + "] " + jsonLine);
 
                 // Dịch chuỗi JSON thành DTO
                 RequestPacket<?> requestPacket = GsonPacketParser.deserializeRequest(jsonLine);
@@ -58,10 +59,10 @@ public class ClientConnectionHandler implements Runnable {
                 }
             }
         } catch (IOException e) {
-            System.err.println("[Handler] Kết nối của " + (userId != null ? userId : "Guest") + " bị ngắt: " + e.getMessage());
+            log.error("[Handler] Kết nối của " + (userId != null ? userId : "Guest") + " bị ngắt: " + e.getMessage());
         } catch (Exception e) {
-            System.err.println("[Handler] Lỗi hệ thống khi xử lý kết nối: " + e.getMessage());
-            e.printStackTrace();
+            log.error("[Handler] Lỗi hệ thống khi xử lý kết nối: " + e.getMessage());
+            log.error("Đã xảy ra lỗi Exception:", e);
         } finally {
             // =========================================================================
             // TỐI ƯU 2: KHỐI DỌN DẸP BỘ NHỚ (CLEANUP) - CHỐNG MEMORY LEAK & GHOST PACKET
@@ -76,7 +77,7 @@ public class ClientConnectionHandler implements Runnable {
                     // Gọi hàm xóa theo đúng góp ý của bạn để chống lỗi phòng đấu giá
                     RealtimeBroadcastService.getInstance().unsubscribeFromAll(userId);
                 } catch (Exception e) {
-                    System.err.println("[Handler] Lỗi dọn dẹp Realtime cho user " + userId + ": " + e.getMessage());
+                    log.error("[Handler] Lỗi dọn dẹp Realtime cho user " + userId + ": " + e.getMessage());
                 }
 
                 // 3. Xóa Client khỏi danh sách quản lý trực tuyến của Server
@@ -85,7 +86,7 @@ public class ClientConnectionHandler implements Runnable {
                         server.unregisterClient(userId);
                     }
                 } catch (Exception e) {
-                    System.err.println("[Handler] Lỗi unregister client " + userId + ": " + e.getMessage());
+                    log.error("[Handler] Lỗi unregister client " + userId + ": " + e.getMessage());
                 }
             }
         }
@@ -106,7 +107,7 @@ public class ClientConnectionHandler implements Runnable {
                 out.flush(); // Xả đệm để gửi đi ngay lập tức
             }
         } catch (Exception e) {
-            System.err.println("[Handler] Lỗi gửi gói tin: " + e.getMessage());
+            log.error("[Handler] Lỗi gửi gói tin: " + e.getMessage());
         }
     }
 
@@ -114,13 +115,13 @@ public class ClientConnectionHandler implements Runnable {
      * Đóng kết nối bắt buộc và giải phóng tài nguyên I/O
      */
     public void forceClose(String reason) {
-        System.out.println("[Handler] Đóng kết nối Socket của " + (userId != null ? userId : "Guest") + " - Lý do: " + reason);
+        log.info("[Handler] Đóng kết nối Socket của " + (userId != null ? userId : "Guest") + " - Lý do: " + reason);
         try {
             if (in != null) in.close();
             if (out != null) out.close();
             if (socket != null && !socket.isClosed()) socket.close();
         } catch (IOException e) {
-            System.err.println("[Handler] Lỗi khi đóng socket: " + e.getMessage());
+            log.error("[Handler] Lỗi khi đóng socket: " + e.getMessage());
         }
     }
 

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.concurrent.*;
 
 public class InMemoryBidServiceImpl implements BidProcessingService {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(InMemoryBidServiceImpl.class);
 
     private static  InMemoryBidServiceImpl instance;
     private static final int WORKER_POOL_SIZE = AppConfig.getWorkerPoolSize();
@@ -113,10 +114,10 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
                 processSingleBid(task);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                System.out.println("Worker " + workerId + " bị ngắt.");
+                log.info("Worker " + workerId + " bị ngắt.");
             } catch (Exception e) {
-                System.err.println("Lỗi tại Worker " + workerId + ": " + e.getMessage());
-                e.printStackTrace();
+                log.error("Lỗi tại Worker " + workerId + ": " + e.getMessage());
+                log.error("Đã xảy ra lỗi Exception:", e);
             }
         }
     }
@@ -167,7 +168,7 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
                 realtimeBroadcastService.broadcast(sessionId, packet);
             }
             else{
-                System.err.println("Database từ chối nhận giá " + req.getBidAmount() + " của user " + task.bidderId());
+                log.error("Database từ chối nhận giá " + req.getBidAmount() + " của user " + task.bidderId());
 
                 // Khôi phục RAM về giá trị cũ để đồng bộ với Database
                 searchCacheManager.updatePriceInCache(sessionId, oldPrice, oldWinner);
@@ -254,7 +255,7 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
             // Nếu Database lỗi (deadlock, rớt mạng chớp nhoáng), ta không để phiên bị "treo" chết trên RAM.
             // Giải pháp: Đẩy ngược nhiệm vụ này vào Scheduler để hệ thống tự động thử lại sau 5 giây.
 
-            System.err.println("CRITICAL: Cập nhật DB thất bại cho phiên " + sessionId + ". Hệ thống sẽ thử lại sau 5 giây...");
+            log.error("CRITICAL: Cập nhật DB thất bại cho phiên " + sessionId + ". Hệ thống sẽ thử lại sau 5 giây...");
 
             ScheduledFuture<?> retryTask = scheduler.schedule(() -> {
                 handleAuctionEnd(sessionId);
@@ -300,7 +301,7 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
             realtimeBroadcastService.closeRoom(sessionId);
 
         } else {
-            System.err.println("CRITICAL: Không thể Force Cancel phiên " + sessionId + " xuống Database.");
+            log.error("CRITICAL: Không thể Force Cancel phiên " + sessionId + " xuống Database.");
             // Có thể thêm logic Retry ở đây nếu cần thiết
         }
     }
