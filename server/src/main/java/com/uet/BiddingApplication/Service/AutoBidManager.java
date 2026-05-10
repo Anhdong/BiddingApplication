@@ -43,6 +43,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Áp dụng mẫu thiết kế Singleton (Double-checked locking).
  */
 public class AutoBidManager {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AutoBidManager.class);
 
     // Sử dụng ConcurrentLinkedQueue (FIFO) thay cho PriorityQueue để đảm bảo công bằng: ai vào trước, xử lý trước.
     private ConcurrentHashMap<String, ConcurrentLinkedQueue<AutoBidSetting>> autoBidQueues;
@@ -81,7 +82,7 @@ public class AutoBidManager {
         queue.removeIf(existing -> existing.getBidderId().equals(setting.getBidderId()));
 
         queue.add(setting);
-        System.out.println("[INFO] Đăng ký Auto-bid thành công cho User [" + setting.getBidderId() + "] tại phiên [" + setting.getSessionId() + "]");
+        log.info("[INFO] Đăng ký Auto-bid thành công cho User [" + setting.getBidderId() + "] tại phiên [" + setting.getSessionId() + "]");
     }
 
     /**
@@ -96,7 +97,7 @@ public class AutoBidManager {
             boolean removed = queue.removeIf(setting -> setting.getBidderId().equals(bidderId));
 
             if (removed) {
-                System.out.println("[INFO] User [" + bidderId + "] đã hủy Auto-bid tại phiên [" + sessionId + "]");
+                log.info("[INFO] User [" + bidderId + "] đã hủy Auto-bid tại phiên [" + sessionId + "]");
             }
 
             // Mẹo tối ưu RAM: Nếu phòng đã trống, dọn luôn phòng đó khỏi HashMap
@@ -150,7 +151,7 @@ public class AutoBidManager {
 
                 // c) Gửi thông báo riêng rẽ
                 RealtimeBroadcastService.getInstance().sendPrivateMessage(setting.getBidderId(), cancelPacket);
-                System.out.println("[INFO] Đã gỡ Auto-Bid của User [" + setting.getBidderId() + "] do chạm ngưỡng maxBid.");
+                log.info("[INFO] Đã gỡ Auto-Bid của User [" + setting.getBidderId() + "] do chạm ngưỡng maxBid.");
 
                 continue; // Vẫn tiếp tục vòng lặp để xét người đủ tiền phía sau!
             }
@@ -160,7 +161,7 @@ public class AutoBidManager {
             autoRequest.setSessionId(sessionId);
             autoRequest.setBidAmount(nextBidPrice);
 
-            System.out.println("[INFO] Kích hoạt Auto-Bid cho User [" + setting.getBidderId() + "], giá đặt tự động: " + nextBidPrice);
+            log.info("[INFO] Kích hoạt Auto-Bid cho User [" + setting.getBidderId() + "], giá đặt tự động: " + nextBidPrice);
 
             // Đẩy lệnh trả giá vào lưới xử lý lõi
             InMemoryBidServiceImpl.getInstance().enqueueBid(autoRequest, setting.getBidderId());
