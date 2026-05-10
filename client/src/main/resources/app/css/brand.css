@@ -1,0 +1,60 @@
+.root {
+    /* --- 1. BẢNG MÀU NỀN (DARK VOID) --- */
+    -color-bg-default:      #151419;
+    -color-bg-subtle:       #1B1B1E;
+    -color-bg-inset:        #262626;
+
+    -color-fg-default:      #FBFBFB;
+    -color-fg-muted:        #878787;
+
+    /* --- 2. GHI ĐÈ TOÀN BỘ DẢI MÀU ACCENT (CAM LIQUID LAVA) --- */
+    /* Việc này đảm bảo mọi trạng thái (hover, focus, active) đều là màu cam */
+    -color-accent-0: #fff3e0;
+    -color-accent-1: #ffe0b2;
+    -color-accent-2: #ffcc80;
+    -color-accent-3: #ffb74d;
+    -color-accent-4: #ffa726;
+    -color-accent-5: #F56E0F; /* Liquid Lava gốc */
+    -color-accent-6: #ef6c00;
+    -color-accent-7: #e65100;
+    -color-accent-8: #bf360c;
+    -color-accent-9: #3e2723;
+
+    /* Gán biến chính */
+    -color-accent-emphasis: -color-accent-5;
+    -color-accent-fg:       #FBFBFB;
+
+    /* --- 3. ĐỊNH NGHĨA BIẾN CHO NÚT --- */
+    -color-btn-bg-hover:    -color-accent-4;
+    -color-btn-bg-pressed:  -color-accent-6;
+
+    /* Border khi focus - Bạn có thể đổi sang màu khác nếu không thích viền cam */
+    -color-btn-border-focused: -color-accent-emphasis;
+
+    /* Đồng bộ JavaFX gốc */
+    -fx-accent:             -color-accent-emphasis;
+}
+
+/* --- 4. FIX TRIỆT ĐỂ TRẠNG THÁI NÚT --- */
+/* Đảm bảo nút .accent và .default không bao giờ quay lại màu xanh */
+.button.accent, .button.default {
+    -fx-background-color: -color-accent-emphasis;
+    -fx-text-fill: -color-accent-fg;
+}
+
+/* Khi di chuột qua */
+.button.accent:hover, .button.default:hover {
+    -fx-background-color: -color-btn-bg-hover;
+}
+
+/* Khi đang nhấn (Armed) hoặc đang Focus mà vẫn muốn giữ màu cam */
+.button.accent:armed, .button.default:armed,
+.button.accent:focused, .button.default:focused {
+    -fx-background-color: -color-btn-bg-pressed;
+}
+
+/* Xử lý riêng cái viền Focus nếu bạn thấy nó quá dày hoặc chói */
+.button:focused {
+    -fx-background-insets: 0, 1, 2;
+    -fx-background-radius: 6, 5, 4;
+}
