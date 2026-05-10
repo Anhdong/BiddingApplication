@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AuctionSessionDAO implements IAuctionSessionDAO {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AuctionSessionDAO.class);
 
     private static volatile AuctionSessionDAO instance;
 
@@ -52,8 +53,8 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
 
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println("[AuctionSessionDAO] Lỗi insertSession: " + session.getId());
-            e.printStackTrace();
+            log.error("[AuctionSessionDAO] Lỗi insertSession: " + session.getId());
+            log.error("Đã xảy ra lỗi Exception:", e);
         }
         return false;
     }
@@ -94,7 +95,7 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
             return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            System.err.println("[AuctionSessionDAO] Lỗi updateSession: " + e.getMessage());
+            log.error("[AuctionSessionDAO] Lỗi updateSession: " + e.getMessage());
             return false;
         }
     }
@@ -120,8 +121,8 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
                 if (rs.next()) return mapRowToSession(rs);
             }
         } catch (SQLException e) {
-            System.err.println("[AuctionSessionDAO] Lỗi getSessionById: " + parameter);
-            e.printStackTrace();
+            log.error("[AuctionSessionDAO] Lỗi getSessionById: " + parameter);
+            log.error("Đã xảy ra lỗi Exception:", e);
         }
         return null;
     }
@@ -142,8 +143,8 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
 
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println("[AuctionSessionDAO] Lỗi updatePriceAndWinner cho Session: " + sessionId);
-            e.printStackTrace();
+            log.error("[AuctionSessionDAO] Lỗi updatePriceAndWinner cho Session: " + sessionId);
+            log.error("Đã xảy ra lỗi Exception:", e);
         }
         return false;
     }
@@ -159,8 +160,8 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
 
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println("[AuctionSessionDAO] Lỗi updateStatus: " + sessionId);
-            e.printStackTrace();
+            log.error("[AuctionSessionDAO] Lỗi updateStatus: " + sessionId);
+            log.error("Đã xảy ra lỗi Exception:", e);
         }
         return false;
     }
@@ -181,8 +182,8 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
                 list.add(mapRowToSession(rs));
             }
         } catch (SQLException e) {
-            System.err.println("[AuctionSessionDAO] Lỗi getAllSessions");
-            e.printStackTrace();
+            log.error("[AuctionSessionDAO] Lỗi getAllSessions");
+            log.error("Đã xảy ra lỗi Exception:", e);
         }
         return list;
     }
@@ -228,8 +229,8 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
            }
        }
        catch (SQLException e){
-           System.err.println("[AuctionSessionDAO] Lỗi getSellerHistory");
-           e.printStackTrace();
+           log.error("[AuctionSessionDAO] Lỗi getSellerHistory");
+           log.error("Đã xảy ra lỗi Exception:", e);
        }
         return list;
     }
@@ -276,8 +277,8 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
             }
 
         }catch (SQLException e){
-            System.err.println("[AuctionSessionDAO] Lỗi getSessionInfo");
-            e.printStackTrace();
+            log.error("[AuctionSessionDAO] Lỗi getSessionInfo");
+            log.error("Đã xảy ra lỗi Exception:", e);
         }
         return dto;
     }
