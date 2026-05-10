@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.concurrent.*;
 
 public class SessionStartScheduler implements ISessionStartScheduler {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(SessionStartScheduler.class);
 
     private static SessionStartScheduler instance;
 
@@ -94,7 +95,7 @@ public class SessionStartScheduler implements ISessionStartScheduler {
             pendingStarts.remove(sessionId);
         } else {
             // Cơ chế Retry nếu Database bị nghẽn (Tương tự handleAuctionEnd)
-            System.err.println("Lỗi mở phiên " + sessionId + " xuống DB. Thử lại sau 5s...");
+            log.error("Lỗi mở phiên " + sessionId + " xuống DB. Thử lại sau 5s...");
             ScheduledFuture<?> retryTask = scheduler.schedule(() -> triggerSession(sessionId), 5, TimeUnit.SECONDS);
             pendingStarts.put(sessionId, retryTask);
         }
