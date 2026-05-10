@@ -1,21 +1,34 @@
 package com.uet.BiddingApplication;
 
-import atlantafx.base.theme.CupertinoLight;
+import atlantafx.base.theme.CupertinoDark;
 import com.uet.BiddingApplication.Enum.ViewPath;
+import com.uet.BiddingApplication.Session.ResponseListenerThread;
+import com.uet.BiddingApplication.Session.ServerConnection;
+import com.uet.BiddingApplication.Util.AlertUtil;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.util.Objects;
 
 public class BiddingApplication extends Application {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(BiddingApplication.class);
+
+    public static Stage primaryStage = null;
 
     @Override
     public void start(Stage stage) throws Exception {
+        //Set primaryStage for easy access
+        primaryStage = stage;
+
+
         // Apply CSS
-        Application.setUserAgentStylesheet(new CupertinoLight().getUserAgentStylesheet());
+        Application.setUserAgentStylesheet(new CupertinoDark().getUserAgentStylesheet());
 
         //Load FXML & create root
         FXMLLoader loader = new FXMLLoader(getClass().getResource(ViewPath.LOGIN.getPath()));
@@ -25,10 +38,14 @@ public class BiddingApplication extends Application {
         Scene scene = new Scene(root);
 
         //Add custome CSS
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/app/css/brand.css")).toExternalForm());
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/app/css/main.css")).toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/app/css/table.css")).toExternalForm());
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/app/css/font.css")).toExternalForm());
 
         // Create stage
+        Image appIcon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/app/assets/logo.png")));
+        stage.getIcons().add(appIcon);
         stage.setTitle("Bidding Application");
         stage.setScene(scene);
 
@@ -39,6 +56,26 @@ public class BiddingApplication extends Application {
         stage.setMinHeight(500);
 
         stage.show();
+
+        new Thread(() -> {
+            String serverIp=ServerConnection.getInstance().discoverServerOnLAN();
+            if(serverIp==null){
+                log.info("Không quét được mạng LAN ");
+            }
+            ServerConnection.getInstance().connect(serverIp, 8080);
+        }).start();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        // QUAN TRỌNG NHẤT: Hàm này tự động chạy khi user bấm dấu X tắt ứng dụng
+        log.info("Đang tắt ứng dụng, dọn dẹp kết nối mạng...");
+
+        // Cắt đứt kết nối một cách sạch sẽ, báo cho Server biết để xóa khỏi Map
+        ServerConnection.getInstance().disconnect();
+
+        // Thoát hẳn chương trình
+        System.exit(0);
     }
 
     public static void main(String[] args) {
