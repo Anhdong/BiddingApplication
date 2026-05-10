@@ -8,6 +8,7 @@ import java.util.Properties;
  * Đọc dữ liệu từ file application.properties trong thư mục resources.
  */
 public class AppConfig {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AppConfig.class);
 
     private static final Properties properties = new Properties();
     private static boolean isLoaded = false;
@@ -25,17 +26,17 @@ public class AppConfig {
         try (InputStream input = AppConfig.class.getClassLoader().getResourceAsStream("application.properties")) {
 
             if (input == null) {
-                System.err.println("CRITICAL: Không tìm thấy file application.properties trong thư mục resources!");
+                log.error("CRITICAL: Không tìm thấy file application.properties trong thư mục resources!");
                 System.exit(1); // Dừng Server ngay lập tức vì không có cấu hình
             }
 
             // Nạp toàn bộ key-value vào bộ nhớ
             properties.load(input);
             isLoaded = true;
-            System.out.println("Đã nạp thành công file cấu hình application.properties.");
+            log.info("Đã nạp thành công file cấu hình application.properties.");
 
         } catch (Exception e) {
-            System.err.println("Lỗi khi đọc file cấu hình: " + e.getMessage());
+            log.error("Lỗi khi đọc file cấu hình: " + e.getMessage());
             System.exit(1);
         }
     }
