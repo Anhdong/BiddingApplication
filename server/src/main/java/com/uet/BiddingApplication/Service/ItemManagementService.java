@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
  * Áp dụng mẫu thiết kế Singleton.
  */
 public class ItemManagementService {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ItemManagementService.class);
 
     private ItemDAO itemDAO;
     private AuctionSessionDAO sessionDAO;
