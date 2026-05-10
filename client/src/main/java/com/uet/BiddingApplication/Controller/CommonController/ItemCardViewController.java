@@ -21,6 +21,7 @@ public class ItemCardViewController implements Initializable {
     @FXML private Label lblName, lblDate, lblPrice;
     @FXML private Button btnAction;
 
+    private AuctionCardDTO currentItem;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -28,6 +29,7 @@ public class ItemCardViewController implements Initializable {
     }
 
     public void setData(AuctionCardDTO cardDto){
+        currentItem = cardDto;
         lblName.setText(cardDto.getItemName());
         //TODO: apply time format rely on status+ convert IMGURL to image
         //lblDate.setText("hh:mm");
