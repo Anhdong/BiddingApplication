@@ -108,7 +108,10 @@ public class AuthService {
         newUser.setPasswordHash(hashedPassWord);
 
         // 3. Ghi xuống DB (DB nên có ràng buộc UNIQUE cho email/username)
-        return this.userDAO.insertUser(newUser);
+        if (!this.userDAO.insertUser(newUser)){
+            throw new BusinessException("Lỗi DAO không đăng ký được");
+        }
+        return true;
     }
 
     /**
@@ -164,7 +167,10 @@ public class AuthService {
 
         // 3. Băm mật khẩu mới, gọi DAO và trả thẳng kết quả boolean cho Router
         String hashedNewPassword = hashPassword(request.getNewPassword());
-        return this.userDAO.changePassword(userId, hashedNewPassword);
+        if (!this.userDAO.changePassword(userId, hashedNewPassword)){
+            throw new BusinessException("Lỗi DAO không thay đổi được mật khẩu");
+        }
+        return true;
     }
 
     /**
@@ -182,7 +188,10 @@ public class AuthService {
         UserMapper.updateEntity(request, user);
 
         // 3. Ghi xuống Database và trả thẳng kết quả boolean cho Router
-        return this.userDAO.updateProfile(user);
+        if (!this.userDAO.updateProfile(user)){
+            throw new BusinessException("Lỗi DAO không update được tài khoản");
+        }
+        return true;
     }
 
     // --- Các phương thức bổ trợ nội bộ (Helper methods) ---
