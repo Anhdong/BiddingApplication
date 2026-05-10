@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class BidDAO implements IBidDAO {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(BidDAO.class);
 
     // Singleton Pattern
     private static volatile BidDAO instance;
@@ -60,7 +61,7 @@ public class BidDAO implements IBidDAO {
             return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            System.err.println("[BidDAO] Lỗi insertBid: " + e.getMessage());
+            log.error("[BidDAO] Lỗi insertBid: " + e.getMessage());
             return false;
         }
     }
@@ -100,7 +101,7 @@ public class BidDAO implements IBidDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("[BidDAO] Lỗi getRecentBids: " + e.getMessage());
+            log.error("[BidDAO] Lỗi getRecentBids: " + e.getMessage());
         }
 
         return history;
@@ -156,7 +157,7 @@ public class BidDAO implements IBidDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("[BidDAO] Lỗi getBidderHistory: " + e.getMessage());
+            log.error("[BidDAO] Lỗi getBidderHistory: " + e.getMessage());
         }
 
         return history;
@@ -201,7 +202,7 @@ public class BidDAO implements IBidDAO {
             } catch (SQLException e) {
                 // 5. Nếu có bất kỳ Exception nào (lỗi SQL, constraint, khóa bảng, v.v.), Rollback ngay lập tức
                 conn.rollback();
-                System.err.println("[BidDAO] Lỗi thực thi transaction, đã rollback hoàn toàn: " + e.getMessage());
+                log.error("[BidDAO] Lỗi thực thi transaction, đã rollback hoàn toàn: " + e.getMessage());
                 return false;
             } finally {
                 // 6. LUÔN LUÔN trả lại trạng thái nguyên bản cho connection trước khi đưa nó về Hikari Pool
@@ -209,7 +210,7 @@ public class BidDAO implements IBidDAO {
             }
 
         } catch (SQLException e) {
-            System.err.println("[BidDAO] Lỗi kết nối hoặc lỗi cấu hình transaction tại placeBidAtomicTransaction: " + e.getMessage());
+            log.error("[BidDAO] Lỗi kết nối hoặc lỗi cấu hình transaction tại placeBidAtomicTransaction: " + e.getMessage());
             return false;
         }
     }
