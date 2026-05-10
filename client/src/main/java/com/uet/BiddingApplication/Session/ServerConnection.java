@@ -7,7 +7,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.net.Socket;
+import java.net.*;
 
 public class ServerConnection {
 
@@ -87,5 +87,42 @@ public class ServerConnection {
         } else {
             System.err.println("Chưa kết nối Server, không thể gửi request!");
         }
+    }
+    /**
+     * Dùng UDP Broadcast để tìm IP của Server trong mạng LAN
+     * @return Địa chỉ IP của Server, hoặc null nếu không tìm thấy
+     */
+    public String discoverServerOnLAN() {
+        try (DatagramSocket c = new DatagramSocket()) {
+            c.setBroadcast(true); // Cho phép hét toàn mạng
+            c.setSoTimeout(3000); // Chỉ đợi 3 giây, quá hạn là bỏ cuộc
+
+            byte[] sendData = "WHERE_IS_AUCTION_SERVER".getBytes();
+
+            // 255.255.255.255 là địa chỉ vạn năng để gửi cho TẤT CẢ máy trong Wifi
+            DatagramPacket sendPacket = new DatagramPacket(
+                    sendData, sendData.length, InetAddress.getByName("255.255.255.255"), 8888);
+
+            c.send(sendPacket);
+            System.out.println("[Client] Đang rò tìm Server Đấu giá trên mạng LAN...");
+
+            // Đợi Server trả lời
+            byte[] recvBuf = new byte[1024];
+            DatagramPacket receivePacket = new DatagramPacket(recvBuf, recvBuf.length);
+            c.receive(receivePacket);
+
+            String response = new String(receivePacket.getData(), 0, receivePacket.getLength());
+            if (response.equals("I_AM_AUCTION_SERVER")) {
+                String serverIp = receivePacket.getAddress().getHostAddress();
+                System.out.println("[Client] ĐÃ TÌM THẤY SERVER TẠI: " + serverIp);
+                return serverIp;
+            }
+
+        } catch (SocketTimeoutException e) {
+            System.out.println("[Client] Quá 3 giây không thấy Server nào lên tiếng.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

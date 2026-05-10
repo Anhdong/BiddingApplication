@@ -57,7 +57,11 @@ public class BiddingApplication extends Application {
         stage.show();
 
         new Thread(() -> {
-            ServerConnection.getInstance().connect("127.0.0.1", 8080);
+            String serverIp=ServerConnection.getInstance().discoverServerOnLAN();
+            if(serverIp==null){
+                System.out.println("Không quét được mạng LAN ");
+            }
+            ServerConnection.getInstance().connect(serverIp, 8080);
         }).start();
     }
 

@@ -17,6 +17,8 @@ public class AuctionServer {
 
     private volatile boolean running = false;
 
+    private Thread udpDiscoveryThread;
+
     private AuctionServer() {
         clients = new ConcurrentHashMap<>();
     }
@@ -33,6 +35,7 @@ public class AuctionServer {
     }
 
     public void start(int port) {
+        startUDPDiscovery();
         try {
             serverSocket = new ServerSocket(port);
 
@@ -68,6 +71,11 @@ public class AuctionServer {
 
     public void stop() {
         running = false;
+
+        if (udpDiscoveryThread != null) {
+            udpDiscoveryThread.interrupt();
+        }
+
         try {
             if (serverSocket != null && !serverSocket.isClosed()) {
                 serverSocket.close();
@@ -125,5 +133,14 @@ public class AuctionServer {
         } else {
             System.out.println("kickUser: user not found: " + userId);
         }
+    }
+    private void startUDPDiscovery() {
+        // Khởi tạo luồng UDP và đánh dấu là Daemon
+        UDPDiscoveryServer udpTask = new UDPDiscoveryServer();
+        udpDiscoveryThread = new Thread(udpTask);
+
+        // Cực kỳ quan trọng: Daemon giúp luồng này tự chết nếu JVM dừng
+        udpDiscoveryThread.setDaemon(true);
+        udpDiscoveryThread.start();
     }
 }
