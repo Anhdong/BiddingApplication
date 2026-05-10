@@ -1,6 +1,7 @@
 package com.uet.BiddingApplication.Model;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public abstract class Entity {
     private String id;
@@ -8,6 +9,7 @@ public abstract class Entity {
 
     public Entity() {
         this.createdAt = LocalDateTime.now();
+        this.id = UUID.randomUUID().toString();
     }
 
     public Entity(String id, LocalDateTime createdAt) {

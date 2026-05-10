@@ -58,14 +58,14 @@ public class ServerConnection {
             if (listenerThread != null) {
                 listenerThread.stopListening();
             }
-            // 2. Ép luồng dừng hẳn (nếu đang bị block ở readLine)
+            // 2. Đóng ống nước và Socket
+            if (socket != null && !socket.isClosed()) socket.close();
+            if (in != null) in.close();
+            if (out != null) out.close();
+            // 3. Ép luồng dừng hẳn (nếu đang bị block ở readLine)
             if (threadHandle != null) {
                 threadHandle.interrupt();
             }
-            // 3. Đóng ống nước và Socket
-            if (in != null) in.close();
-            if (out != null) out.close();
-            if (socket != null && !socket.isClosed()) socket.close();
 
             System.out.println("Đã ngắt kết nối an toàn.");
         } catch (Exception e) {
