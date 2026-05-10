@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SessionRegistrationDAO implements ISessionRegistrationDAO {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(SessionRegistrationDAO.class);
 
     // 1. Singleton Pattern
     private static volatile SessionRegistrationDAO instance;
@@ -50,8 +51,8 @@ public class SessionRegistrationDAO implements ISessionRegistrationDAO {
             return rowsAffected > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            System.err.println("[SessionRegistrationDAO] Lỗi registerBidder");
+            log.error("Đã xảy ra lỗi Exception:", e);
+            log.error("[SessionRegistrationDAO] Lỗi registerBidder");
             return false;
         }
     }
@@ -71,8 +72,8 @@ public class SessionRegistrationDAO implements ISessionRegistrationDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            System.err.println("[SessionRegistrationDAO] Lỗi checkRegistration");
+            log.error("Đã xảy ra lỗi Exception:", e);
+            log.error("[SessionRegistrationDAO] Lỗi checkRegistration");
             return false;
         }
     }
@@ -91,8 +92,8 @@ public class SessionRegistrationDAO implements ISessionRegistrationDAO {
             return rowsAffected > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            System.err.println("[SessionRegistrationDAO] Lỗi deleteRegistration");
+            log.error("Đã xảy ra lỗi Exception:", e);
+            log.error("[SessionRegistrationDAO] Lỗi deleteRegistration");
             return false;
         }
     }
@@ -153,8 +154,8 @@ public class SessionRegistrationDAO implements ISessionRegistrationDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("[SessionRegistrationDAO] Lỗi getRegisteredSessions");
-            e.printStackTrace();
+            log.error("[SessionRegistrationDAO] Lỗi getRegisteredSessions");
+            log.error("Đã xảy ra lỗi Exception:", e);
         }
 
         return registeredSessions;
