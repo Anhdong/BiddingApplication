@@ -2,15 +2,11 @@ package com.uet.BiddingApplication;
 
 import atlantafx.base.theme.CupertinoDark;
 import com.uet.BiddingApplication.Enum.ViewPath;
-import com.uet.BiddingApplication.Session.ResponseListenerThread;
 import com.uet.BiddingApplication.Session.ServerConnection;
-import com.uet.BiddingApplication.Util.AlertUtil;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
