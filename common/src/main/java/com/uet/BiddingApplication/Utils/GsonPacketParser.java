@@ -15,15 +15,18 @@ import java.time.Instant;
 public class GsonPacketParser {
     // Chỉ khởi tạo 1 lần duy nhất, thread-safe
     private static final Gson gson = new GsonBuilder().create();
-
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(GsonPacketParser.class);
     public static String serialize(Object packet) {
-        return gson.toJson(packet) + "\n"; // Chuẩn NDJSON
+        return gson.toJson(packet); // Chuẩn NDJSON
     }
     //chuyển đối tượng -> JSON , kết thúc lệnh bằng dấu /n
     /**
      * Dùng cho Server khi nhận Request từ Client
      */
     public static RequestPacket<?> deserializeRequest(String jsonLine) {
+        if (jsonLine == null || jsonLine.trim().isEmpty()) {
+            return null;
+        }
         //đoch chuổix Json từ client gửi , thực hiện các thao tác để trả về 1 requestpacket
         try {
             JsonObject jsonObject = JsonParser.parseString(jsonLine).getAsJsonObject();
@@ -51,7 +54,7 @@ public class GsonPacketParser {
 
         } catch (JsonSyntaxException | IllegalArgumentException e) {
             // Log lỗi nghiêm trọng để truy vết, chặn các JSON malformed tấn công Server
-            System.err.println("[SECURITY/PARSE ERROR] Invalid packet format: " + e.getMessage());
+            log.error("[SECURITY/PARSE ERROR] Invalid packet format: " + e.getMessage());
             return null;
         }
     }
@@ -60,6 +63,9 @@ public class GsonPacketParser {
      * Dùng cho Client khi nhận Response từ Server (Logic tương tự)
      */
     public static ResponsePacket<?> deserializeResponse(String jsonLine) {
+        if (jsonLine == null || jsonLine.trim().isEmpty()) {
+            return null;
+        }
         try {
             JsonObject jsonObject = JsonParser.parseString(jsonLine).getAsJsonObject();
             ActionType action = ActionType.valueOf(jsonObject.get("action").getAsString());
@@ -68,6 +74,9 @@ public class GsonPacketParser {
             ResponsePacket<Object> packet = new ResponsePacket<>();
             packet.setAction(action);
             packet.setStatusCode(statusCode);
+            if (jsonObject.has("message") && !jsonObject.get("message").isJsonNull()) {
+                packet.setMessage(jsonObject.get("message").getAsString());
+            }
 
             if (jsonObject.has("payload") && !jsonObject.get("payload").isJsonNull()) {
                 Type payloadType = PacketTypeRegistry.getResponseType(action);
@@ -81,7 +90,7 @@ public class GsonPacketParser {
             return packet;
 
         } catch (Exception e) {
-            System.err.println("[CLIENT PARSE ERROR] Corrupted response: " + e.getMessage());
+            log.error("[CLIENT PARSE ERROR] Corrupted response: " + e.getMessage());
             return null;
         }
     }
