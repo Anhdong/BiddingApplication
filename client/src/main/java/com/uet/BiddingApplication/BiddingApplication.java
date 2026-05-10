@@ -2,15 +2,10 @@ package com.uet.BiddingApplication;
 
 import atlantafx.base.theme.CupertinoDark;
 import com.uet.BiddingApplication.Enum.ViewPath;
-import com.uet.BiddingApplication.Session.ResponseListenerThread;
-import com.uet.BiddingApplication.Session.ServerConnection;
-import com.uet.BiddingApplication.Util.AlertUtil;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
@@ -56,26 +51,6 @@ public class BiddingApplication extends Application {
         stage.setMinHeight(500);
 
         stage.show();
-
-        new Thread(() -> {
-            String serverIp=ServerConnection.getInstance().discoverServerOnLAN();
-            if(serverIp==null){
-                log.info("Không quét được mạng LAN ");
-            }
-            ServerConnection.getInstance().connect(serverIp, 8080);
-        }).start();
-    }
-
-    @Override
-    public void stop() throws Exception {
-        // QUAN TRỌNG NHẤT: Hàm này tự động chạy khi user bấm dấu X tắt ứng dụng
-        log.info("Đang tắt ứng dụng, dọn dẹp kết nối mạng...");
-
-        // Cắt đứt kết nối một cách sạch sẽ, báo cho Server biết để xóa khỏi Map
-        ServerConnection.getInstance().disconnect();
-
-        // Thoát hẳn chương trình
-        System.exit(0);
     }
 
     public static void main(String[] args) {

@@ -16,7 +16,7 @@ import java.time.Duration;
  * Định dạng nội dung Gist (một dòng duy nhất):
  *   0.tcp.ap.ngrok.io:12345
  */
-public class Remoteconfigfetcher {
+public class RemoteConfigFetcher {
 
     // -----------------------------------------------------------------------
     // ĐỔI URL NÀY thành raw URL của GitHub Gist của bạn.

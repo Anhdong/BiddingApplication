@@ -1,7 +1,5 @@
 package com.uet.BiddingApplication.Session;
 
-// Import class BiddingApplication nằm ở package com.uet.BiddingApplication
-import com.uet.BiddingApplication.BiddingApplication;
 
 public class ClientMain {
 
