@@ -26,6 +26,7 @@ import java.util.function.Consumer;
 import static com.uet.BiddingApplication.BiddingApplication.primaryStage;
 
 public class LoginController implements Initializable {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(LoginController.class);
 
     @FXML private TextField txtUsername;
     @FXML private PasswordField txtPassword;
@@ -82,7 +83,7 @@ public class LoginController implements Initializable {
 
             // Cập nhật phiên đăng nhập cục bộ
             ClientSession.getInstance().updateLocalSession(authData.getUserProfile(), authData.getToken());
-            System.out.println("Đăng nhập thành công! Xin chào " + authData.getUserProfile().getUsername());
+            log.info("Đăng nhập thành công! Xin chào " + authData.getUserProfile().getUsername());
 
             //Chuyen ve Main
             switchToMain();
@@ -98,7 +99,7 @@ public class LoginController implements Initializable {
         Parent registerRoot = null;
         try {
             registerRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(ViewPath.REGISTER.getPath())));
-        } catch (Exception e) {System.out.println("[LoginController] Cannot load RegisterView");}
+        } catch (Exception e) {log.info("[LoginController] Cannot load RegisterView");}
 
         Scene currentScene = primaryStage.getScene();
         currentScene.setRoot(registerRoot);
@@ -110,7 +111,7 @@ public class LoginController implements Initializable {
         Parent mainRoot = null;
         try {
             mainRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(ViewPath.MAIN.getPath())));
-        } catch (Exception e) {System.out.println("[LoginController] Cannot load Main");}
+        } catch (Exception e) {log.info("[LoginController] Cannot load Main");}
 
         Scene currentScene = primaryStage.getScene();
         currentScene.setRoot(mainRoot);

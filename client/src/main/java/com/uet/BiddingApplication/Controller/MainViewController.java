@@ -18,6 +18,7 @@ import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
 public class MainViewController implements Initializable {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(MainViewController.class);
 
     // --- SINGLETON ---
     private static MainViewController instance;
@@ -51,14 +52,14 @@ public class MainViewController implements Initializable {
             Parent sidebar = loader.load();
             SidebarSlot.getChildren().setAll(sidebar);
         } catch (Exception e) {
-            System.err.println("[MainViewController] Thiết lập Sidebar không thành công: " + e.getMessage());
+            log.error("[MainViewController] Thiết lập Sidebar không thành công: " + e.getMessage());
         }
         try { //set defaultView
             FXMLLoader loader = new FXMLLoader(getClass().getResource(ViewPath.getDefaultView(role).getPath()));
             Parent defaultView = loader.load();
             ContentSlot.getChildren().setAll(defaultView);
         } catch (Exception e) {
-            System.err.println("[MainViewController] Thiết lập default View không thành công: " + e.getMessage());
+            log.error("[MainViewController] Thiết lập default View không thành công: " + e.getMessage());
         }
     }
 
@@ -80,11 +81,11 @@ public class MainViewController implements Initializable {
 
             // 2. TẢI TRANG MỚI HOẶC LẤY TỪ CACHE
             if (target.isCacheable() && viewCache.containsKey(target)) {
-                System.out.println("Đang lấy từ Cache: " + target.getPath());
+                log.info("Đang lấy từ Cache: " + target.getPath());
                 view = viewCache.get(target);
                 nextController = controllerCache.get(target);
             } else {
-                System.out.println("Đang load mới: " + target.getPath());
+                log.info("Đang load mới: " + target.getPath());
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(target.getPath()));
                 view = loader.load();
                 nextController = loader.getController();
@@ -115,8 +116,8 @@ public class MainViewController implements Initializable {
             }
 
         } catch (IOException e) {
-            System.err.println("[MainViewController] Không thể thiết lập giao diện nội dung: " + target.getPath());
-            e.printStackTrace();
+            log.error("[MainViewController] Không thể thiết lập giao diện nội dung: " + target.getPath());
+            log.error("Đã xảy ra lỗi Exception:", e);
         }
     }
 }

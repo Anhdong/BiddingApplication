@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class AuctionServer {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AuctionServer.class);
 
     private static volatile AuctionServer instance;
 
@@ -42,14 +43,14 @@ public class AuctionServer {
             // Thử dùng Virtual Threads nếu JVM hỗ trợ, nếu không fallback sang cached pool
             try {
                 threadPool = Executors.newVirtualThreadPerTaskExecutor();
-                System.out.println("Using Virtual Threads executor");
+                log.info("Using Virtual Threads executor");
             } catch (Throwable t) {
                 threadPool = Executors.newCachedThreadPool();
-                System.out.println("Virtual Threads not available, using cached thread pool");
+                log.info("Virtual Threads not available, using cached thread pool");
             }
 
             running = true;
-            System.out.println("AuctionServer started on port " + port);
+            log.info("AuctionServer started on port " + port);
 
             while (running) {
                 Socket socket = serverSocket.accept();
@@ -60,9 +61,9 @@ public class AuctionServer {
             }
         } catch (IOException e) {
             if (running) {
-                e.printStackTrace();
+                log.error("Đã xảy ra lỗi Exception:", e);
             } else {
-                System.out.println("Server stopped.");
+                log.info("Server stopped.");
             }
         } finally {
             stop();
@@ -81,7 +82,7 @@ public class AuctionServer {
                 serverSocket.close();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Đã xảy ra lỗi Exception:", e);
         }
         if (threadPool != null) {
             threadPool.shutdownNow();
@@ -101,7 +102,7 @@ public class AuctionServer {
     public void registerClient(String userId, ClientConnectionHandler handler) {
         if (userId == null || handler == null) return;
         clients.put(userId, handler);
-        System.out.println("Registered client: " + userId);
+        log.info("Registered client: " + userId);
     }
 
     /**
@@ -110,7 +111,7 @@ public class AuctionServer {
     public void unregisterClient(String userId) {
         if (userId == null) return;
         clients.remove(userId);
-        System.out.println("Unregistered client: " + userId);
+        log.info("Unregistered client: " + userId);
     }
 
     public ClientConnectionHandler getClientHandler(String userId) {
@@ -127,11 +128,11 @@ public class AuctionServer {
             try {
                 handler.closeConnection();
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("Đã xảy ra lỗi Exception:", e);
             }
-            System.out.println("User " + userId + " has been kicked.");
+            log.info("User " + userId + " has been kicked.");
         } else {
-            System.out.println("kickUser: user not found: " + userId);
+            log.info("kickUser: user not found: " + userId);
         }
     }
     private void startUDPDiscovery() {

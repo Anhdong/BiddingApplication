@@ -5,6 +5,7 @@ import com.uet.BiddingApplication.Utils.GsonPacketParser;
 import java.io.BufferedReader;
 
 public class ResponseListenerThread implements Runnable {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ResponseListenerThread.class);
 
     private final BufferedReader in;
     // Dùng volatile để đảm bảo khi gọi stopListening(), luồng sẽ dừng ngay lập tức một cách an toàn
@@ -20,7 +21,7 @@ public class ResponseListenerThread implements Runnable {
             String jsonLine;
             // Vòng lặp chặn (block) liên tục hứng dòng JSON từ Server
             while (running && (jsonLine = in.readLine()) != null) {
-                System.out.println("[Server -> Client] Nhận được: " + jsonLine);
+                log.info("[Server -> Client] Nhận được: " + jsonLine);
 
                 // Dịch chuỗi JSON thành Đối tượng ResponsePacket
                 ResponsePacket<?> response = GsonPacketParser.deserializeResponse(jsonLine);
@@ -32,9 +33,9 @@ public class ResponseListenerThread implements Runnable {
             }
         } catch (Exception e) {
             if (running) {
-                System.err.println("[Client] Mất kết nối tới Server hoặc lỗi luồng nghe: " + e.getMessage());
+                log.error("[Client] Mất kết nối tới Server hoặc lỗi luồng nghe: " + e.getMessage());
             } else {
-                System.out.println("[Client] Luồng lắng nghe đã được đóng chủ động.");
+                log.info("[Client] Luồng lắng nghe đã được đóng chủ động.");
             }
         }
     }

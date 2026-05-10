@@ -20,6 +20,7 @@ import com.uet.BiddingApplication.Model.SessionRegistration;
 import com.uet.BiddingApplication.Utils.Mapper.AuctionSessionMapper;
 
 public class BidderService {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(BidderService.class);
 
     // Khởi tạo Singleton
     private static volatile BidderService instance = null;

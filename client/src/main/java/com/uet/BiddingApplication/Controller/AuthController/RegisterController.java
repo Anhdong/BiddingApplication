@@ -27,6 +27,7 @@ import java.util.function.Consumer;
 import static com.uet.BiddingApplication.BiddingApplication.primaryStage;
 
 public class RegisterController implements Initializable {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RegisterController.class);
 
     @FXML private TextField txtUsername, txtEmail, txtPhoneNumber;
     @FXML private PasswordField txtPassword;
@@ -121,7 +122,7 @@ public class RegisterController implements Initializable {
         Parent loginRoot = null;
         try {
             loginRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(ViewPath.LOGIN.getPath())));
-        } catch (Exception e) {System.out.println("[RegisterController] Cannot load LoginView");}
+        } catch (Exception e) {log.info("[RegisterController] Cannot load LoginView");}
 
         Scene currentScene = primaryStage.getScene();
         currentScene.setRoot(loginRoot);

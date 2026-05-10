@@ -30,6 +30,7 @@ import java.util.Map;
  * File này đóng vai trò là bảng điều phối logic (Router) phía Server.
  */
 public class RouteRegistry {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RouteRegistry.class);
 
     public interface CommandHandler {
         ResponsePacket<?> handle(RequestPacket<?> request) throws Exception;

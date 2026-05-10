@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 import java.util.Objects;
 
 public class BiddingApplication extends Application {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(BiddingApplication.class);
 
     public static Stage primaryStage = null;
 
@@ -59,7 +60,7 @@ public class BiddingApplication extends Application {
         new Thread(() -> {
             String serverIp=ServerConnection.getInstance().discoverServerOnLAN();
             if(serverIp==null){
-                System.out.println("Không quét được mạng LAN ");
+                log.info("Không quét được mạng LAN ");
             }
             ServerConnection.getInstance().connect(serverIp, 8080);
         }).start();
@@ -68,7 +69,7 @@ public class BiddingApplication extends Application {
     @Override
     public void stop() throws Exception {
         // QUAN TRỌNG NHẤT: Hàm này tự động chạy khi user bấm dấu X tắt ứng dụng
-        System.out.println("Đang tắt ứng dụng, dọn dẹp kết nối mạng...");
+        log.info("Đang tắt ứng dụng, dọn dẹp kết nối mạng...");
 
         // Cắt đứt kết nối một cách sạch sẽ, báo cho Server biết để xóa khỏi Map
         ServerConnection.getInstance().disconnect();

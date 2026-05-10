@@ -7,6 +7,7 @@ import com.uet.BiddingApplication.Enum.ActionType;
 import com.uet.BiddingApplication.Exception.BusinessException;
 
 public class RequestRouter {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RequestRouter.class);
 
     private static volatile RequestRouter instance;
 
@@ -72,7 +73,7 @@ public class RequestRouter {
             // =========================================================
             System.err.println("[Router - System Error] Lỗi nghiêm trọng khi xử lý " + currentAction +
                     " từ " + (client.getUserId() != null ? client.getUserId() : "Guest"));
-            e.printStackTrace(); // Ghi log console
+            log.error("Đã xảy ra lỗi Exception:", e); // Ghi log console
 
             // Trực tiếp gán statusCode 500
             ResponsePacket<Void> serverErrorResponse = new ResponsePacket<>(currentAction, 500, "Lỗi máy chủ nội bộ", null);

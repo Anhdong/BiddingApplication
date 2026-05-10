@@ -15,7 +15,7 @@ import java.time.Instant;
 public class GsonPacketParser {
     // Chỉ khởi tạo 1 lần duy nhất, thread-safe
     private static final Gson gson = new GsonBuilder().create();
-
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(GsonPacketParser.class);
     public static String serialize(Object packet) {
         return gson.toJson(packet); // Chuẩn NDJSON
     }
@@ -54,7 +54,7 @@ public class GsonPacketParser {
 
         } catch (JsonSyntaxException | IllegalArgumentException e) {
             // Log lỗi nghiêm trọng để truy vết, chặn các JSON malformed tấn công Server
-            System.err.println("[SECURITY/PARSE ERROR] Invalid packet format: " + e.getMessage());
+            log.error("[SECURITY/PARSE ERROR] Invalid packet format: " + e.getMessage());
             return null;
         }
     }
@@ -90,7 +90,7 @@ public class GsonPacketParser {
             return packet;
 
         } catch (Exception e) {
-            System.err.println("[CLIENT PARSE ERROR] Corrupted response: " + e.getMessage());
+            log.error("[CLIENT PARSE ERROR] Corrupted response: " + e.getMessage());
             return null;
         }
     }

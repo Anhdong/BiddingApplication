@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.net.*;
 
 public class ServerConnection {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ServerConnection.class);
 
     // Singleton pattern
     private static volatile ServerConnection instance;
@@ -46,9 +47,9 @@ public class ServerConnection {
             this.threadHandle.setDaemon(true); // Tự động chết khi app đóng
             this.threadHandle.start();
 
-            System.out.println("Đã kết nối Server thành công và bật luồng lắng nghe!");
+            log.info("Đã kết nối Server thành công và bật luồng lắng nghe!");
         } catch (Exception e) {
-            System.err.println("Lỗi kết nối Server: " + e.getMessage());
+            log.error("Lỗi kết nối Server: " + e.getMessage());
         }
     }
 
@@ -68,9 +69,9 @@ public class ServerConnection {
                 threadHandle.interrupt();
             }
 
-            System.out.println("Đã ngắt kết nối an toàn.");
+            log.info("Đã ngắt kết nối an toàn.");
         } catch (Exception e) {
-            System.err.println("Lỗi khi ngắt kết nối: " + e.getMessage());
+            log.error("Lỗi khi ngắt kết nối: " + e.getMessage());
         }
     }
 
@@ -80,12 +81,12 @@ public class ServerConnection {
             try {
                 String jsonStr = GsonPacketParser.serialize(request);
                 out.println(jsonStr);
-                // System.out.println("[Client -> Server] Đã gửi: " + jsonStr);
+                // log.info("[Client -> Server] Đã gửi: " + jsonStr);
             } catch (Exception e) {
-                System.err.println("Lỗi đóng gói dữ liệu: " + e.getMessage());
+                log.error("Lỗi đóng gói dữ liệu: " + e.getMessage());
             }
         } else {
-            System.err.println("Chưa kết nối Server, không thể gửi request!");
+            log.error("Chưa kết nối Server, không thể gửi request!");
         }
     }
     /**
@@ -104,7 +105,7 @@ public class ServerConnection {
                     sendData, sendData.length, InetAddress.getByName("255.255.255.255"), 8888);
 
             c.send(sendPacket);
-            System.out.println("[Client] Đang rò tìm Server Đấu giá trên mạng LAN...");
+            log.info("[Client] Đang rò tìm Server Đấu giá trên mạng LAN...");
 
             // Đợi Server trả lời
             byte[] recvBuf = new byte[1024];
@@ -114,14 +115,14 @@ public class ServerConnection {
             String response = new String(receivePacket.getData(), 0, receivePacket.getLength());
             if (response.equals("I_AM_AUCTION_SERVER")) {
                 String serverIp = receivePacket.getAddress().getHostAddress();
-                System.out.println("[Client] ĐÃ TÌM THẤY SERVER TẠI: " + serverIp);
+                log.info("[Client] ĐÃ TÌM THẤY SERVER TẠI: " + serverIp);
                 return serverIp;
             }
 
         } catch (SocketTimeoutException e) {
-            System.out.println("[Client] Quá 3 giây không thấy Server nào lên tiếng.");
+            log.info("[Client] Quá 3 giây không thấy Server nào lên tiếng.");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Đã xảy ra lỗi Exception:", e);
         }
         return null;
     }

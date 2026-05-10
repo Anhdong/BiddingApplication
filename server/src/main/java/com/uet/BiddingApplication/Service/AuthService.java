@@ -21,6 +21,7 @@ import org.mindrot.jbcrypt.BCrypt;
  * Áp dụng mẫu thiết kế Singleton.
  */
 public class AuthService {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AuthService.class);
 
     // 1. Khởi tạo Singleton
     private static volatile AuthService instance;

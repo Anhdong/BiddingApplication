@@ -21,6 +21,7 @@ import com.uet.BiddingApplication.Utils.StorageService;
  * Áp dụng mẫu thiết kế Singleton.
  */
 public class SellerService {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(SellerService.class);
 
     private static volatile SellerService instance = null;
 
@@ -130,7 +131,7 @@ public class SellerService {
                 StorageService.getInstance().deleteImage(item.getImageURL());
             } catch (Exception e) {
                 // Lưu ý: Ta chỉ ghi log cảnh báo, không chặn luồng xóa chính nếu chỉ lỗi xóa file rác
-                System.err.println("[Warning] Không thể dọn dẹp ảnh cũ trên Storage cho itemId: " + itemId);
+                log.error("[Warning] Không thể dọn dẹp ảnh cũ trên Storage cho itemId: " + itemId);
             }
         }
 

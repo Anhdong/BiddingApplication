@@ -4,10 +4,11 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
 public class UDPDiscoveryServer implements Runnable {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(UDPDiscoveryServer.class);
     @Override
     public void run() {
         try (DatagramSocket socket = new DatagramSocket(8888)) {
-            System.out.println("Bật luồng phản hồi UDP Discovery trên Port 8888...");
+            log.info("Bật luồng phản hồi UDP Discovery trên Port 8888...");
             byte[] receiveBuffer = new byte[1024];
 
             // Vòng lặp an toàn, tự dừng nếu Thread bị ngắt (interrupt)
@@ -29,7 +30,7 @@ public class UDPDiscoveryServer implements Runnable {
             }
         } catch (Exception e) {
             // Khi server gọi udpDiscoveryThread.interrupt() hoặc tắt JVM, nó sẽ rơi vào đây
-            System.out.println("Luồng UDP Discovery đã được đóng.");
+            log.info("Luồng UDP Discovery đã được đóng.");
         }
     }
 }

@@ -3,6 +3,7 @@ package com.uet.BiddingApplication.Util;
 import javafx.scene.control.Alert;
 
 public class AlertUtil {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AlertUtil.class);
     public static void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR); // Thay đổi Type tùy ý
         alert.setTitle(title);

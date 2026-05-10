@@ -4,6 +4,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
 
 public class UIUtil {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(UIUtil.class);
     public static void roundedImageView(ImageView imageView, double radius) {
         // Tạo một hình chữ nhật bo góc làm "khuôn" (clip)
         Rectangle clip = new Rectangle();

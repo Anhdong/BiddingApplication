@@ -11,6 +11,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class BidderSidebarController implements Initializable {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(BidderSidebarController.class);
     @FXML private ToggleGroup sidebarGroup; // Inject từ FXML qua @FXML
     @FXML private ToggleButton btnBrowse, btnWatchlist, btnHistory;
 

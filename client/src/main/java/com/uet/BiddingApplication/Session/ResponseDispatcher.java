@@ -11,6 +11,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
 public class ResponseDispatcher {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ResponseDispatcher.class);
 
     private static volatile ResponseDispatcher instance;
 
@@ -52,14 +53,14 @@ public class ResponseDispatcher {
                     try {
                         callback.accept(response);
                     } catch (Exception e) {
-                        System.err.println("[Dispatcher] Lỗi khi Controller xử lý UI: " + e.getMessage());
-                        e.printStackTrace();
+                        log.error("[Dispatcher] Lỗi khi Controller xử lý UI: " + e.getMessage());
+                        log.error("Đã xảy ra lỗi Exception:", e);
                     }
                 }
             });
         } else {
             // Log nhẹ nhàng nếu Client nhận được tin nhắn rác hoặc chưa kịp mở màn hình
-            System.out.println("[Dispatcher] Tin nhắn bị bỏ qua do chưa có UI lắng nghe: " + response.getAction());
+            log.info("[Dispatcher] Tin nhắn bị bỏ qua do chưa có UI lắng nghe: " + response.getAction());
         }
     }
 }
