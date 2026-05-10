@@ -17,13 +17,16 @@ public class GsonPacketParser {
     private static final Gson gson = new GsonBuilder().create();
 
     public static String serialize(Object packet) {
-        return gson.toJson(packet) + "\n"; // Chuẩn NDJSON
+        return gson.toJson(packet); // Chuẩn NDJSON
     }
     //chuyển đối tượng -> JSON , kết thúc lệnh bằng dấu /n
     /**
      * Dùng cho Server khi nhận Request từ Client
      */
     public static RequestPacket<?> deserializeRequest(String jsonLine) {
+        if (jsonLine == null || jsonLine.trim().isEmpty()) {
+            return null;
+        }
         //đoch chuổix Json từ client gửi , thực hiện các thao tác để trả về 1 requestpacket
         try {
             JsonObject jsonObject = JsonParser.parseString(jsonLine).getAsJsonObject();
@@ -60,6 +63,9 @@ public class GsonPacketParser {
      * Dùng cho Client khi nhận Response từ Server (Logic tương tự)
      */
     public static ResponsePacket<?> deserializeResponse(String jsonLine) {
+        if (jsonLine == null || jsonLine.trim().isEmpty()) {
+            return null;
+        }
         try {
             JsonObject jsonObject = JsonParser.parseString(jsonLine).getAsJsonObject();
             ActionType action = ActionType.valueOf(jsonObject.get("action").getAsString());
@@ -68,6 +74,9 @@ public class GsonPacketParser {
             ResponsePacket<Object> packet = new ResponsePacket<>();
             packet.setAction(action);
             packet.setStatusCode(statusCode);
+            if (jsonObject.has("message") && !jsonObject.get("message").isJsonNull()) {
+                packet.setMessage(jsonObject.get("message").getAsString());
+            }
 
             if (jsonObject.has("payload") && !jsonObject.get("payload").isJsonNull()) {
                 Type payloadType = PacketTypeRegistry.getResponseType(action);

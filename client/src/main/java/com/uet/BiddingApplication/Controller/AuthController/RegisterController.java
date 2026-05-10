@@ -62,8 +62,6 @@ public class RegisterController implements Initializable {
         //Send Request
         ServerConnection.getInstance().sendRequest(request);
 
-        //Switch to login
-        switchToLogin();
     }
 
     private RegisterRequestDTO getRegisterRequestDTO() {
@@ -112,7 +110,7 @@ public class RegisterController implements Initializable {
             AlertUtil.showAlert("Success","Account created successfully!");
             switchToLogin();
         } else {
-            AlertUtil.showAlert("Cannot create account!");
+            AlertUtil.showAlert(response.getMessage());
         }
     }
 

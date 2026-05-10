@@ -87,7 +87,7 @@ public class LoginController implements Initializable {
             //Chuyen ve Main
             switchToMain();
         } else {
-            System.err.println("Đăng nhập thất bại: " + response.getMessage());
+            AlertUtil.showAlert(response.getMessage());
         }
     }
 
