@@ -1,0 +1,16 @@
+2026-05-10 19:58:58.686 [main] INFO  c.u.B.Launcher.ServerLauncher -   KHỞI ĐỘNG HỆ THỐNG ĐẤU GIÁ TRỰC TUYẾN - UET    
+2026-05-10 19:58:58.689 [main] INFO  c.u.B.Launcher.ServerLauncher - [1/4] Đang nạp dữ liệu lên RAM...
+2026-05-10 19:58:58.691 [main] INFO  c.u.B.Config.AppConfig - Đã nạp thành công file cấu hình application.properties.
+2026-05-10 19:59:00.320 [main] INFO  c.u.B.Launcher.ServerLauncher -  HOÀN TẤT.
+2026-05-10 19:59:00.320 [main] INFO  c.u.B.Launcher.ServerLauncher - [2/4] Đang khôi phục các luồng xử lý phiên...
+2026-05-10 19:59:00.327 [main] INFO  c.u.B.Launcher.ServerLauncher -  HOÀN TẤT.
+2026-05-10 19:59:00.328 [main] INFO  c.u.B.Launcher.ServerLauncher - [3/4] Kiểm tra Worker Pool (Fixed 8 Threads)...
+2026-05-10 19:59:00.341 [main] INFO  c.u.B.Launcher.ServerLauncher -  SẴN SÀNG.
+2026-05-10 19:59:00.360 [main] INFO  c.u.B.Launcher.ServerLauncher - [4/4] Đang mở cổng mạng: 8080
+2026-05-10 19:59:00.363 [main] INFO  c.u.B.Launcher.ServerLauncher - >>> SERVER ĐANG LẮNG NGHE...
+2026-05-10 19:59:00.364 [main] INFO  c.u.B.Launcher.ServerLauncher - --------------------------------------------------
+2026-05-10 19:59:00.367 [main] INFO  c.u.B.ServerClass.AuctionServer - Using Virtual Threads executor
+2026-05-10 19:59:00.369 [main] INFO  c.u.B.ServerClass.AuctionServer - AuctionServer started on port 8080
+2026-05-10 19:59:00.372 [Thread-1] INFO  c.u.B.ServerClass.UDPDiscoveryServer - Bật luồng phản hồi UDP Discovery trên Port 8888...
+2026-05-10 19:59:17.295 [virtual-67] INFO  c.u.B.S.ClientConnectionHandler - [Server nhận từ Guest] {"action":"LOGIN","payload":{"username":"nẻoberb","password":"brb"},"timestamp":0}
+2026-05-10 20:01:04.328 [Thread-0] INFO  c.u.B.Utils.DatabaseConnectionPool - Hệ thống tắt: Đã giải phóng Pool thành công.
