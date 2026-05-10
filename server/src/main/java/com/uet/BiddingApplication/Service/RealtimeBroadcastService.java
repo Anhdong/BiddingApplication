@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Áp dụng mẫu thiết kế Singleton.
  */
 public class RealtimeBroadcastService {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RealtimeBroadcastService.class);
 
     // Map lưu ID Phòng đấu giá và Tập hợp ID người dùng đang xem phòng đó.
     private ConcurrentHashMap<String, Set<String>> roomSubscribers;
@@ -43,11 +44,11 @@ public class RealtimeBroadcastService {
     public void subscribe(String sessionId, String userId) {
         // 1. FAIL-FAST: Kiểm tra dữ liệu đầu vào ngay lập tức.
         if (sessionId == null || sessionId.trim().isEmpty()) {
-            System.err.println("[ERROR] Subscribe failed: sessionId is null or empty. UserId: " + userId);
+            log.error("[ERROR] Subscribe failed: sessionId is null or empty. UserId: " + userId);
             throw new IllegalArgumentException("SessionId cannot be null or empty");
         }
         if (userId == null || userId.trim().isEmpty()) {
-            System.err.println("[ERROR] Subscribe failed: userId is null or empty. SessionId: " + sessionId);
+            log.error("[ERROR] Subscribe failed: userId is null or empty. SessionId: " + sessionId);
             throw new IllegalArgumentException("UserId cannot be null or empty");
         }
 
@@ -63,17 +64,17 @@ public class RealtimeBroadcastService {
 
             // 4. PRINT LOGGING: In ra màn hình console thay vì dùng thư viện Log
             if (isNewSubscriber) {
-                System.out.println("[INFO] User [" + userId + "] successfully subscribed to room [" + sessionId + "]");
+                log.info("[INFO] User [" + userId + "] successfully subscribed to room [" + sessionId + "]");
             } else {
                 // Debug: Không spam log nếu user bấm F5 hoặc gửi nhầm request subscribe nhiều lần
                 // (Bạn có thể comment dòng này lại nếu thấy console bị trôi quá nhanh)
-                System.out.println("[DEBUG] User [" + userId + "] is already in room [" + sessionId + "]. Ignored duplicate subscription.");
+                log.info("[DEBUG] User [" + userId + "] is already in room [" + sessionId + "]. Ignored duplicate subscription.");
             }
 
         } catch (Exception e) {
             // 5. ERROR HANDLING: Bắt và in ra lỗi chi tiết (Stack trace) để dễ sửa
-            System.err.println("[ERROR] Unexpected error while subscribing user [" + userId + "] to room [" + sessionId + "]: " + e.getMessage());
-            e.printStackTrace();
+            log.error("[ERROR] Unexpected error while subscribing user [" + userId + "] to room [" + sessionId + "]: " + e.getMessage());
+            log.error("Đã xảy ra lỗi Exception:", e);
             throw new RuntimeException("Internal error during subscription", e);
         }
     }
@@ -92,7 +93,7 @@ public class RealtimeBroadcastService {
             return audience.isEmpty();
         });
 
-        System.out.println("[INFO] Đã dọn dẹp toàn bộ phòng của User [" + userId + "]");
+        log.info("[INFO] Đã dọn dẹp toàn bộ phòng của User [" + userId + "]");
     }
 
     public void unsubscribe(String sessionId, String userId) {
@@ -102,12 +103,12 @@ public class RealtimeBroadcastService {
         roomSubscribers.computeIfPresent(sessionId, (key, audience) -> {
             boolean removed = audience.remove(userId);
             if (removed) {
-                System.out.println("[INFO] User [" + userId + "] left room [" + sessionId + "]");
+                log.info("[INFO] User [" + userId + "] left room [" + sessionId + "]");
             }
 
             // Trả về null sẽ báo cho ConcurrentHashMap tự động remove cái key (sessionId) này đi
             if (audience.isEmpty()) {
-                System.out.println("[INFO] Room [" + sessionId + "] is empty and has been removed.");
+                log.info("[INFO] Room [" + sessionId + "] is empty and has been removed.");
                 return null;
             }
             return audience; // Giữ nguyên phòng nếu vẫn còn người
@@ -123,7 +124,7 @@ public class RealtimeBroadcastService {
 
         // 2. Lập trình phòng thủ (Defensive Programming): Chặn lỗi NullPointer
         if (audience == null || audience.isEmpty()) {
-            System.out.println("[DEBUG] Phòng [" + sessionId + "] không có khán giả để broadcast.");
+            log.info("[DEBUG] Phòng [" + sessionId + "] không có khán giả để broadcast.");
             return;
         }
 
@@ -140,7 +141,7 @@ public class RealtimeBroadcastService {
                 clientHandler.sendPacket(packet);
             } else {
                 // User có thể đã bị rớt mạng hoặc đóng app đột ngột
-                System.out.println("[WARN] Broadcast thất bại: User [" + userId + "] không online.");
+                log.info("[WARN] Broadcast thất bại: User [" + userId + "] không online.");
             }
         }
     }
@@ -155,7 +156,7 @@ public class RealtimeBroadcastService {
         Set<String> removedRoom = roomSubscribers.remove(sessionId);
 
         if (removedRoom != null) {
-            System.out.println("[INFO] Đã đóng phòng phát thanh cho Session [" + sessionId + "]. Giải phóng " + removedRoom.size() + " users.");
+            log.info("[INFO] Đã đóng phòng phát thanh cho Session [" + sessionId + "]. Giải phóng " + removedRoom.size() + " users.");
         }
     }
 
@@ -169,10 +170,10 @@ public class RealtimeBroadcastService {
             if (handler != null) {
                 handler.sendPacket(packet);
             } else {
-                System.out.println("[DEBUG] Không thể gửi tin riêng: User [" + userId + "] có thể đã ngắt kết nối.");
+                log.info("[DEBUG] Không thể gửi tin riêng: User [" + userId + "] có thể đã ngắt kết nối.");
             }
         } catch (Exception e) {
-            System.err.println("[ERROR] Lỗi khi gửi tin nhắn riêng cho User [" + userId + "]: " + e.getMessage());
+            log.error("[ERROR] Lỗi khi gửi tin nhắn riêng cho User [" + userId + "]: " + e.getMessage());
         }
     }
 }
