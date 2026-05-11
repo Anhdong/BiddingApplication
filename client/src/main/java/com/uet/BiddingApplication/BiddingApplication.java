@@ -56,10 +56,9 @@ public class BiddingApplication extends Application {
         stage.setMinHeight(500);
 
         stage.show();
-
         new Thread(() -> {
-            String serverIp=ServerConnection.getInstance().discoverServerOnLAN();
-            if(serverIp==null){
+            String serverIp = ServerConnection.getInstance().discoverServerOnLAN();
+            if (serverIp == null) {
                 log.info("Không quét được mạng LAN ");
             }
             ServerConnection.getInstance().connect(serverIp, 8080);

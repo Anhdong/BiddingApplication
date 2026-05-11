@@ -10,7 +10,6 @@ public abstract class Entity {
     public Entity() {
         this.id= UUID.randomUUID().toString();
         this.createdAt = LocalDateTime.now();
-        this.id = UUID.randomUUID().toString();
     }
 
     public Entity(String id, LocalDateTime createdAt) {

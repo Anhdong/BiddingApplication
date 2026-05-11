@@ -1,4 +1,0 @@
-2026-05-10 19:59:12.025 [Thread-4] INFO  c.u.B.Session.ServerConnection - [Client] Đang rò tìm Server Đấu giá trên mạng LAN...
-2026-05-10 19:59:12.028 [Thread-4] INFO  c.u.B.Session.ServerConnection - [Client] ĐÃ TÌM THẤY SERVER TẠI: 192.168.1.6
-2026-05-10 19:59:12.031 [Thread-4] INFO  c.u.B.Session.ServerConnection - Đã kết nối Server thành công và bật luồng lắng nghe!
-2026-05-10 19:59:17.729 [Thread-5] INFO  c.u.B.Session.ResponseListenerThread - [Server -> Client] Nhận được: {"action":"LOGIN","statusCode":400,"message":"Tài khoản không tồn tại hoặc sai mật khẩu."}

@@ -2,6 +2,7 @@ package com.uet.BiddingApplication.ServerClass;
 
 import com.uet.BiddingApplication.DTO.Packet.RequestPacket;
 import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
+import com.uet.BiddingApplication.DTO.Response.AuthResponseDTO;
 import com.uet.BiddingApplication.Enum.ActionType;
 // Import BusinessException của bạn vào đây (nếu khác package)
 import com.uet.BiddingApplication.Exception.BusinessException;
@@ -51,6 +52,15 @@ public class RequestRouter {
 
             // 3. Nếu xử lý thành công, gửi trả ResponsePacket về Client
             if (response != null) {
+                if (currentAction == ActionType.LOGIN && response.getStatusCode() == 200) {
+                    // Ép kiểu payload an toàn vì chắc chắn LOGIN thành công sẽ trả về AuthResponseDTO
+                    AuthResponseDTO authData = (AuthResponseDTO) response.getPayload();
+
+                    // Gán userId vào Handler (hành động này tự động registerClient vào AuctionServer)
+                    client.setUserId(authData.getUserProfile().getId());
+
+                    log.info("[Router] Đã định danh luồng kết nối với UserID: " + authData.getUserProfile().getId());
+                }
                 client.sendPacket(response);
             }
 
