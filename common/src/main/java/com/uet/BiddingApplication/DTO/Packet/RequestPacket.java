@@ -20,6 +20,7 @@ public class RequestPacket<T>{
         this.userId = userId;
         this.token = token;
         this.payload = payload;
+        this.timestamp =System.currentTimeMillis();
     }
 
     public long getTimestamp() {
