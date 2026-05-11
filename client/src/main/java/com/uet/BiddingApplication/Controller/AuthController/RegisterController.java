@@ -108,7 +108,7 @@ public class RegisterController implements Initializable {
 
     private void handleRegisterResponse(ResponsePacket<?> response){
         if (response.getStatusCode() == 200) {
-            NotificationUtil.showError("Success","Account created successfully!");
+            NotificationUtil.showInfo("Success","Account created successfully!");
             switchToLogin();
         } else {
             NotificationUtil.showError(response.getMessage());
@@ -122,7 +122,7 @@ public class RegisterController implements Initializable {
         Parent loginRoot = null;
         try {
             loginRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(ViewPath.LOGIN.getPath())));
-        } catch (Exception e) {log.info("[RegisterController] Cannot load LoginView");}
+        } catch (Exception e) {log.error("[RegisterController] Cannot load LoginView");}
 
         Scene currentScene = primaryStage.getScene();
         currentScene.setRoot(loginRoot);

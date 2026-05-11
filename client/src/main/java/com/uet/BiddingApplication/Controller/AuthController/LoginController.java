@@ -99,7 +99,7 @@ public class LoginController implements Initializable {
         Parent registerRoot = null;
         try {
             registerRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(ViewPath.REGISTER.getPath())));
-        } catch (Exception e) {log.info("[LoginController] Cannot load RegisterView");}
+        } catch (Exception e) {log.error("[LoginController] Cannot load RegisterView");}
 
         Scene currentScene = primaryStage.getScene();
         currentScene.setRoot(registerRoot);
@@ -111,7 +111,7 @@ public class LoginController implements Initializable {
         Parent mainRoot = null;
         try {
             mainRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(ViewPath.MAIN.getPath())));
-        } catch (Exception e) {log.info("[LoginController] Cannot load Main");}
+        } catch (Exception e) {log.error("[LoginController] Cannot load Main");}
 
         Scene currentScene = primaryStage.getScene();
         currentScene.setRoot(mainRoot);
