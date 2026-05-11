@@ -3,6 +3,7 @@ package com.uet.BiddingApplication.Controller;
 import com.uet.BiddingApplication.Enum.ViewPath;
 import com.uet.BiddingApplication.Enum.RoleType;
 import com.uet.BiddingApplication.Interface.ViewControllerLifecycle;
+import com.uet.BiddingApplication.Session.ClientSession;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -43,7 +44,7 @@ public class MainViewController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // Gán instance bằng chính object này khi giao diện load xong
         instance = this;
-        setupUserInterface(RoleType.BIDDER);
+        setupUserInterface(ClientSession.getInstance().getCurrentUser().getRole());
     }
 
     public void setupUserInterface(RoleType role) {
@@ -51,13 +52,11 @@ public class MainViewController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(ViewPath.getSidebarView(role).getPath()));
             Parent sidebar = loader.load();
             SidebarSlot.getChildren().setAll(sidebar);
-        } catch (Exception e) {
+        } catch (IOException e) {
             log.error("[MainViewController] Thiết lập Sidebar không thành công: " + e.getMessage());
         }
         try { //set defaultView
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(ViewPath.getDefaultView(role).getPath()));
-            Parent defaultView = loader.load();
-            ContentSlot.getChildren().setAll(defaultView);
+            loadView(ViewPath.getDefaultView(role));
         } catch (Exception e) {
             log.error("[MainViewController] Thiết lập default View không thành công: " + e.getMessage());
         }
@@ -116,7 +115,7 @@ public class MainViewController implements Initializable {
             }
 
         } catch (IOException e) {
-            log.error("[MainViewController] Không thể thiết lập giao diện nội dung: " + target.getPath());
+            log.error("[MainViewController] Không thể thiết lập giao diện nội dung: {}", target.getPath());
         }
     }
 }
