@@ -88,7 +88,7 @@ public class PacketTypeRegistry {
         responseTypes.put(ActionType.LOGIN, AuthResponseDTO.class);
         responseTypes.put(ActionType.UPDATE_PROFILE, UserProfileDTO.class);
         responseTypes.put(ActionType.JOIN_SESSION, AuctionRoomSyncDTO.class);
-        responseTypes.put(ActionType.FORCE_LOGOUT, String.class); // Payload là chuỗi lý do khóa
+        //responseTypes.put(ActionType.FORCE_LOGOUT, Void.class); // Payload là chuỗi lý do khóa
 
         // --- Nhóm Admin ---
         responseTypes.put(ActionType.GET_ALL_USERS, userProfileListType); // Tránh rò rỉ Entity User

@@ -2,6 +2,7 @@ package com.uet.BiddingApplication.ServerClass;
 
 import com.uet.BiddingApplication.DTO.Packet.RequestPacket;
 import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
+import com.uet.BiddingApplication.Enum.ActionType;
 import com.uet.BiddingApplication.Utils.GsonPacketParser;
 import com.uet.BiddingApplication.Service.RealtimeBroadcastService; // Import service quản lý phòng
 
@@ -117,12 +118,37 @@ public class ClientConnectionHandler implements Runnable {
     public void forceClose(String reason) {
         log.info("[Handler] Đóng kết nối Socket của " + (userId != null ? userId : "Guest") + " - Lý do: " + reason);
         try {
+            if (socket != null && !socket.isClosed()) socket.close();
             if (in != null) in.close();
             if (out != null) out.close();
-            if (socket != null && !socket.isClosed()) socket.close();
         } catch (IOException e) {
             log.error("[Handler] Lỗi khi đóng socket: " + e.getMessage());
         }
+    }
+    /**
+     * Kích Client một cách lịch sự: Gửi thông báo trước khi cắt cáp
+     */
+    public void kickOut(String reason) {
+        log.info("[Handler] Đang gửi thông báo KICK cho user " + userId + "...");
+
+        // 1. Đóng gói Tối hậu thư (Cần thêm ActionType.FORCE_LOGOUT vào Enum)
+        ResponsePacket<Void> kickPacket = new ResponsePacket<>();
+        kickPacket.setAction(ActionType.FORCE_LOGOUT);
+        kickPacket.setStatusCode(403); // HTTP 403 Forbidden
+        kickPacket.setMessage(reason);
+
+        // 2. Gửi đi
+        sendPacket(kickPacket);
+
+        // 3. THỦ THUẬT QUAN TRỌNG: Đợi 200ms để đảm bảo gói tin rời khỏi Card mạng của Server
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        // 4. Rút ống thở
+        forceClose("Bị kích ra ngoài do: " + reason);
     }
 
     public void closeConnection() {

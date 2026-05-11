@@ -117,7 +117,6 @@ public class MainViewController implements Initializable {
 
         } catch (IOException e) {
             log.error("[MainViewController] Không thể thiết lập giao diện nội dung: " + target.getPath());
-            log.error("Đã xảy ra lỗi Exception:", e);
         }
     }
 }
