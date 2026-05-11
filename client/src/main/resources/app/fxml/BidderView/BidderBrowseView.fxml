@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.TilePane?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="800.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="800.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.uet.BiddingApplication.Controller.BidderController.BidderBrowseController">
    <center>
       <ScrollPane fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
@@ -29,7 +29,7 @@
                   <FontIcon iconLiteral="mdi2m-magnify" styleClass="large-icon" />
                </graphic>
             </Label>
-            <TextField fx:id="searchField" maxWidth="-Infinity" prefHeight="50.0" prefWidth="500.0" promptText="Search here..." style="-fx-background-color: transparent;">
+            <TextField fx:id="searchField" maxWidth="-Infinity" onAction="#onSearchEnter" prefHeight="50.0" prefWidth="500.0" promptText="Search here..." style="-fx-background-color: transparent;">
                <HBox.margin>
                   <Insets />
                </HBox.margin></TextField>

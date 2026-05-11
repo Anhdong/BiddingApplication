@@ -2,7 +2,6 @@ package com.uet.BiddingApplication.Controller.BaseController;
 
 
 import com.uet.BiddingApplication.Controller.CommonController.ItemCardController;
-import com.uet.BiddingApplication.Controller.MainViewController;
 import com.uet.BiddingApplication.DTO.Response.AuctionCardDTO;
 import com.uet.BiddingApplication.Interface.ViewControllerLifecycle;
 import javafx.fxml.FXML;
@@ -21,7 +20,7 @@ import java.util.ResourceBundle;
 public abstract class BaseBrowseController implements Initializable, ViewControllerLifecycle {
 
     //--LOG--
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(MainViewController.class);
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(BaseBrowseController.class);
 
     // --FXML FIELDS--
     @FXML protected TilePane itemContainer;
