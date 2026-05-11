@@ -14,7 +14,7 @@ import javafx.scene.layout.VBox;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class ItemCardViewController implements Initializable {
+public class ItemCardController implements Initializable {
 
     @FXML private VBox vbxCard;
     @FXML private ImageView imgItem;
