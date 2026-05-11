@@ -14,7 +14,7 @@
    <center>
       <ScrollPane fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
-            <TilePane hgap="45.0" vgap="24.0">
+            <TilePane fx:id="itemContainer" hgap="45.0" vgap="24.0">
                <padding>
                   <Insets left="45.0" right="45.0" top="24.0" />
                </padding></TilePane>
@@ -29,7 +29,7 @@
                   <FontIcon iconLiteral="mdi2m-magnify" styleClass="large-icon" />
                </graphic>
             </Label>
-            <TextField maxWidth="-Infinity" prefHeight="50.0" prefWidth="500.0" promptText="Search here..." style="-fx-background-color: transparent;">
+            <TextField fx:id="searchField" maxWidth="-Infinity" prefHeight="50.0" prefWidth="500.0" promptText="Search here..." style="-fx-background-color: transparent;">
                <HBox.margin>
                   <Insets />
                </HBox.margin></TextField>
