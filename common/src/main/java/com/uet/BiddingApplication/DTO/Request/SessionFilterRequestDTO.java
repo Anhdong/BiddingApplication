@@ -11,6 +11,7 @@ public class SessionFilterRequestDTO  {
     public SessionFilterRequestDTO(String category, String timeSortOption, String keyword) {
         this.category = category;
         this.timeSortOption = timeSortOption;
+        this.keyword = keyword;
     }
 
     public SessionFilterRequestDTO() {

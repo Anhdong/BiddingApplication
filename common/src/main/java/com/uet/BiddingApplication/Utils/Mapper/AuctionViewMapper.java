@@ -25,7 +25,7 @@ public class AuctionViewMapper {
     public static List<AuctionCardDTO> toCardDTOList(List<AuctionSession> sessions, Map<String,Item> itemCache){
         List<AuctionCardDTO> cardDTOList = new ArrayList<>();
         for(AuctionSession session : sessions){
-            cardDTOList.add(toCardDTO(session,itemCache.get(session.getId())));
+            cardDTOList.add(toCardDTO(session,itemCache.get(session.getItemId())));
         }
         return cardDTOList;
     }

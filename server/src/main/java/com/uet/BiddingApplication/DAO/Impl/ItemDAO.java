@@ -180,23 +180,34 @@ public class ItemDAO implements IItemDAO {
 
     @Override
     public List<Item> getItemsByIds(List<String> itemIds) {
-        String placeholders=String.join(",", Collections.nCopies(itemIds.size(), "?"));
-        String sql = "SELECT * FROM items WHERE id IN ("+placeholders+")";
         List<Item> items = new ArrayList<>();
-        try(Connection conn=DatabaseConnectionPool.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql)) {
-            for (int i=0; i<itemIds.size(); i++) {
-                ps.setString(i+1, itemIds.get(i));
+
+        // 1. Guard clause: Tránh lỗi cú pháp SQL "IN ()" nếu danh sách truyền vào rỗng
+        if (itemIds == null || itemIds.isEmpty()) {
+            return items;
+        }
+
+        // 2. Sửa lỗi ép kiểu: Gắn trực tiếp ::uuid vào từng placeholder
+        String placeholders = String.join(",", Collections.nCopies(itemIds.size(), "?::uuid"));
+        String sql = "SELECT * FROM items WHERE id IN (" + placeholders + ")";
+
+        try (Connection conn = DatabaseConnectionPool.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            for (int i = 0; i < itemIds.size(); i++) {
+                ps.setString(i + 1, itemIds.get(i));
             }
-            try(ResultSet rs = ps.executeQuery()) {
+
+            try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     items.add(mapRowToItem(rs));
                 }
             }
-        }catch (SQLException e){
-            log.error("[ItemDAO] Lỗi getItemsByIds: ");
-            log.error("Đã xảy ra lỗi Exception:", e);
+        } catch (SQLException e) {
+            // Chuẩn hóa ghi log theo quy tắc
+            log.error("[ItemDAO] Lỗi getItemsByIds: " + e.getMessage());
         }
+
         return items;
     }
 

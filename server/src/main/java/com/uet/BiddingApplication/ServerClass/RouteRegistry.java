@@ -2,6 +2,7 @@ package com.uet.BiddingApplication.ServerClass;
 
 import com.uet.BiddingApplication.CoreService.InMemoryBidServiceImpl;
 import com.uet.BiddingApplication.CoreService.ItemSearchService;
+import com.uet.BiddingApplication.CoreService.SearchCacheManager;
 import com.uet.BiddingApplication.Enum.Category;
 import com.uet.BiddingApplication.DTO.Packet.RequestPacket;
 import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
@@ -167,8 +168,8 @@ public class RouteRegistry {
         });
 
         registry.put(ActionType.GET_ACTIVE_SESSIONS, req -> {
-            SessionFilterRequestDTO filter = (SessionFilterRequestDTO) req.getPayload();
-            Object result = AuctionService.getInstance().getActiveSessions(filter);
+            //SessionFilterRequestDTO filter = (SessionFilterRequestDTO) req.getPayload();
+            Object result = SearchCacheManager.getInstance().getAllActiveSessionsAsCardDto();
             return new ResponsePacket<>(ActionType.GET_ACTIVE_SESSIONS, 200, "OK", result);
         });
 
@@ -188,7 +189,7 @@ public class RouteRegistry {
 
         registry.put(ActionType.GET_SESSION_DETAIL, req -> {
             SessionTargetRequestDTO dto = (SessionTargetRequestDTO) req.getPayload();
-            Object result = AuctionService.getInstance().getItemDetail(dto.getSessionId());
+            Object result = SearchCacheManager.getInstance().getSessionDetailDto(dto.getSessionId());
             return new ResponsePacket<>(ActionType.GET_SESSION_DETAIL, 200, "OK", result);
         });
 
