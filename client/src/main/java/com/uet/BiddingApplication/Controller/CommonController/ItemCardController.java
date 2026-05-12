@@ -1,6 +1,7 @@
 package com.uet.BiddingApplication.Controller.CommonController;
 
 import com.uet.BiddingApplication.DTO.Response.AuctionCardDTO;
+import com.uet.BiddingApplication.Enum.SessionStatus;
 import com.uet.BiddingApplication.Util.UIUtil;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -8,10 +9,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class ItemCardController implements Initializable {
@@ -30,10 +36,35 @@ public class ItemCardController implements Initializable {
 
     public void setData(AuctionCardDTO cardDto){
         currentItem = cardDto;
+        if(cardDto.getImageURL()!= null) imgItem.setImage(new Image(cardDto.getImageURL()));
         lblName.setText(cardDto.getItemName());
-        //TODO: apply time format rely on status+ convert IMGURL to image
-        //lblDate.setText("hh:mm");
+        setLblDate(cardDto.getStatus(),cardDto.getStartTime(),cardDto.getEndTime());
         lblPrice.setText("$"+cardDto.getStartPrice().toString());
+    }
+
+    private void setLblDate(SessionStatus status,LocalDateTime startTime, LocalDateTime endTime){
+        if (Objects.requireNonNull(status) == SessionStatus.OPEN) {
+            // Định dạng giờ:phút
+            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+            // Định dạng ngày:tháng/năm
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+            LocalDateTime now = LocalDateTime.now();
+            //Xu ly format neu cung ngay hoac khac ngay
+            if (now.toLocalDate().equals(startTime.toLocalDate())) {
+                lblDate.setText(startTime.format(timeFormatter) + " - " + endTime.format(timeFormatter));
+            } else {
+                lblDate.setText(startTime.format(timeFormatter) + " - " + endTime.format(dateFormatter));
+            }
+        } else {
+            lblDate.setText(sentenceCase((status.toString())));
+        }
+    }
+    private String sentenceCase(String original) {
+        if (original == null || original.isEmpty()) {
+            return original;
+        }
+        return original.substring(0, 1).toUpperCase() + original.substring(1).toLowerCase();
     }
 
     //Nhan logic tu browse

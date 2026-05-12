@@ -3,6 +3,7 @@ package com.uet.BiddingApplication.Controller.BaseController;
 
 import com.uet.BiddingApplication.Controller.CommonController.ItemCardController;
 import com.uet.BiddingApplication.DTO.Response.AuctionCardDTO;
+import com.uet.BiddingApplication.Enum.ViewPath;
 import com.uet.BiddingApplication.Interface.ViewControllerLifecycle;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -49,12 +50,12 @@ public abstract class BaseBrowseController implements Initializable, ViewControl
 
     //--METHODS--
     protected void renderItems(List<AuctionCardDTO> items) {
+            log.info("Clean all items");
             itemContainer.getChildren().clear(); // Clean all old cards
-
             for (AuctionCardDTO item : items) {
                 try {
                     // Load Card
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/app/fxml/CommonView/ItemCardView.fxml"));
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource(ViewPath.ITEM_CARD.getPath()));
                     Node itemNode = loader.load();
 
                     // Get ItemCardController and setData
