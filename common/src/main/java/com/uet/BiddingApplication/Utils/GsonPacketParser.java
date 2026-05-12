@@ -7,14 +7,26 @@ import com.uet.BiddingApplication.Enum.ActionType;
 
 import java.lang.reflect.Type;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Lõi phân tích gói tin mạng.
  * Xử lý ngoại lệ chặt chẽ, chống crash hệ thống khi nhận chuỗi JSON rác.
  */
 public class GsonPacketParser {
-    // Chỉ khởi tạo 1 lần duy nhất, thread-safe
-    private static final Gson gson = new GsonBuilder().create();
+    // TỐI ƯU: Cấu hình GsonBuilder với TypeAdapter cho LocalDateTime
+    private static final Gson gson = new GsonBuilder()
+            // Dạy Gson cách Serialize: LocalDateTime -> String JSON
+            .registerTypeAdapter(LocalDateTime.class, (JsonSerializer<LocalDateTime>) (src, typeOfSrc, context) ->
+                    new JsonPrimitive(src.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
+
+            // Dạy Gson cách Deserialize: String JSON -> LocalDateTime
+            .registerTypeAdapter(LocalDateTime.class, (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) ->
+                    LocalDateTime.parse(json.getAsString(), DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+
+            // (Tùy chọn) Có thể format ngày giờ cho đẹp hơn nếu cần
+            .create();
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(GsonPacketParser.class);
     public static String serialize(Object packet) {
         return gson.toJson(packet); // Chuẩn NDJSON
