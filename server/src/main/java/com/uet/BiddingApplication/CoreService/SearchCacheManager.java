@@ -53,9 +53,6 @@ public class SearchCacheManager implements ISearchCacheManager{
                 activeSessionsCache.put(session.getId(), session);
             }
         }
-        for(AuctionSession activeSession : activeSessions){
-            System.out.println(activeSession.getItemId());
-        }
     }
 
     /**
@@ -76,9 +73,6 @@ public class SearchCacheManager implements ISearchCacheManager{
             for (Item item : items) {
                 itemCache.put(item.getId(), item);
             }
-        }
-        for(String itemId : itemCache.keySet()){
-            System.out.println(itemId+":"+itemCache.get(itemId).getName());
         }
     }
 
