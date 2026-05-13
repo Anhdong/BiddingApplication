@@ -44,7 +44,6 @@ public class BidderBrowseController extends BaseBrowseController {
 
     @Override
     protected void configureItem(ItemCardController controller, AuctionCardDTO item) {
-        controller.setData(item);
         controller.setBtnAction("Add", event -> {
             log.info("[BidderBrowse] Bidder chọn đấu giá sản phẩm: {}", item.getItemName());
             // TODO: Chuyển sang màn hình chi tiết phiên đấu giá (Auction Detail)

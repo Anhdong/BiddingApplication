@@ -81,16 +81,17 @@ public class NotificationUtil {
     // CONFIRMATION DIALOG (Returns true/false)
     // ==========================================
     public static boolean showConfirmation(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
 
-        // --- GỌI HÀM ÁP DỤNG CSS CHO CẢ CONFIRMATION ---
-        applyStyles(alert.getDialogPane());
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            Platform.runLater(()->{
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(content);
+            applyStyles(alert.getDialogPane());
+            });
 
         // showAndWait() returns an Optional containing the button the user clicked
-        Optional<ButtonType> result = alert.showAndWait();
+        Optional<ButtonType> result = AppExecutor.getResultFromUI(alert::showAndWait);
 
         // Return true ONLY if the user clicked OK
         return result.isPresent() && result.get() == ButtonType.OK;

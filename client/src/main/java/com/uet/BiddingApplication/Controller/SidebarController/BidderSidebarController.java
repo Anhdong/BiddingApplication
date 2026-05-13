@@ -31,9 +31,7 @@ public class BidderSidebarController implements Initializable {
     }
 
     @FXML
-    private void handleWatchlist() {
-        MainViewController.getInstance().loadView(ViewPath.BIDDER_WATCHLIST);
-    }
+    private void handleWatchlist() {MainViewController.getInstance().loadView(ViewPath.BIDDER_WATCHLIST);}
 
     @FXML
     private void handleHistory() {

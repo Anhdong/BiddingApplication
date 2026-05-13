@@ -5,6 +5,7 @@ import com.uet.BiddingApplication.Controller.CommonController.ItemCardController
 import com.uet.BiddingApplication.DTO.Response.AuctionCardDTO;
 import com.uet.BiddingApplication.Enum.ViewPath;
 import com.uet.BiddingApplication.Interface.ViewControllerLifecycle;
+import com.uet.BiddingApplication.Util.AppExecutor;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -40,22 +41,18 @@ public abstract class BaseBrowseController implements Initializable, ViewControl
     }
     //--LifeCycle--
     @Override
-    public void onShow() {
-        setupSubscriptions();
-    }
+    public void onShow() {setupSubscriptions();}
 
     @Override
-    public void onHide() {
-        unsubscribeAll();
-    }
+    public void onHide() {unsubscribeAll();}
 
     //--METHODS--
     protected void renderItems(List<AuctionCardDTO> items) {
             log.info("Clean all items");
             Platform.runLater(()->{itemContainer.getChildren().clear();}); // Clean all old cards
+            log.info("Load all Item cards");
             for (AuctionCardDTO item : items) {
                 try {
-                    log.info("Load all item card");
                     // Load Card
                     FXMLLoader loader = new FXMLLoader(getClass().getResource(ViewPath.ITEM_CARD.getPath()));
                     Node itemNode = loader.load();
@@ -81,15 +78,17 @@ public abstract class BaseBrowseController implements Initializable, ViewControl
         if (searchField != null) {
             // getText when pressing Enter
             currentSearchKeyword = searchField.getText().trim().toLowerCase();
-            //Filter list
-            List<AuctionCardDTO> filteredList = currentAuctions.stream()
-                    .filter(item -> currentSearchKeyword.isEmpty() ||
-                            item.getItemName().toLowerCase().contains(currentSearchKeyword))
-                    .toList();
-            //Render
-            renderItems(filteredList);
+            AppExecutor.execute(()->{
+                //Filter list
+                List<AuctionCardDTO> filteredList = currentAuctions.stream()
+                        .filter(item -> currentSearchKeyword.isEmpty() ||
+                                item.getItemName().toLowerCase().contains(currentSearchKeyword))
+                        .toList();
+                //Render
+                renderItems(filteredList);
 
-            log.info("Đang tìm kiếm với từ khóa: {}", currentSearchKeyword);
+                log.info("Đang tìm kiếm với từ khóa: {}", currentSearchKeyword);
+            });
         }
     }
     //Sau nếu apply filter thì có thể tách riêng hàm applyFilter

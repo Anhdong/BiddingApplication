@@ -42,7 +42,7 @@ public class MainViewController implements Initializable {
     private Object currentController;
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    public void initialize(URL url, ResourceBundle resourceBundle) { //Background Thread
         // Gán instance bằng chính object này khi giao diện load xong
         instance = this;
         setupUserInterface(ClientSession.getInstance().getCurrentUser().getRole());
@@ -52,7 +52,7 @@ public class MainViewController implements Initializable {
         try { //set Sidebar
             FXMLLoader loader = new FXMLLoader(getClass().getResource(ViewPath.getSidebarView(role).getPath()));
             Parent sidebar = loader.load();
-            SidebarSlot.getChildren().setAll(sidebar);
+            Platform.runLater(()->SidebarSlot.getChildren().setAll(sidebar));
         } catch (IOException e) {
             log.error("[MainViewController] Thiết lập Sidebar không thành công: {}", e.getMessage());
         }
@@ -61,6 +61,7 @@ public class MainViewController implements Initializable {
         } catch (Exception e) {
             log.error("[MainViewController] Thiết lập default View không thành công: {}", e.getMessage());
         }
+        log.info("[MainViewController] Thiết lập default View thành công");
     }
 
     // Hàm loadView cơ bản cho các trường hợp chuyển trang không cần bơm dữ liệu
@@ -74,7 +75,7 @@ public class MainViewController implements Initializable {
             Node view;
             Object nextController;
 
-            // 1. CHO TRANG CŨ ĐI NGỦ (Ngắt kết nối Socket, giải phóng tài nguyên)
+            // 1. CHO TRANG CŨ ĐI NGỦ
             if (currentController instanceof ViewControllerLifecycle lifecycleController) {
                 lifecycleController.onHide();
             }

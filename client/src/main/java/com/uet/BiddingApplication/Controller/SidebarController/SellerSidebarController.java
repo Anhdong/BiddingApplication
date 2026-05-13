@@ -26,9 +26,7 @@ public class SellerSidebarController implements Initializable {
     }
 
     @FXML
-    private void handleItems() {
-        MainViewController.getInstance().loadView(ViewPath.SELLER_ITEMS);
-    }
+    private void handleItems() {MainViewController.getInstance().loadView(ViewPath.SELLER_ITEMS);}
 
     @FXML
     private void handleHistory() {

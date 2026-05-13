@@ -31,7 +31,7 @@ public class ItemCardController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        UIUtil.roundedImageView(imgItem);
+        Platform.runLater(()->{UIUtil.roundedImageView(imgItem);});
     }
 
     public void setData(AuctionCardDTO cardDto){

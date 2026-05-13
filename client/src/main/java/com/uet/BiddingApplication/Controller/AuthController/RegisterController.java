@@ -8,7 +8,9 @@ import com.uet.BiddingApplication.Enum.RoleType;
 import com.uet.BiddingApplication.Enum.ViewPath;
 import com.uet.BiddingApplication.Session.ResponseDispatcher;
 import com.uet.BiddingApplication.Session.ServerConnection;
+import com.uet.BiddingApplication.Util.AppExecutor;
 import com.uet.BiddingApplication.Util.NotificationUtil;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -38,6 +40,7 @@ public class RegisterController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        log.info("[RegisterController] Assign role option to radioBtn");
         // Gán "giá trị thực" cho mỗi nút để dễ lấy sau này
         rbBidder.setUserData(RoleType.BIDDER);
         rbSeller.setUserData(RoleType.SELLER);
@@ -55,14 +58,14 @@ public class RegisterController implements Initializable {
 
         //Get info
         RegisterRequestDTO registerDTO = getRegisterRequestDTO();
+        AppExecutor.execute(()->{
+            RequestPacket<RegisterRequestDTO> request = new RequestPacket<>();
+            request.setAction(ActionType.REGISTER);
+            request.setPayload(registerDTO);
 
-        RequestPacket<RegisterRequestDTO> request = new RequestPacket<>();
-        request.setAction(ActionType.REGISTER);
-        request.setPayload(registerDTO);
-
-        //Send Request
-        ServerConnection.getInstance().sendRequest(request);
-
+            //Send Request
+            ServerConnection.getInstance().sendRequest(request);
+        });
     }
 
     private RegisterRequestDTO getRegisterRequestDTO() {
@@ -119,12 +122,12 @@ public class RegisterController implements Initializable {
         //Unsubcribe khi chuyen di
         ResponseDispatcher.getInstance().unsubscribe(ActionType.REGISTER, registerCallback);
 
-        Parent loginRoot = null;
         try {
-            loginRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(ViewPath.LOGIN.getPath())));
+            Parent loginRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(ViewPath.LOGIN.getPath())));
+            Platform.runLater(()->{
+                Scene currentScene = primaryStage.getScene();
+                currentScene.setRoot(loginRoot);
+            });
         } catch (Exception e) {log.error("[RegisterController] Cannot load LoginView");}
-
-        Scene currentScene = primaryStage.getScene();
-        currentScene.setRoot(loginRoot);
     }
 }

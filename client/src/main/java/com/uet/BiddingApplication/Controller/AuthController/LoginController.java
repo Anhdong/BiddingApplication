@@ -9,6 +9,7 @@ import com.uet.BiddingApplication.Enum.ViewPath;
 import com.uet.BiddingApplication.Session.ClientSession;
 import com.uet.BiddingApplication.Session.ResponseDispatcher;
 import com.uet.BiddingApplication.Session.ServerConnection;
+import com.uet.BiddingApplication.Util.AppExecutor;
 import com.uet.BiddingApplication.Util.NotificationUtil;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -52,17 +53,18 @@ public class LoginController implements Initializable {
         String password = txtPassword.getText();
 
         //Bọc vô DTO
-        AuthRequestDTO authDTO = new AuthRequestDTO();
-        authDTO.setUsername(username);
-        authDTO.setPassword(password);
+        AppExecutor.execute(()->{
+            AuthRequestDTO authDTO = new AuthRequestDTO();
+            authDTO.setUsername(username);
+            authDTO.setPassword(password);
 
-        RequestPacket<AuthRequestDTO> request = new RequestPacket<>();
-        request.setAction(ActionType.LOGIN);
-        request.setPayload(authDTO);
+            RequestPacket<AuthRequestDTO> request = new RequestPacket<>();
+            request.setAction(ActionType.LOGIN);
+            request.setPayload(authDTO);
 
-        //Gửi request
-        ServerConnection.getInstance().sendRequest(request);
-
+            //Gửi request
+            ServerConnection.getInstance().sendRequest(request);
+        });
 
     }
 
