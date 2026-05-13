@@ -10,6 +10,7 @@ import com.uet.BiddingApplication.Session.ClientSession;
 import com.uet.BiddingApplication.Session.ResponseDispatcher;
 import com.uet.BiddingApplication.Session.ServerConnection;
 import com.uet.BiddingApplication.Util.NotificationUtil;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -83,7 +84,7 @@ public class LoginController implements Initializable {
 
             // Cập nhật phiên đăng nhập cục bộ
             ClientSession.getInstance().updateLocalSession(authData.getUserProfile(), authData.getToken());
-            log.info("Đăng nhập thành công! Xin chào " + authData.getUserProfile().getUsername());
+            log.info("Đăng nhập thành công! Xin chào {}", authData.getUserProfile().getUsername());
 
             //Chuyen ve Main
             switchToMain();
@@ -96,24 +97,29 @@ public class LoginController implements Initializable {
         //Unsubcribe khi chuyển
         ResponseDispatcher.getInstance().unsubscribe(ActionType.LOGIN, loginCallback);
 
-        Parent registerRoot = null;
         try {
-            registerRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(ViewPath.REGISTER.getPath())));
+            Parent registerRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(ViewPath.REGISTER.getPath())));
+            Platform.runLater(()->{
+                Scene currentScene = primaryStage.getScene();
+                currentScene.setRoot(registerRoot);
+            });
         } catch (Exception e) {log.error("[LoginController] Cannot load RegisterView");}
 
-        Scene currentScene = primaryStage.getScene();
-        currentScene.setRoot(registerRoot);
+
     }
     private void switchToMain(){
         //Unsubcribe khi chuyển
         ResponseDispatcher.getInstance().unsubscribe(ActionType.LOGIN, loginCallback);
 
-        Parent mainRoot = null;
         try {
-            mainRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(ViewPath.MAIN.getPath())));
+            Parent mainRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(ViewPath.MAIN.getPath())));
+            Platform.runLater(()->{
+                Scene currentScene = primaryStage.getScene();
+                currentScene.setRoot(mainRoot);
+            });
+
         } catch (Exception e) {log.error("[LoginController] Cannot load Main");}
 
-        Scene currentScene = primaryStage.getScene();
-        currentScene.setRoot(mainRoot);
+
     }
 }

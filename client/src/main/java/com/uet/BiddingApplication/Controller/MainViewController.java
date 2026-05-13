@@ -4,6 +4,7 @@ import com.uet.BiddingApplication.Enum.ViewPath;
 import com.uet.BiddingApplication.Enum.RoleType;
 import com.uet.BiddingApplication.Interface.ViewControllerLifecycle;
 import com.uet.BiddingApplication.Session.ClientSession;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -53,12 +54,12 @@ public class MainViewController implements Initializable {
             Parent sidebar = loader.load();
             SidebarSlot.getChildren().setAll(sidebar);
         } catch (IOException e) {
-            log.error("[MainViewController] Thiết lập Sidebar không thành công: " + e.getMessage());
+            log.error("[MainViewController] Thiết lập Sidebar không thành công: {}", e.getMessage());
         }
         try { //set defaultView
             loadView(ViewPath.getDefaultView(role));
         } catch (Exception e) {
-            log.error("[MainViewController] Thiết lập default View không thành công: " + e.getMessage());
+            log.error("[MainViewController] Thiết lập default View không thành công: {}", e.getMessage());
         }
     }
 
@@ -80,11 +81,11 @@ public class MainViewController implements Initializable {
 
             // 2. TẢI TRANG MỚI HOẶC LẤY TỪ CACHE
             if (target.isCacheable() && viewCache.containsKey(target)) {
-                log.info("Đang lấy từ Cache: " + target.getPath());
+                log.info("Đang lấy từ Cache: {}", target.getPath());
                 view = viewCache.get(target);
                 nextController = controllerCache.get(target);
             } else {
-                log.info("Đang load mới: " + target.getPath());
+                log.info("Đang load mới: {}", target.getPath());
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(target.getPath()));
                 view = loader.load();
                 nextController = loader.getController();
@@ -104,9 +105,11 @@ public class MainViewController implements Initializable {
             }
 
             // 4. HIỂN THỊ LÊN MÀN HÌNH
-            if (view != null) {
-                ContentSlot.getChildren().setAll(view);
-            }
+            Platform.runLater(() -> {
+                if (view != null) {
+                    ContentSlot.getChildren().setAll(view);
+                }
+            });
 
             // 5. ĐÁNH THỨC TRANG MỚI (Đăng ký lắng nghe Socket trở lại)
             currentController = nextController;

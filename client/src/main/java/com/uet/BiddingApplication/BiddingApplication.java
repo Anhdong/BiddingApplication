@@ -3,6 +3,7 @@ package com.uet.BiddingApplication;
 import atlantafx.base.theme.CupertinoDark;
 import com.uet.BiddingApplication.Enum.ViewPath;
 import com.uet.BiddingApplication.Session.ServerConnection;
+import com.uet.BiddingApplication.Util.AppExecutor;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -68,6 +69,9 @@ public class BiddingApplication extends Application {
 
         // Cắt đứt kết nối một cách sạch sẽ, báo cho Server biết để xóa khỏi Map
         ServerConnection.getInstance().disconnect();
+
+        // Đóng App Executor tránh để luồng chạy ngầm
+        AppExecutor.shutdown();
 
         // Thoát hẳn chương trình
         System.exit(0);

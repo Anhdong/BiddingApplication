@@ -2,6 +2,7 @@ package com.uet.BiddingApplication.Session;
 
 import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
 import com.uet.BiddingApplication.Enum.ActionType;
+import com.uet.BiddingApplication.Util.AppExecutor;
 import javafx.application.Platform;
 
 import java.util.List;
@@ -47,8 +48,8 @@ public class ResponseDispatcher {
         List<Consumer<ResponsePacket<?>>> actionListeners = listeners.get(response.getAction());
 
         if (actionListeners != null && !actionListeners.isEmpty()) {
-            // Đẩy sang UI Thread an toàn
-            Platform.runLater(() -> {
+            // Đẩy sang AppExecutor(luồng phụ) đảm bảo UI Thread và Thread Mạng
+            AppExecutor.execute(() -> {
                 for (Consumer<ResponsePacket<?>> callback : actionListeners) {
                     try {
                         callback.accept(response);

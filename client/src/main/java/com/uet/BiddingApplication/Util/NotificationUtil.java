@@ -1,6 +1,7 @@
 package com.uet.BiddingApplication.Util;
 
 import atlantafx.base.theme.CupertinoDark;
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
@@ -39,15 +40,17 @@ public class NotificationUtil {
     // CORE ALERT METHOD
     // ==========================================
     public static void showAlert(Alert.AlertType type, String title, String content) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
+        Platform.runLater(()->{
+            Alert alert = new Alert(type);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(content);
 
-        // --- GỌI HÀM ÁP DỤNG CSS ---
-        applyStyles(alert.getDialogPane());
+            // --- GỌI HÀM ÁP DỤNG CSS ---
+            applyStyles(alert.getDialogPane());
 
-        alert.showAndWait();
+            alert.showAndWait();
+        });
     }
 
     // ==========================================

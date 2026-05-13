@@ -3,6 +3,7 @@ package com.uet.BiddingApplication.Controller.CommonController;
 import com.uet.BiddingApplication.DTO.Response.AuctionCardDTO;
 import com.uet.BiddingApplication.Enum.SessionStatus;
 import com.uet.BiddingApplication.Util.UIUtil;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -14,7 +15,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
 import java.net.URL;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
@@ -35,11 +35,13 @@ public class ItemCardController implements Initializable {
     }
 
     public void setData(AuctionCardDTO cardDto){
-        currentItem = cardDto;
-        if(cardDto.getImageURL()!= null) imgItem.setImage(new Image(cardDto.getImageURL()));
-        lblName.setText(cardDto.getItemName());
-        setLblDate(cardDto.getStatus(),cardDto.getStartTime(),cardDto.getEndTime());
-        lblPrice.setText("$"+cardDto.getStartPrice().toString());
+        Platform.runLater(()->{
+            currentItem = cardDto;
+            if(cardDto.getImageURL()!= null) imgItem.setImage(new Image(cardDto.getImageURL()));
+            lblName.setText(cardDto.getItemName());
+            setLblDate(cardDto.getStatus(),cardDto.getStartTime(),cardDto.getEndTime());
+            lblPrice.setText("$"+cardDto.getStartPrice().toString());
+        });
     }
 
     private void setLblDate(SessionStatus status,LocalDateTime startTime, LocalDateTime endTime){
@@ -51,15 +53,18 @@ public class ItemCardController implements Initializable {
 
             LocalDateTime now = LocalDateTime.now();
             //Xu ly format neu cung ngay hoac khac ngay
-            if (now.toLocalDate().equals(startTime.toLocalDate())) {
-                lblDate.setText(startTime.format(timeFormatter) + " - " + endTime.format(timeFormatter));
-            } else {
-                lblDate.setText(startTime.format(timeFormatter) + " - " + endTime.format(dateFormatter));
-            }
+            Platform.runLater(()->{
+                if (now.toLocalDate().equals(startTime.toLocalDate())) {
+                    lblDate.setText(startTime.format(timeFormatter) + " - " + endTime.format(timeFormatter));
+                } else {
+                    lblDate.setText(startTime.format(timeFormatter) + " - " + endTime.format(dateFormatter));
+                }
+            });
         } else {
-            lblDate.setText(sentenceCase((status.toString())));
+            Platform.runLater(()->{lblDate.setText(sentenceCase((status.toString())));});
         }
     }
+
     private String sentenceCase(String original) {
         if (original == null || original.isEmpty()) {
             return original;
@@ -69,8 +74,10 @@ public class ItemCardController implements Initializable {
 
     //Nhan logic tu browse
     public void setBtnAction(String label, EventHandler<ActionEvent> actionHandler){
-        btnAction.setText(label);
-        btnAction.setOnAction(actionHandler);
+        Platform.runLater(()->{
+            btnAction.setText(label);
+            btnAction.setOnAction(actionHandler);
+        });
     }
 
 }

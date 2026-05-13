@@ -5,6 +5,7 @@ import com.uet.BiddingApplication.Controller.CommonController.ItemCardController
 import com.uet.BiddingApplication.DTO.Response.AuctionCardDTO;
 import com.uet.BiddingApplication.Enum.ViewPath;
 import com.uet.BiddingApplication.Interface.ViewControllerLifecycle;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -51,9 +52,10 @@ public abstract class BaseBrowseController implements Initializable, ViewControl
     //--METHODS--
     protected void renderItems(List<AuctionCardDTO> items) {
             log.info("Clean all items");
-            itemContainer.getChildren().clear(); // Clean all old cards
+            Platform.runLater(()->{itemContainer.getChildren().clear();}); // Clean all old cards
             for (AuctionCardDTO item : items) {
                 try {
+                    log.info("Load all item card");
                     // Load Card
                     FXMLLoader loader = new FXMLLoader(getClass().getResource(ViewPath.ITEM_CARD.getPath()));
                     Node itemNode = loader.load();
@@ -66,7 +68,7 @@ public abstract class BaseBrowseController implements Initializable, ViewControl
                     configureItem(itemController, item);
 
                     // Add Card to Container
-                    itemContainer.getChildren().add(itemNode);
+                    Platform.runLater(()->{itemContainer.getChildren().add(itemNode);});
 
                 } catch (IOException e) {
                     log.error("[BaseBrowseController] Lỗi khi load ItemCardView.fxml cho sản phẩm {}", item.getItemName());
