@@ -11,19 +11,32 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="vbxCard" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="280.0" prefWidth="210.0" spacing="5.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:id="vbxCard" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="280.0" prefWidth="210.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.uet.BiddingApplication.Controller.CommonController.ItemCardController">
    <children>
-      <ImageView fx:id="imgItem" fitHeight="140.0" fitWidth="140.0" nodeOrientation="INHERIT" pickOnBounds="true" styleClass="elevated-4">
+      <ImageView fx:id="imgItem" fitHeight="150.0" fitWidth="150.0" nodeOrientation="INHERIT" pickOnBounds="true" styleClass="elevated-4">
          <image>
             <Image url="@../../assets/default-items.png" />
          </image>
+         <VBox.margin>
+            <Insets bottom="2.0" />
+         </VBox.margin>
       </ImageView>
       <Label fx:id="lblName" maxWidth="1.7976931348623157E308" styleClass="title-3" text="Name" />
       <Label fx:id="lblDate" maxWidth="1.7976931348623157E308" text="hh:mm - dd/mm/yyyy">
          <styleClass>
-            <String fx:value="text-muted" />
-            <String fx:value="text-caption" />
+            <String fx:value="text-small" />
+            <String fx:value="text-bold" />
          </styleClass>
+      </Label>
+      <Label fx:id="lblDate1" layoutX="38.0" layoutY="207.0" maxWidth="1.7976931348623157E308" text="from">
+         <styleClass>
+            <String fx:value="text-muted" />
+            <String fx:value="text-small" />
+            <String fx:value="text-bold" />
+         </styleClass>
+         <VBox.margin>
+            <Insets top="4.0" />
+         </VBox.margin>
       </Label>
       <HBox alignment="CENTER" maxWidth="1.7976931348623157E308">
          <children>
@@ -35,22 +48,26 @@
             </Label>
             <Region maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
             <Button fx:id="btnAction" alignment="CENTER" mnemonicParsing="false" text="Btn">
-               <styleClass>
-                  <String fx:value="accent" />
-                  <String fx:value="bold" />
-               </styleClass>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
+               <styleClass>
+                  <String fx:value="accent" />
+                  <String fx:value="text-bold" />
+               </styleClass>
             </Button>
          </children>
       </HBox>
    </children>
    <padding>
-      <Insets bottom="12.0" left="28.0" right="28.0" top="12.0" />
+      <Insets bottom="10.0" left="28.0" right="28.0" top="10.0" />
    </padding>
    <styleClass>
+      <String fx:value="bg-inset" />
       <String fx:value="rounded" />
       <String fx:value="interactive-card" />
    </styleClass>
+   <cursor>
+      <Cursor fx:constant="HAND" />
+   </cursor>
 </VBox>

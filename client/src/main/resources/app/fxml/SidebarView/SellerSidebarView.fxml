@@ -36,7 +36,7 @@
             <Insets bottom="10.0" />
          </VBox.margin>
       </Separator>
-      <ToggleButton maxHeight="80.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="80.0" selected="true" text="Items">
+      <ToggleButton fx:id="btnItems" maxHeight="80.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleItems" prefHeight="80.0" selected="true" text="Items">
          <styleClass>
             <String fx:value="flat" />
             <String fx:value="title-3" />
@@ -51,7 +51,7 @@
             <FontIcon iconLiteral="mdi2i-inbox" styleClass="medium-icon" />
          </graphic>
       </ToggleButton>
-      <ToggleButton maxHeight="80.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="80.0" text="History" toggleGroup="$sidebarGroup">
+      <ToggleButton fx:id="btnHistory" maxHeight="80.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleHistory" prefHeight="80.0" text="History" toggleGroup="$sidebarGroup">
          <styleClass>
             <String fx:value="flat" />
             <String fx:value="title-3" />

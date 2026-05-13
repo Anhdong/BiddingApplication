@@ -9,7 +9,7 @@ import com.uet.BiddingApplication.Enum.ViewPath;
 import com.uet.BiddingApplication.Session.ClientSession;
 import com.uet.BiddingApplication.Session.ResponseDispatcher;
 import com.uet.BiddingApplication.Session.ServerConnection;
-import com.uet.BiddingApplication.Util.AlertUtil;
+import com.uet.BiddingApplication.Util.NotificationUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -67,11 +67,11 @@ public class LoginController implements Initializable {
 
     private boolean validateInput(){
         if(txtUsername.getText().isEmpty()){
-            AlertUtil.showAlert("Username cannot be empty.");
+            NotificationUtil.showError("Username cannot be empty.");
             return false;
         }
         if(txtPassword.getText().isEmpty()){
-            AlertUtil.showAlert("Password cannot be empty.");
+            NotificationUtil.showError("Password cannot be empty.");
             return false;
         }
 
@@ -88,7 +88,7 @@ public class LoginController implements Initializable {
             //Chuyen ve Main
             switchToMain();
         } else {
-            AlertUtil.showAlert(response.getMessage());
+            NotificationUtil.showError(response.getMessage());
         }
     }
 
@@ -99,7 +99,7 @@ public class LoginController implements Initializable {
         Parent registerRoot = null;
         try {
             registerRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(ViewPath.REGISTER.getPath())));
-        } catch (Exception e) {log.info("[LoginController] Cannot load RegisterView");}
+        } catch (Exception e) {log.error("[LoginController] Cannot load RegisterView");}
 
         Scene currentScene = primaryStage.getScene();
         currentScene.setRoot(registerRoot);
@@ -111,7 +111,7 @@ public class LoginController implements Initializable {
         Parent mainRoot = null;
         try {
             mainRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(ViewPath.MAIN.getPath())));
-        } catch (Exception e) {log.info("[LoginController] Cannot load Main");}
+        } catch (Exception e) {log.error("[LoginController] Cannot load Main");}
 
         Scene currentScene = primaryStage.getScene();
         currentScene.setRoot(mainRoot);

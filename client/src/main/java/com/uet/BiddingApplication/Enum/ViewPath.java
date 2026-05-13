@@ -25,12 +25,12 @@ public enum ViewPath {
     BIDDER_AUCTION("/app/fxml/BidderView/BidderAuctionView.fxml", false), // KHÔNG CACHE: Phải load mới 100% mỗi khi vào 1 phòng đấu giá khác nhau
 
     // SELLER
-    //SELLER_ITEMS
-    SELLER_ITEMS("",true),
-    SELLER_ITEM_FORM("/app/fxml/SellerView/SellerItemFormView.fxml", true)  // CACHE: Để người dùng gõ dở thông tin lỡ ấn sang tab khác không bị mất form
+    SELLER_ITEMS("/app/fxml/SellerView/SellerItemsView.fxml",true),
+    SELLER_HISTORY("/app/fxml/SellerView/SellerHistoryView.fxml",true),
+    SELLER_ITEM_FORM("/app/fxml/SellerView/SellerItemFormView.fxml", true),  // CACHE: Để người dùng gõ dở thông tin lỡ ấn sang tab khác không bị mất form
 
     // ADMIN
-    ;
+    ADMIN_DASHBOARD("",true);
 
     private final String path;
     private final boolean cacheable; // Thêm thuộc tính đánh dấu Cache
@@ -62,7 +62,7 @@ public enum ViewPath {
         return switch (role) {
         case RoleType.BIDDER -> ViewPath.BIDDER_BROWSE;
         case RoleType.SELLER -> ViewPath.SELLER_ITEMS;
-        case RoleType.ADMIN  -> null;//temp
+        case RoleType.ADMIN  -> ViewPath.ADMIN_DASHBOARD;
         };
     }
 }

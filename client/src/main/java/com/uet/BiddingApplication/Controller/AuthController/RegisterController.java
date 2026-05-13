@@ -8,7 +8,7 @@ import com.uet.BiddingApplication.Enum.RoleType;
 import com.uet.BiddingApplication.Enum.ViewPath;
 import com.uet.BiddingApplication.Session.ResponseDispatcher;
 import com.uet.BiddingApplication.Session.ServerConnection;
-import com.uet.BiddingApplication.Util.AlertUtil;
+import com.uet.BiddingApplication.Util.NotificationUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -84,23 +84,23 @@ public class RegisterController implements Initializable {
 
     private boolean validateInput(){
         if(txtUsername.getText().isEmpty()){
-            AlertUtil.showAlert("Username cannot be empty.");
+            NotificationUtil.showError("Username cannot be empty.");
             return false;
         }
         if(txtEmail.getText().isEmpty() || !txtEmail.getText().matches("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$")){
-            AlertUtil.showAlert("Email cannot be empty or is invalid.");
+            NotificationUtil.showError("Email cannot be empty or is invalid.");
             return false;
         }
         if(txtPhoneNumber.getText().isEmpty() || !txtPhoneNumber.getText().matches("\\d+")){
-            AlertUtil.showAlert("Phone number cannot be empty or can only contain numbers.");
+            NotificationUtil.showError("Phone number cannot be empty or can only contain numbers.");
             return false;
         }
         if(txtPassword.getText().isEmpty()){
-            AlertUtil.showAlert("Password cannot be empty.");
+            NotificationUtil.showError("Password cannot be empty.");
             return false;
         }
         if(roleGroup.getSelectedToggle() == null){
-            AlertUtil.showAlert("Role cannot be empty.");
+            NotificationUtil.showError("Role cannot be empty.");
             return false;
         }
 
@@ -108,10 +108,10 @@ public class RegisterController implements Initializable {
 
     private void handleRegisterResponse(ResponsePacket<?> response){
         if (response.getStatusCode() == 200) {
-            AlertUtil.showAlert("Success","Account created successfully!");
+            NotificationUtil.showInfo("Success","Account created successfully!");
             switchToLogin();
         } else {
-            AlertUtil.showAlert(response.getMessage());
+            NotificationUtil.showError(response.getMessage());
         }
     }
 
@@ -122,7 +122,7 @@ public class RegisterController implements Initializable {
         Parent loginRoot = null;
         try {
             loginRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(ViewPath.LOGIN.getPath())));
-        } catch (Exception e) {log.info("[RegisterController] Cannot load LoginView");}
+        } catch (Exception e) {log.error("[RegisterController] Cannot load LoginView");}
 
         Scene currentScene = primaryStage.getScene();
         currentScene.setRoot(loginRoot);
