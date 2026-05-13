@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.uet.BiddingApplication.CoreService.SearchCacheManager;
+import com.uet.BiddingApplication.CoreService.SessionStartScheduler;
 import com.uet.BiddingApplication.DAO.Impl.AuctionSessionDAO;
 import com.uet.BiddingApplication.DAO.Impl.ItemDAO;
 import com.uet.BiddingApplication.DTO.Response.SellerHistoryResponseDTO;
@@ -120,7 +121,7 @@ public class SellerService {
         // Theo đặc tả: Không được xóa nếu phiên đã mở, đang chạy hoặc đã kết thúc thành công
         if (session != null) {
             SessionStatus status = session.getStatus();
-            if (status == SessionStatus.OPEN || status == SessionStatus.RUNNING || status == SessionStatus.FINISHED) {
+            if (status == SessionStatus.RUNNING || status == SessionStatus.FINISHED) {
                 throw new BusinessException("Không thể xóa vật phẩm khi phiên đấu giá đang " + status.name() + ".");
             }
         }
@@ -141,6 +142,9 @@ public class SellerService {
         if (isDeleted) {
             // 5. Cập nhật bộ nhớ đệm (Cache) để đồng bộ giao diện ngay lập tức
             SearchCacheManager.getInstance().removeItem(itemId);
+            if (session != null) {
+                SessionStartScheduler.getInstance().cancelSchedule(session.getId());
+            }
             return true;
         } else {
             throw new BusinessException("Lỗi hệ thống: Không thể xóa vật phẩm khỏi cơ sở dữ liệu.");
