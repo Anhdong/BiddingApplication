@@ -26,10 +26,7 @@ public class BidderBrowseController extends BaseBrowseController {
     protected void setupSubscriptions() {
         log.info("[BidderBrowse] Đăng ký lắng nghe các sự kiện đấu giá.");
         ResponseDispatcher.getInstance().subscribe(ActionType.GET_ACTIVE_SESSIONS, auctionListCallback);
-    }
 
-    @Override
-    protected void loadInitialData() {
         log.info("[BidderBrowse] Đang gửi yêu cầu lấy danh sách đấu giá...");
         RequestPacket<Void> request = new RequestPacket<>();
         request.setAction(ActionType.GET_ACTIVE_SESSIONS);

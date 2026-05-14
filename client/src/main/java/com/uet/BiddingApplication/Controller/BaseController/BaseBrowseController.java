@@ -9,18 +9,15 @@ import com.uet.BiddingApplication.Util.AppExecutor;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.TilePane;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 
-public abstract class BaseBrowseController implements Initializable, ViewControllerLifecycle {
+public abstract class BaseBrowseController implements ViewControllerLifecycle {
 
     //--LOG--
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(BaseBrowseController.class);
@@ -34,11 +31,6 @@ public abstract class BaseBrowseController implements Initializable, ViewControl
     //help update single items without render all again
     protected List<AuctionCardDTO> currentAuctions = new ArrayList<>();
 
-    //--INITIAL--
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        loadInitialData();    // Sau đó mới gửi request lấy dữ liệu
-    }
     //--LifeCycle--
     @Override
     public void onShow() {setupSubscriptions();}
@@ -98,14 +90,9 @@ public abstract class BaseBrowseController implements Initializable, ViewControl
     // =========================================================================
 
     /**
-     * Dùng để đăng ký các luồng nhận dữ liệu từ ResponseDispatcher
+     * Dùng để đăng ký các luồng nhận dữ liệu từ ResponseDispatcher và khởi tạo gửi request nếu cần
      */
     protected abstract void setupSubscriptions();
-
-    /**
-     * Dùng để gửi RequestPacket lên Server (Ví dụ: GET_ALL_AUCTIONS hay GET_MY_AUCTIONS)
-     */
-    protected abstract void loadInitialData();
 
     /**
      * Dùng để dọn dẹp các đăng ký mạng khi người dùng chuyển sang giao diện khác
