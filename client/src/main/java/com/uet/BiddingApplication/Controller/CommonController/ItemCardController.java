@@ -24,27 +24,28 @@ public class ItemCardController implements Initializable {
 
     @FXML private VBox vbxCard;
     @FXML private ImageView imgItem;
-    @FXML private Label lblName, lblDate, lblPrice;
+    @FXML private Label lblName, lblDatetime, lblPrice;
     @FXML private Button btnAction;
 
     private AuctionCardDTO currentItem;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        Platform.runLater(()->{UIUtil.roundedImageView(imgItem);});
+        Platform.runLater(()->UIUtil.roundedImageView(imgItem));
     }
 
+    //--SET/FORMAT DATA
     public void setData(AuctionCardDTO cardDto){
         Platform.runLater(()->{
             currentItem = cardDto;
             if(cardDto.getImageURL()!= null) imgItem.setImage(new Image(cardDto.getImageURL()));
             lblName.setText(cardDto.getItemName());
-            setLblDate(cardDto.getStatus(),cardDto.getStartTime(),cardDto.getEndTime());
+            setlblDatetime(cardDto.getStatus(),cardDto.getStartTime(),cardDto.getEndTime());
             lblPrice.setText("$"+cardDto.getStartPrice().toString());
         });
     }
 
-    private void setLblDate(SessionStatus status,LocalDateTime startTime, LocalDateTime endTime){
+    private void setlblDatetime(SessionStatus status,LocalDateTime startTime, LocalDateTime endTime){
         if (Objects.requireNonNull(status) == SessionStatus.OPEN) {
             // Định dạng giờ:phút
             DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
@@ -55,13 +56,13 @@ public class ItemCardController implements Initializable {
             //Xu ly format neu cung ngay hoac khac ngay
             Platform.runLater(()->{
                 if (now.toLocalDate().equals(startTime.toLocalDate())) {
-                    lblDate.setText(startTime.format(timeFormatter) + " - " + endTime.format(timeFormatter));
+                    lblDatetime.setText(startTime.format(timeFormatter) + " - " + endTime.format(timeFormatter));
                 } else {
-                    lblDate.setText(startTime.format(timeFormatter) + " - " + endTime.format(dateFormatter));
+                    lblDatetime.setText(startTime.format(timeFormatter) + " - " + endTime.format(dateFormatter));
                 }
             });
         } else {
-            Platform.runLater(()->{lblDate.setText(sentenceCase((status.toString())));});
+            Platform.runLater(()->{lblDatetime.setText(sentenceCase((status.toString())));});
         }
     }
 
@@ -72,12 +73,16 @@ public class ItemCardController implements Initializable {
         return original.substring(0, 1).toUpperCase() + original.substring(1).toLowerCase();
     }
 
-    //Nhan logic tu browse
+    //--BUTTON ACTION--
     public void setBtnAction(String label, EventHandler<ActionEvent> actionHandler){
         Platform.runLater(()->{
             btnAction.setText(label);
             btnAction.setOnAction(actionHandler);
         });
+    }
+    public void setButtonVisible(boolean visible) {
+        btnAction.setVisible(visible);
+        btnAction.setManaged(visible);
     }
 
 }
