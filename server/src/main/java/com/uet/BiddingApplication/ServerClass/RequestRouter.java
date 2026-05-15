@@ -6,6 +6,7 @@ import com.uet.BiddingApplication.DTO.Response.AuthResponseDTO;
 import com.uet.BiddingApplication.Enum.ActionType;
 // Import BusinessException của bạn vào đây (nếu khác package)
 import com.uet.BiddingApplication.Exception.BusinessException;
+import com.uet.BiddingApplication.Service.AuthService;
 
 public class RequestRouter {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RequestRouter.class);
@@ -31,6 +32,7 @@ public class RequestRouter {
      */
     public void route(RequestPacket<?> request, ClientConnectionHandler client) {
         ActionType currentAction = null;
+        String userId=null;
 
         try {
             if (request == null) {
@@ -39,9 +41,15 @@ public class RequestRouter {
             }
 
             currentAction = request.getAction();
+            userId = AuthService.getInstance().validateToken(request.getToken());
+            System.out.println(userId);
+            System.out.println(request.getUserId());
 
             if (currentAction == null) {
                 throw new BusinessException("Gói tin thiếu trường ActionType");
+            }
+            if(currentAction!=ActionType.LOGIN &&(userId==null || !userId.equals(request.getUserId()))) {
+                throw new BusinessException("User id hoặc token không hợp lệ");
             }
 
             // 1. Lấy Handler tương ứng từ RouteRegistry

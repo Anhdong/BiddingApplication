@@ -7,6 +7,7 @@ import com.uet.BiddingApplication.DTO.Packet.RequestPacket;
 import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
 import com.uet.BiddingApplication.DTO.Response.AuctionCardDTO;
 import com.uet.BiddingApplication.Enum.ActionType;
+import com.uet.BiddingApplication.Session.ClientSession;
 import com.uet.BiddingApplication.Session.ResponseDispatcher;
 import com.uet.BiddingApplication.Session.ServerConnection;
 import org.slf4j.Logger;
@@ -30,6 +31,8 @@ public class BidderBrowseController extends BaseBrowseController {
         log.info("[BidderBrowse] Đang gửi yêu cầu lấy danh sách đấu giá...");
         RequestPacket<Void> request = new RequestPacket<>();
         request.setAction(ActionType.GET_ACTIVE_SESSIONS);
+        request.setUserId(ClientSession.getInstance().getCurrentUser().getId());
+        request.setToken(ClientSession.getInstance().getCurrentToken());
         ServerConnection.getInstance().sendRequest(request);
     }
 
