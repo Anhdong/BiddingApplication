@@ -49,6 +49,7 @@ public class GsonPacketParser {
 
             RequestPacket<Object> packet = new RequestPacket<>();
             packet.setAction(action);
+            packet.setUserId(jsonObject.has("userId") ? jsonObject.get("userId").getAsString() : null);
             packet.setToken(jsonObject.has("token") ? jsonObject.get("token").getAsString() : null);
             packet.setTimestamp(timestamp);
 
