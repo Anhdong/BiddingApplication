@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="800.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="800.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.uet.BiddingApplication.Controller.CommonController.ItemDetailController">
    <children>
       <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="40.0" styleClass="bg-neutral-subtle">
          <children>
@@ -20,7 +20,7 @@
                <children>
                   <StackPane prefHeight="480.0" prefWidth="480.0">
                      <children>
-                        <ImageView fitHeight="480.0" fitWidth="480.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="imgItem" fitHeight="480.0" fitWidth="480.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../assets/default-items.png" />
                            </image>
@@ -31,7 +31,7 @@
                         <String fx:value="bg-default" />
                      </styleClass>
                   </StackPane>
-                  <Label maxWidth="1.7976931348623157E308" text="ItemName">
+                  <Label fx:id="lblName" maxWidth="1.7976931348623157E308" text="ItemName">
                      <styleClass>
                         <String fx:value="main-title" />
                         <String fx:value="text-bold" />
@@ -39,7 +39,7 @@
                   </Label>
                   <VBox prefHeight="210.0" prefWidth="480.0">
                      <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="No description" textAlignment="JUSTIFY" wrappingWidth="440.0" />
+                        <Text fx:id="txtDesc" strokeType="OUTSIDE" strokeWidth="0.0" text="No description" textAlignment="JUSTIFY" wrappingWidth="440.0" />
                      </children>
                      <VBox.margin>
                         <Insets />
@@ -61,13 +61,13 @@
                <children>
                   <VBox prefWidth="400.0" spacing="8.0">
                      <children>
-                        <Label text="Start Time">
+                        <Label text="Start time">
                            <styleClass>
                               <String fx:value="text-muted" />
                               <String fx:value="text-bold" />
                            </styleClass>
                         </Label>
-                        <Label styleClass="title-1" text="hh:mm - dd/mm/yyyy" />
+                        <Label fx:id="lblDatetime" styleClass="title-1" text="hh:mm - dd/mm/yyyy" />
                      </children>
                      <padding>
                         <Insets bottom="15.0" left="25.0" right="25.0" top="15.0" />
@@ -82,25 +82,20 @@
                   </VBox>
                   <VBox prefWidth="400.0" spacing="10.0">
                      <children>
-                        <Label text="Start bid">
+                        <Label text="Category">
                            <styleClass>
                               <String fx:value="text-muted" />
                               <String fx:value="text-bold" />
                            </styleClass>
                         </Label>
-                        <Label text="\$0">
-                           <styleClass>
-                              <String fx:value="main-title" />
-                              <String fx:value="success" />
-                           </styleClass>
-                        </Label>
-                        <Label text="Minimum Bid">
+                        <Label fx:id="lblCategory" styleClass="title-2" text="\$0" />
+                        <Label text="Start Bid">
                            <styleClass>
                               <String fx:value="text-muted" />
                               <String fx:value="text-bold" />
                            </styleClass>
                         </Label>
-                        <Label layoutX="35.0" layoutY="51.0" text="\$0">
+                        <Label fx:id="lblStartBid" layoutX="35.0" layoutY="51.0" text="\$0">
                            <styleClass>
                               <String fx:value="main-title" />
                               <String fx:value="success" />
@@ -130,13 +125,13 @@
                         <String fx:value="bg-default" />
                      </styleClass>
                      <children>
-                        <Label text="Add to Watchlist">
+                        <Label fx:id="lblAction" text="Add to Watchlist">
                            <styleClass>
                               <String fx:value="text-muted" />
                               <String fx:value="text-bold" />
                            </styleClass>
                         </Label>
-                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="40.0" text="ADD">
+                        <Button fx:id="btnAction" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="40.0" text="ADD">
                            <styleClass>
                               <String fx:value="title-3" />
                               <String fx:value="accent" />
