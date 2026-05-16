@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.TilePane?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="800.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="800.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.uet.BiddingApplication.Controller.SellerController.SellerItemsController">
    <center>
       <StackPane BorderPane.alignment="CENTER">
          <children>
@@ -24,7 +24,7 @@
                   </TilePane>
                </content>
             </ScrollPane>
-            <Button defaultButton="true" mnemonicParsing="false" styleClass="title-1" text="ADD" StackPane.alignment="BOTTOM_RIGHT">
+            <Button fx:id="btnAdd" defaultButton="true" mnemonicParsing="false" onAction="#switchToAddItem" styleClass="title-1" text="ADD" StackPane.alignment="BOTTOM_RIGHT">
                <graphic>
                   <FontIcon iconLiteral="mdi2p-plus" styleClass="large-icon" />
                </graphic>

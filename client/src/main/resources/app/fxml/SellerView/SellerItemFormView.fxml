@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.uet.BiddingApplication.Controller.SellerController.SellerItemsFormController">
    <children>
       <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="40.0" styleClass="bg-neutral-subtle">
          <children>
@@ -24,7 +24,7 @@
                <children>
                   <StackPane prefHeight="480.0" prefWidth="480.0">
                      <children>
-                        <ImageView fitHeight="480.0" fitWidth="480.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="imgItem" fitHeight="480.0" fitWidth="480.0" onMouseClicked="#handleImageChooser" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../assets/add-item.png" />
                            </image>
@@ -38,13 +38,13 @@
                         <String fx:value="bg-default" />
                      </styleClass>
                   </StackPane>
-                  <TextField maxWidth="1.7976931348623157E308" promptText="Product Name">
+                  <TextField fx:id="txtName" maxWidth="1.7976931348623157E308" promptText="Product Name">
                      <styleClass>
                         <String fx:value="rounded" />
                         <String fx:value="title-1" />
                      </styleClass>
                   </TextField>
-                  <TextArea prefWidth="480.0" promptText="Description" />
+                  <TextArea fx:id="txtDesc" prefWidth="480.0" promptText="Description" />
                </children>
                <HBox.margin>
                   <Insets />
@@ -60,7 +60,7 @@
                               <String fx:value="title-4" />
                            </styleClass>
                         </Label>
-                        <TextField promptText="\$0">
+                        <TextField fx:id="txtStartPrice" promptText="\$0">
                            <styleClass>
                               <String fx:value="rounded" />
                               <String fx:value="title-3" />
@@ -72,7 +72,7 @@
                               <String fx:value="title-4" />
                            </styleClass>
                         </Label>
-                        <TextField promptText="\$0">
+                        <TextField fx:id="txtMinBid" promptText="\$0">
                            <styleClass>
                               <String fx:value="rounded" />
                               <String fx:value="title-3" />
@@ -98,7 +98,7 @@
                               <String fx:value="title-4" />
                            </styleClass>
                         </Label>
-                        <ChoiceBox maxWidth="1.7976931348623157E308" styleClass="rounded" />
+                        <ChoiceBox fx:id="cbxCategory" maxWidth="1.7976931348623157E308" styleClass="rounded" />
                      </children>
                      <styleClass>
                         <String fx:value="rounded" />
@@ -126,7 +126,7 @@
                               <String fx:value="title-4" />
                            </styleClass>
                         </Label>
-                        <DatePicker maxWidth="1.7976931348623157E308" />
+                        <DatePicker fx:id="datePicker" maxWidth="1.7976931348623157E308" />
                         <Label layoutX="35.0" layoutY="30.0" text="Start Time">
                            <styleClass>
                               <String fx:value="text-muted" />
@@ -135,9 +135,9 @@
                         </Label>
                         <HBox prefHeight="60.0" prefWidth="350.0" spacing="32.0">
                            <children>
-                              <Spinner editable="true" prefHeight="60.0" prefWidth="138.0" styleClass="title-2" />
+                              <Spinner fx:id="spnStartHour" editable="true" prefHeight="60.0" prefWidth="138.0" styleClass="title-2" />
                               <Label prefHeight="60.0" styleClass="title-2" text=":" textAlignment="CENTER" />
-                              <Spinner editable="true" layoutX="10.0" layoutY="10.0" prefHeight="60.0" prefWidth="138.0" styleClass="title-2" />
+                              <Spinner fx:id="spnStartMinute" editable="true" layoutX="10.0" layoutY="10.0" prefHeight="60.0" prefWidth="138.0" styleClass="title-2" />
                            </children>
                         </HBox>
                         <Label layoutX="35.0" layoutY="105.0" text="End Time">
@@ -148,14 +148,14 @@
                         </Label>
                         <HBox layoutX="35.0" layoutY="174.0" prefHeight="60.0" prefWidth="350.0" spacing="32.0">
                            <children>
-                              <Spinner editable="true" prefHeight="60.0" prefWidth="138.0" styleClass="title-2" />
+                              <Spinner fx:id="spnEndHour" editable="true" prefHeight="60.0" prefWidth="138.0" styleClass="title-2" />
                               <Label prefHeight="60.0" styleClass="title-2" text=":" textAlignment="CENTER" />
-                              <Spinner editable="true" layoutX="10.0" layoutY="10.0" prefHeight="60.0" prefWidth="138.0" styleClass="title-2" />
+                              <Spinner fx:id="spnEndMinute" editable="true" layoutX="10.0" layoutY="10.0" prefHeight="60.0" prefWidth="138.0" styleClass="title-2" />
                            </children>
                         </HBox>
                      </children>
                   </VBox>
-                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="50.0" text="Button">
+                  <Button fx:id="btnAction" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleBtnAction" prefHeight="50.0" text="Button">
                      <styleClass>
                         <String fx:value="title-1" />
                         <String fx:value="accent" />
