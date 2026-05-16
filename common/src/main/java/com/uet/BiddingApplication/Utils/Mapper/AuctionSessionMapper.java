@@ -15,11 +15,13 @@ public class AuctionSessionMapper {
     /**
      * Trích xuất phần thời gian, giá khởi điểm từ Request và gán itemId vừa tạo để lưu DB.
      */
-    public static AuctionSession toEntity(ItemCreateDTO dto, String itemId){
+    public static AuctionSession toEntity(ItemCreateDTO dto, String itemId, String sellerId){
         // 1. Kiểm tra an toàn
         if (dto == null) return null;
 
         AuctionSession entity = new AuctionSession();
+
+        entity.setSellerId(sellerId);
 
         // 2. Gắn khóa ngoại (Foreign key)
         entity.setItemId(itemId);
@@ -40,13 +42,15 @@ public class AuctionSessionMapper {
         return entity;
     }
 
-    public static AuctionSession toEntity(RelistRequestDTO dto){
+    public static AuctionSession toEntity(RelistRequestDTO dto, String sellerId){
         // 1. Kiểm tra an toàn
         if (dto == null) return null;
 
         AuctionSession entity = new AuctionSession();
 
         String itemId = dto.getItemId();
+
+        entity.setSellerId(sellerId);
 
         // 2. Gắn khóa ngoại (Foreign key)
         entity.setItemId(itemId);
