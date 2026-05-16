@@ -103,6 +103,7 @@ public class SessionStartScheduler implements ISessionStartScheduler {
     /**
      * Hủy bỏ lịch mở phiên đấu giá nếu phiên bị hủy hoặc xóa.
      */
+    @Override
     public void cancelSchedule(String sessionId) {
         ScheduledFuture<?> task = pendingStarts.remove(sessionId);
         if (task != null && !task.isDone()) {

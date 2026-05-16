@@ -186,8 +186,8 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
         if (LocalDateTime.now().isAfter(session.getEndTime())) {
             return false;
         }
-        BigDecimal minimumRequired = session.getCurrentPrice().add(session.getBidStep());
-        return bidAmount.compareTo(minimumRequired) >= 0;
+        BigDecimal minimumRequired = session.getCurrentPrice();
+        return bidAmount.compareTo(minimumRequired) > 0;
     }
 
     public boolean checkAndHandleAntiSniping(AuctionSession session) {

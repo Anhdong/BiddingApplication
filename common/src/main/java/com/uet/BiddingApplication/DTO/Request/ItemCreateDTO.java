@@ -8,16 +8,16 @@ public class ItemCreateDTO  {
     private String name;
     private String description;
     private String category;
-
-    public ItemCreateDTO() {
-    }
-
     private byte[] imageBytes;
     private String imageExtension;
     private BigDecimal startPrice;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String attribute;
+
+    public ItemCreateDTO() {
+    }
+
 
     public ItemCreateDTO(String name, String description, String category, byte[] imageBytes,
                          String imageExtension, BigDecimal startPrice, LocalDateTime startTime,

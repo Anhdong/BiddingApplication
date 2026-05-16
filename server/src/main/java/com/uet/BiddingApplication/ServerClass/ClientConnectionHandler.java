@@ -152,11 +152,11 @@ public class ClientConnectionHandler implements Runnable {
     }
 
     public void closeConnection() {
-        forceClose("Server chủ động yêu cầu đóng kết nối (Không rõ lý do cụ thể)");
+        kickOut("Server chủ động yêu cầu đóng kết nối (Không rõ lý do cụ thể)");
     }
 
     public void closeConnection(String reason) {
-        forceClose(reason);
+        kickOut(reason);
     }
 
     public String getUserId() {

@@ -3,6 +3,8 @@ package com.uet.BiddingApplication.DTO.Request;
 import com.uet.BiddingApplication.Enum.Category;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public class ItemUpdateRequestDTO  {
     private String itemId;
@@ -13,12 +15,17 @@ public class ItemUpdateRequestDTO  {
     private byte[] imageBytes;
     private String imageExtension;
     private String attribute;
+    private BigDecimal startPrice;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 
     public ItemUpdateRequestDTO() {
     }
 
-    public ItemUpdateRequestDTO(String itemId,String name, String description, Category category, String oldImageURL,
-                                byte[] imageBytes, String imageExtension, String attribute) {
+    public ItemUpdateRequestDTO(String itemId, String name, String description, Category category,
+                                String oldImageURL, byte[] imageBytes, String imageExtension,
+                                String attribute, BigDecimal startPrice, LocalDateTime startTime,
+                                LocalDateTime endTime) {
         this.itemId = itemId;
         this.name = name;
         this.description = description;
@@ -27,10 +34,37 @@ public class ItemUpdateRequestDTO  {
         this.imageBytes = imageBytes;
         this.imageExtension = imageExtension;
         this.attribute = attribute;
+        this.startPrice = startPrice;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
     public String getItemId() {
         return itemId;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public BigDecimal getStartPrice() {
+        return startPrice;
+    }
+
+    public void setStartPrice(BigDecimal startPrice) {
+        this.startPrice = startPrice;
     }
 
     public void setItemId(String itemId) {
