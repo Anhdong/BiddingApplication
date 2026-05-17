@@ -55,6 +55,11 @@ public class ItemManagementService {
             throw new BusinessException("Dữ liệu yêu cầu không hợp lệ."); // [cite: 687]
         }
 
+        // BỔ SUNG: Kiểm tra bidStep
+        if (request.getBidStep() == null || request.getBidStep().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BusinessException("Bước giá phải lớn hơn 0.");
+        }
+
         // 2. Xử lý lưu trữ hình ảnh qua StorageService
         String imageURL=null;
         if(request.getImageBytes()!=null) {
@@ -117,6 +122,11 @@ public class ItemManagementService {
             throw new BusinessException("Giá khởi điểm phải lớn hơn 0.");
         }
 
+        // BỔ SUNG: Kiểm tra newBidStep
+        if (request.getNewBidStep() == null || request.getNewBidStep().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BusinessException("Bước giá mới phải lớn hơn 0.");
+        }
+
         // 2. Kiểm tra sự tồn tại và quyền sở hữu vật phẩm
         Item item = itemDAO.getItemById(request.getItemId());
         if (item == null) {
@@ -139,6 +149,7 @@ public class ItemManagementService {
         if (currentStatus == SessionStatus.OPEN) {
             /* TRƯỜNG HỢP 1: PHIÊN CHƯA BẮT ĐẦU -> CẬP NHẬT TRỰC TIẾP */
             oldSession.setStartPrice(request.getNewStartPrice());
+            oldSession.setBidStep(request.getNewBidStep()); // BỔ SUNG DÒNG NÀY
             oldSession.setStartTime(request.getNewStartTime());
             oldSession.setEndTime(request.getNewEndTime());
 
