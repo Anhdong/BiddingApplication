@@ -1,6 +1,5 @@
 package com.uet.BiddingApplication.DTO.Request;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 public class AutoBidRegisterDTO {

@@ -89,7 +89,7 @@ public class ItemManagementServiceTest {
         LocalDateTime endTime = LocalDateTime.now().plusDays(2);
 
         ItemCreateDTO request = new ItemCreateDTO("Laptop", "Gaming", "ELECTRONICS",
-                new byte[]{1, 2, 3}, "png", new BigDecimal("1000"), startTime, endTime, "12");
+                new byte[]{1, 2, 3}, "png", new BigDecimal("1000"), new BigDecimal(10),startTime, endTime, "12");
 
         when(mockStorageService.uploadImage(any(byte[].class), anyString())).thenReturn("http://image.url");
         when(mockItemDAO.insertItem(any(Item.class))).thenReturn(true);
@@ -140,7 +140,7 @@ public class ItemManagementServiceTest {
         String sessionId = "session-1";
         LocalDateTime newStartTime = LocalDateTime.now().plusHours(1);
 
-        RelistRequestDTO request = new RelistRequestDTO(itemId, sessionId, new BigDecimal("1500"),
+        RelistRequestDTO request = new RelistRequestDTO(itemId, sessionId, new BigDecimal("1500"),new BigDecimal(10),
                 newStartTime, LocalDateTime.now().plusDays(1));
 
         Item mockItem = new Electronics();
@@ -175,7 +175,7 @@ public class ItemManagementServiceTest {
         String sessionId = "session-old";
 
         RelistRequestDTO request = new RelistRequestDTO(itemId, sessionId, new BigDecimal("1500"),
-                LocalDateTime.now().plusHours(1), LocalDateTime.now().plusDays(1));
+                new BigDecimal(10),LocalDateTime.now().plusHours(1), LocalDateTime.now().plusDays(1));
 
         Item mockItem = new Electronics();
         mockItem.setId(itemId);
@@ -202,7 +202,7 @@ public class ItemManagementServiceTest {
     @DisplayName("relistUnsoldItem: Thất bại do người dùng không phải chủ sở hữu Item")
     void testRelistUnsoldItem_Fail_NotOwner() {
         RelistRequestDTO request = new RelistRequestDTO("item-1", "session-1", new BigDecimal("100"),
-                LocalDateTime.now().plusHours(1), LocalDateTime.now().plusDays(1));
+                new BigDecimal(10),LocalDateTime.now().plusHours(1), LocalDateTime.now().plusDays(1));
 
         Item mockItem = new Electronics();
         mockItem.setSellerId("ANOTHER_SELLER"); // Không khớp
@@ -219,7 +219,7 @@ public class ItemManagementServiceTest {
     @DisplayName("relistUnsoldItem: Thất bại do đặt thời gian trong quá khứ")
     void testRelistUnsoldItem_Fail_PastTime() {
         RelistRequestDTO request = new RelistRequestDTO("item-1", "session-1", new BigDecimal("100"),
-                LocalDateTime.now().minusDays(1), // Cố tình đặt ở quá khứ
+                new BigDecimal(10),LocalDateTime.now().minusDays(1), // Cố tình đặt ở quá khứ
                 LocalDateTime.now().plusDays(1));
 
         BusinessException exception = assertThrows(BusinessException.class,
@@ -232,7 +232,7 @@ public class ItemManagementServiceTest {
     @DisplayName("relistUnsoldItem: Thất bại do cố ý tác động vào phiên đang RUNNING")
     void testRelistUnsoldItem_Fail_SessionRunning() {
         RelistRequestDTO request = new RelistRequestDTO("item-1", "session-1", new BigDecimal("100"),
-                LocalDateTime.now().plusHours(1), LocalDateTime.now().plusDays(1));
+                new BigDecimal(10),LocalDateTime.now().plusHours(1), LocalDateTime.now().plusDays(1));
 
         Item mockItem = new Electronics();
         mockItem.setId("item-1");

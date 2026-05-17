@@ -15,11 +15,13 @@ public class AuctionSessionMapper {
     /**
      * Trích xuất phần thời gian, giá khởi điểm từ Request và gán itemId vừa tạo để lưu DB.
      */
-    public static AuctionSession toEntity(ItemCreateDTO dto, String itemId){
+    public static AuctionSession toEntity(ItemCreateDTO dto, String itemId, String sellerId){
         // 1. Kiểm tra an toàn
         if (dto == null) return null;
 
         AuctionSession entity = new AuctionSession();
+
+        entity.setSellerId(sellerId);
 
         // 2. Gắn khóa ngoại (Foreign key)
         entity.setItemId(itemId);
@@ -28,6 +30,7 @@ public class AuctionSessionMapper {
         entity.setStartTime(dto.getStartTime());
         entity.setEndTime(dto.getEndTime());
         entity.setStartPrice(dto.getStartPrice());
+        entity.setBidStep(dto.getBidStep());
 
         // 4. BỔ SUNG LOGIC NGHIỆP VỤ (Quan trọng)
         // Giá hiện tại ban đầu chính là giá khởi điểm
@@ -40,13 +43,15 @@ public class AuctionSessionMapper {
         return entity;
     }
 
-    public static AuctionSession toEntity(RelistRequestDTO dto){
+    public static AuctionSession toEntity(RelistRequestDTO dto, String sellerId){
         // 1. Kiểm tra an toàn
         if (dto == null) return null;
 
         AuctionSession entity = new AuctionSession();
 
         String itemId = dto.getItemId();
+
+        entity.setSellerId(sellerId);
 
         // 2. Gắn khóa ngoại (Foreign key)
         entity.setItemId(itemId);
@@ -55,6 +60,7 @@ public class AuctionSessionMapper {
         entity.setStartTime(dto.getNewStartTime());
         entity.setEndTime(dto.getNewEndTime());
         entity.setStartPrice(dto.getNewStartPrice());
+        entity.setBidStep(dto.getNewBidStep());
 
         // 4. BỔ SUNG LOGIC NGHIỆP VỤ (Quan trọng)
         // Giá hiện tại ban đầu chính là giá khởi điểm

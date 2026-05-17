@@ -1,7 +1,5 @@
 package com.uet.BiddingApplication.DTO.Response;
 
-import java.time.LocalDateTime;
-
 public class SessionTargetDTO {
         private String sessionId;
         private long remainingMillis;

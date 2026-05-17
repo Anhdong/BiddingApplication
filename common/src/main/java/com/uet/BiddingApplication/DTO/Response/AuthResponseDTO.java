@@ -1,7 +1,5 @@
 package com.uet.BiddingApplication.DTO.Response;
 
-import java.io.Serializable;
-
 public class AuthResponseDTO  {
     private String token;
     private UserProfileDTO userProfile;

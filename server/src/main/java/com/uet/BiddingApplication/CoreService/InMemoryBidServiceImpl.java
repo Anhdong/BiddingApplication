@@ -13,6 +13,7 @@ import com.uet.BiddingApplication.DTO.Response.SessionResultDTO;
 import com.uet.BiddingApplication.DTO.Response.SessionTargetDTO;
 import com.uet.BiddingApplication.Enum.ActionType;
 import com.uet.BiddingApplication.Enum.SessionStatus;
+import com.uet.BiddingApplication.Exception.BusinessException;
 import com.uet.BiddingApplication.Model.AuctionSession;
 import com.uet.BiddingApplication.Service.AutoBidManager;
 import com.uet.BiddingApplication.Service.RealtimeBroadcastService;
@@ -178,7 +179,7 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
             AutoBidManager.getInstance().triggerAutoBid(sessionId, req.getBidAmount(),task.bidderId());
         }
         else{
-
+            throw new BusinessException("Giá không hợp lệ");
         }
     }
 
@@ -223,12 +224,13 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
 
         // 1. Chuyển trạng thái
         session.setStatus(SessionStatus.FINISHED);
+        boolean statusUpdated=AuctionSessionDAO.getInstance().updateStatus(sessionId, SessionStatus.FINISHED);
 
         // 2. Lưu đồng bộ xuống Database để chốt sổ (Giao tiếp với DAO)
         boolean dbUpdated = auctionSessionDAO.updatePriceAndWinner(
                 sessionId, session.getCurrentPrice(),session.getWinnerId());
 
-        if (dbUpdated) {
+        if (dbUpdated&&statusUpdated) {
             String winner = (session.getWinnerId() != null)
                     ? session.getWinnerId().substring(0, 5)
                     : "NO_WINNER";
@@ -251,6 +253,7 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
 
             // 5. Giải tán phòng (Unsubscribe tất cả)
             realtimeBroadcastService.closeRoom(sessionId);
+            log.info("Đã đóng phiên "+sessionId);
         } else {
             // Nếu Database lỗi (deadlock, rớt mạng chớp nhoáng), ta không để phiên bị "treo" chết trên RAM.
             // Giải pháp: Đẩy ngược nhiệm vụ này vào Scheduler để hệ thống tự động thử lại sau 5 giây.

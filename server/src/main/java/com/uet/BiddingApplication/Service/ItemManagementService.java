@@ -74,7 +74,7 @@ public class ItemManagementService {
         }
 
         // 5. Khởi tạo và lưu phiên đấu giá (AuctionSession) liên kết với Item vừa tạo [cite: 1041, 1093, 1135]
-        AuctionSession newSession = AuctionSessionMapper.toEntity(request, newItem.getId());
+        AuctionSession newSession = AuctionSessionMapper.toEntity(request, newItem.getId(), sellerId);
         if (!sessionDAO.insertSession(newSession)) {
             // Nếu bước này lỗi, lý tưởng nhất là có cơ chế rollback xóa Item đã tạo ở trên
             throw new BusinessException("Lỗi hệ thống: Không thể mở phiên đấu giá cho sản phẩm này.");
@@ -151,7 +151,7 @@ public class ItemManagementService {
 
         } else if (currentStatus == SessionStatus.FINISHED || currentStatus == SessionStatus.CANCELED) {
             /* TRƯỜNG HỢP 2: PHIÊN ĐÃ KẾT THÚC/HỦY -> TẠO PHIÊN MỚI (ĐĂNG LẠI) */
-            AuctionSession newSession = AuctionSessionMapper.toEntity(request);
+            AuctionSession newSession = AuctionSessionMapper.toEntity(request, sellerId);
             newSession.setItemId(item.getId());
 
             if (!sessionDAO.insertSession(newSession)) {

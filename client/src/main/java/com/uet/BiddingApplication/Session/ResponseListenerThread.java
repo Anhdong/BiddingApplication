@@ -33,7 +33,14 @@ public class ResponseListenerThread implements Runnable {
             }
         } catch (Exception e) {
             if (running) {
-                log.error("[Client] Mất kết nối tới Server hoặc lỗi luồng nghe: " + e.getMessage());
+                // Nếu 'running' vẫn đang true mà bị văng lỗi -> CHẮC CHẮN LÀ ĐỨT CÁP / SERVER SẬP
+                System.err.println("[Client] Mất kết nối đột ngột với Server!");
+
+                // Giải phóng luồng cũ trước khi tìm cái mới
+                running = false;
+
+                // Gọi còi báo động
+                ServerConnection.getInstance().startAutoReconnect();
             } else {
                 log.info("[Client] Luồng lắng nghe đã được đóng chủ động.");
             }

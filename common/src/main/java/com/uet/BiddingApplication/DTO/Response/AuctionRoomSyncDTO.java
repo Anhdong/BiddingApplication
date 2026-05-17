@@ -1,6 +1,5 @@
 package com.uet.BiddingApplication.DTO.Response;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -9,21 +8,31 @@ public class AuctionRoomSyncDTO {
     private String sessionId;
     private String imageURL;
     private BigDecimal currentPrice;
-    private LocalDateTime endTime; // Để chạy đồng hồ đếm ngược
+    private BigDecimal bidStep;
+    private long remainingMillis; // Để chạy đồng hồ đếm ngược
     private List<BidHistoryDTO> history; // Để vẽ ngay lập tức cái table lúc mới vào
     private String highestBidderName; // Tên người đang giữ giá cao nhất hiện tại
 
-    public AuctionRoomSyncDTO(String sessionId,String imageURL ,BigDecimal currentPrice, LocalDateTime endTime,
+    public AuctionRoomSyncDTO(String sessionId,String imageURL ,BigDecimal currentPrice,BigDecimal bidStep, long remainingMillis,
                               List<BidHistoryDTO> history, String highestBidderName) {
         this.sessionId = sessionId;
         this.imageURL = imageURL;
         this.currentPrice = currentPrice;
-        this.endTime = endTime;
+        this.bidStep = bidStep;
+        this.remainingMillis=remainingMillis;
         this.history = history;
         this.highestBidderName = highestBidderName;
     }
 
     public AuctionRoomSyncDTO() {
+    }
+
+    public BigDecimal getBidStep() {
+        return bidStep;
+    }
+
+    public void setBidStep(BigDecimal bidStep) {
+        this.bidStep = bidStep;
     }
 
     public String getSessionId() {
@@ -42,12 +51,12 @@ public class AuctionRoomSyncDTO {
         this.currentPrice = currentPrice;
     }
 
-    public LocalDateTime getEndTime() {
-        return endTime;
+    public long getRemainingMillis() {
+        return remainingMillis;
     }
 
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
+    public void setRemainingMillis(long remainingMillis) {
+        this.remainingMillis = remainingMillis;
     }
 
     public List<BidHistoryDTO> getHistory() {

@@ -100,6 +100,17 @@ public class SessionStartScheduler implements ISessionStartScheduler {
             pendingStarts.put(sessionId, retryTask);
         }
     }
+    /**
+     * Hủy bỏ lịch mở phiên đấu giá nếu phiên bị hủy hoặc xóa.
+     */
+    @Override
+    public void cancelSchedule(String sessionId) {
+        ScheduledFuture<?> task = pendingStarts.remove(sessionId);
+        if (task != null && !task.isDone()) {
+            task.cancel(false);
+            System.out.println("[INFO] Đã hủy lịch khởi động cho phiên: " + sessionId);
+        }
+    }
 
     /**
      * Bootstrapper: Dành cho hàm main() khi Server vừa bật lên

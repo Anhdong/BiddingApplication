@@ -1,7 +1,10 @@
 package com.uet.BiddingApplication.Session;
 
 import com.uet.BiddingApplication.DTO.Packet.RequestPacket;
+import com.uet.BiddingApplication.Util.NotificationUtil;
 import com.uet.BiddingApplication.Utils.GsonPacketParser;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -14,6 +17,7 @@ public class ServerConnection {
 
     // Singleton pattern
     private static volatile ServerConnection instance;
+    private volatile boolean isReconnecting = false; // Cờ chặn việc chạy nhiều luồng Reconnect cùng lúc
 
     private Socket socket;
     private PrintWriter out;
@@ -35,8 +39,14 @@ public class ServerConnection {
         return instance;
     }
 
-    public void connect(String host, int port) {
+    public boolean connect(String host, int port) {
         try {
+            // DỌN DẸP XÁC CŨ TRƯỚC KHI NỐI LẠI
+            if (socket != null) { try { socket.close(); } catch (Exception e){} }
+            if (in != null) { try { in.close(); } catch (Exception e){} }
+            if (out != null) { try { out.close(); } catch (Exception e){} }
+
+            // TẠO MỚi
             this.socket = new Socket(host, port);
             this.out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true);
             this.in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
@@ -48,8 +58,10 @@ public class ServerConnection {
             this.threadHandle.start();
 
             log.info("Đã kết nối Server thành công và bật luồng lắng nghe!");
+            return true;
         } catch (Exception e) {
             log.error("Lỗi kết nối Server: " + e.getMessage());
+            return false;
         }
     }
 
@@ -125,5 +137,55 @@ public class ServerConnection {
             log.error("Đã xảy ra lỗi Exception:", e);
         }
         return null;
+    }
+    /**
+     * Kích hoạt luồng tự động tìm và kết nối lại
+     */
+    public void startAutoReconnect() {
+        if (isReconnecting) return; // Nếu đang tìm rồi thì không tạo thêm luồng nữa
+        isReconnecting = true;
+
+        log.error("[Watchdog] Phát hiện rớt mạng. Bắt đầu tiến trình Auto-Reconnect...");
+
+        Platform.runLater(()->{
+            NotificationUtil.showAlert(Alert.AlertType.ERROR,"Lỗi Kết Nối","Mất kết nối đến server, tiến hành kết nối lại");
+        });
+
+        Thread reconnectThread = new Thread(() -> {
+            while (isReconnecting) {
+                try {
+                    // 1. Dùng hàm UDP quét lại mạng
+                    String serverIp = discoverServerOnLAN();
+
+                    // 2. Nếu quét không thấy, fallback về localhost
+                    if (serverIp == null) {
+                        serverIp = "127.0.0.1";
+                    }
+
+                    // 3. Thử kết nối TCP (Lưu ý: Bạn phải sửa hàm connect một chút để nó return true/false)
+                    boolean success = connect(serverIp, 8080);
+
+                    if (success) {
+                        isReconnecting = false; // Dừng vòng lặp
+                        log.info("[Watchdog] Kết nối lại THÀNH CÔNG tại IP: " + serverIp);
+
+                        Platform.runLater(()->{
+                            NotificationUtil.showAlert(Alert.AlertType.INFORMATION,"Kết Nối Thành Công","Đã khôi phục kết nối mạng");
+                        });
+                        break;
+                    }
+
+                    // Thất bại thì ngủ 3 giây rồi thử lại, tránh ăn 100% CPU
+                    Thread.sleep(3000);
+
+                } catch (Exception e) {
+                    log.error("[Watchdog] Thử lại thất bại, đang chờ nhịp tiếp theo...");
+                    try { Thread.sleep(3000); } catch (InterruptedException ignored) {}
+                }
+            }
+        });
+
+        reconnectThread.setDaemon(true);
+        reconnectThread.start();
     }
 }

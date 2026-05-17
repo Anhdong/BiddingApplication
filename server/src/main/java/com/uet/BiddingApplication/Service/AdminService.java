@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.uet.BiddingApplication.CoreService.SearchCacheManager;
+import com.uet.BiddingApplication.CoreService.SessionStartScheduler;
 import com.uet.BiddingApplication.DAO.Impl.AuctionSessionDAO;
 import com.uet.BiddingApplication.DAO.Impl.UserDAO;
 import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
@@ -157,6 +158,7 @@ public class AdminService {
         // 5. Thực hiện nghiệp vụ (Bước 2): Tách biệt Network & Cache (Side-effects)
         // a. Xóa phiên khỏi RAM để không ai có thể tìm thấy trên trang chủ nữa
         SearchCacheManager.getInstance().removeSession(sessionId);
+        SessionStartScheduler.getInstance().cancelSchedule(sessionId);
 
         // b. Phát thanh thông báo đóng phòng khẩn cấp cho tất cả Bidder đang xem phiên này
         ResponsePacket<String> cancelNotification = new ResponsePacket<>(

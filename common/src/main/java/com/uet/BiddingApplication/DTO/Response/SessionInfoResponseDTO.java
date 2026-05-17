@@ -3,7 +3,6 @@ package com.uet.BiddingApplication.DTO.Response;
 import com.uet.BiddingApplication.Enum.Category;
 import com.uet.BiddingApplication.Enum.SessionStatus;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -16,13 +15,14 @@ public class SessionInfoResponseDTO  {
     private Category category;
     private String attribute;
     private BigDecimal startPrice;
+    private BigDecimal bidStep;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private SessionStatus status;
 
     public SessionInfoResponseDTO(String sessionId,String sellerName, String itemName, String description,
                                   String imageUrl, Category category, String attribute,
-                                  BigDecimal startPrice, LocalDateTime startTime, LocalDateTime endTime,
+                                  BigDecimal startPrice,BigDecimal bidStep, LocalDateTime startTime, LocalDateTime endTime,
                                   SessionStatus status) {
         this.sessionId = sessionId;
         this.sellerName = sellerName;
@@ -32,9 +32,18 @@ public class SessionInfoResponseDTO  {
         this.category = category;
         this.attribute = attribute;
         this.startPrice = startPrice;
+        this.bidStep = bidStep;
         this.startTime = startTime;
         this.endTime = endTime;
         this.status = status;
+    }
+
+    public BigDecimal getBidStep() {
+        return bidStep;
+    }
+
+    public void setBidStep(BigDecimal bidStep) {
+        this.bidStep = bidStep;
     }
 
     public SessionStatus getStatus() {
