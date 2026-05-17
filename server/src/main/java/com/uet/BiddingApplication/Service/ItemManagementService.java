@@ -56,13 +56,15 @@ public class ItemManagementService {
         }
 
         // 2. Xử lý lưu trữ hình ảnh qua StorageService
-        String imageURL;
-        try {
-            // Nhận byte[] từ DTO và tải lên hệ thống lưu trữ [cite: 849, 1027]
-            imageURL = StorageService.getInstance().uploadImage(request.getImageBytes(), request.getImageExtension());
-        } catch (Exception e) {
-            // Nếu lỗi upload ảnh, chặn quy trình và báo lỗi cụ thể
-            throw new BusinessException("Không thể tải lên hình ảnh sản phẩm. Vui lòng thử lại.");
+        String imageURL=null;
+        if(request.getImageBytes()!=null) {
+            try {
+                // Nhận byte[] từ DTO và tải lên hệ thống lưu trữ [cite: 849, 1027]
+                imageURL = StorageService.getInstance().uploadImage(request.getImageBytes(), request.getImageExtension());
+            } catch (Exception e) {
+                // Nếu lỗi upload ảnh, chặn quy trình và báo lỗi cụ thể
+                throw new BusinessException("Không thể tải lên hình ảnh sản phẩm. Vui lòng thử lại.");
+            }
         }
 
         // 3. Chuyển đổi DTO sang Entity Item thông qua Mapper [cite: 1091]

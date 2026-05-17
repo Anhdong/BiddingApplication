@@ -56,6 +56,7 @@ public class BiddingApplication extends Application {
             String serverIp = ServerConnection.getInstance().discoverServerOnLAN();
             if (serverIp == null) {
                 log.info("Không quét được mạng LAN ");
+                ServerConnection.getInstance().startAutoReconnect();
             }
             ServerConnection.getInstance().connect(serverIp, 8080);
         }).start();
