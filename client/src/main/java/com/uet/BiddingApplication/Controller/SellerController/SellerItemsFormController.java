@@ -51,7 +51,7 @@ public class SellerItemsFormController implements Initializable {
 
     public void setupFormMode(String itemId) {
         this.currentItemId = itemId;
-        log.info("Item form set to  "+(isUpdateMode()?"Update":"Create") + " mode");
+        log.info("Item form set to  {} mode", isUpdateMode() ? "Update" : "Create");
         Platform.runLater(() -> {
             if (isUpdateMode()) {
                 btnAction.setText("Update");
@@ -179,6 +179,7 @@ public class SellerItemsFormController implements Initializable {
         String name = txtName.getText();
         String description = txtDesc.getText();
         BigDecimal startPrice = new BigDecimal(txtStartPrice.getText());
+        BigDecimal minBid = new BigDecimal(txtMinBid.getText());
         String category  = cbxCategory.getValue().name();
         LocalDateTime startDateTime = LocalDateTime.of(datePicker.getValue(),LocalTime.of(spnStartHour.getValue(),spnStartMinute.getValue()));
         LocalDateTime endDateTime = LocalDateTime.of(datePicker.getValue(),LocalTime.of(spnEndHour.getValue(),spnEndMinute.getValue()));
@@ -188,7 +189,7 @@ public class SellerItemsFormController implements Initializable {
             //TODO:get Item info, place and send request
         } else {
             ItemCreateDTO itemCreateDTO = new ItemCreateDTO(
-                    name,description,category,imageBytes,imageExtension,startPrice,startDateTime,endDateTime,null
+                    name,description,category,imageBytes,imageExtension,startPrice,minBid,startDateTime,endDateTime,null
             );
 
             RequestPacket<ItemCreateDTO> request = new RequestPacket<>();

@@ -36,7 +36,7 @@ public class ItemDetailController implements Initializable, ViewControllerLifecy
 
     @FXML
     ImageView imgItem;
-    @FXML Label lblName, lblDatetime, lblStartBid, lblCategory, lblAction;
+    @FXML Label lblName, lblDatetime, lblStartBid, lblMinBid, lblCategory, lblAction;
     @FXML Text txtDesc;
     @FXML Button btnAction;
 
@@ -47,8 +47,6 @@ public class ItemDetailController implements Initializable, ViewControllerLifecy
 
     public void setCurrentSessionID(String sessionID){currentSessionID=sessionID;}
 
-    //Lấy ảnh mặc định để set khi thoát
-    Image imgDefault;
 
     //--Initialize and setup--
     private final Consumer<ResponsePacket<?>> sessionDetailCallback = this::handleSessionInfoResponse;
@@ -104,11 +102,13 @@ public class ItemDetailController implements Initializable, ViewControllerLifecy
         Platform.runLater(()->{
             //Set dữ liệu mới
             currentItem = sessionInfoDTO;
+            log.info("Item Image URL: {}", sessionInfoDTO.getImageUrl());
             if(sessionInfoDTO.getImageUrl()!= null) imgItem.setImage(new Image(sessionInfoDTO.getImageUrl()));
             lblName.setText(sessionInfoDTO.getItemName());
             setlblDatetime(sessionInfoDTO.getStatus(),sessionInfoDTO.getStartTime(),sessionInfoDTO.getEndTime());
             lblStartBid.setText("$"+sessionInfoDTO.getStartPrice().toString());
-            lblCategory.setText(sentenceCase(sessionInfoDTO.getCategory().toString()));
+            lblMinBid.setText("$"+sessionInfoDTO.getBidStep().toString());
+            lblCategory.setText(sentenceCase(sessionInfoDTO.getCategory().name()));
             txtDesc.setText(sessionInfoDTO.getDescription());
         });
     }

@@ -80,7 +80,14 @@
                         <String fx:value="bg-default" />
                      </styleClass>
                   </VBox>
-                  <VBox prefWidth="400.0" spacing="10.0">
+                  <VBox prefWidth="400.0" spacing="8.0">
+                     <padding>
+                        <Insets bottom="15.0" left="25.0" right="25.0" top="15.0" />
+                     </padding>
+                     <styleClass>
+                        <String fx:value="rounded" />
+                        <String fx:value="bg-default" />
+                     </styleClass>
                      <children>
                         <Label text="Category">
                            <styleClass>
@@ -88,7 +95,11 @@
                               <String fx:value="text-bold" />
                            </styleClass>
                         </Label>
-                        <Label fx:id="lblCategory" styleClass="title-2" text="\$0" />
+                        <Label fx:id="lblCategory" styleClass="title-2" text="None" />
+                     </children>
+                  </VBox>
+                  <VBox prefWidth="400.0" spacing="10.0">
+                     <children>
                         <Label text="Start Bid">
                            <styleClass>
                               <String fx:value="text-muted" />
@@ -96,6 +107,18 @@
                            </styleClass>
                         </Label>
                         <Label fx:id="lblStartBid" layoutX="35.0" layoutY="51.0" text="\$0">
+                           <styleClass>
+                              <String fx:value="main-title" />
+                              <String fx:value="success" />
+                           </styleClass>
+                        </Label>
+                        <Label text="Minimum Bid Increment">
+                           <styleClass>
+                              <String fx:value="text-muted" />
+                              <String fx:value="text-bold" />
+                           </styleClass>
+                        </Label>
+                        <Label fx:id="lblMinBid" text="\$0">
                            <styleClass>
                               <String fx:value="main-title" />
                               <String fx:value="success" />
