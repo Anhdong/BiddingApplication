@@ -1,8 +1,5 @@
 package com.uet.BiddingApplication.DTO.Request;
 
-import java.io.Serializable;
-import java.util.Objects;
-
 public class AdminActionRequestDTO {
     private String targetId;
     private String actionReason;

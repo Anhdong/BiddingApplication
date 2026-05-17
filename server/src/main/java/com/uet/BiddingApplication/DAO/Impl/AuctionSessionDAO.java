@@ -47,7 +47,7 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
             ps.setTimestamp(5, Timestamp.valueOf(session.getEndTime()));
             ps.setString(6, session.getStatus().name());
             ps.setBigDecimal(7, session.getStartPrice());
-            ps.setBigDecimal(8, session.getCurrentPrice());
+            ps.setBigDecimal(8, session.getStartPrice());
             ps.setBigDecimal(9, session.getBidStep());
             ps.setTimestamp(10, Timestamp.valueOf(session.getCreatedAt()));
 
@@ -66,6 +66,8 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
                 "start_time = ?, " +
                 "end_time = ?, " +
                 "start_price = ?, " +
+                "current_price = ?, " +
+                "bid_step = ?, " +
                 "WHERE id = ?::uuid";
 
         try (Connection conn = DatabaseConnectionPool.getConnection();
@@ -85,11 +87,15 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
                 ps.setNull(2, java.sql.Types.TIMESTAMP);
             }
 
-            // 3. start_price
+            // 3+4. start_price+currentPrice
             ps.setBigDecimal(3, session.getStartPrice());
+            ps.setBigDecimal(4, session.getStartPrice());
 
-            // 5. id (Điều kiện WHERE ép kiểu UUID)
-            ps.setString(5, session.getId());
+            //5.bidStep
+            ps.setBigDecimal(5, session.getBidStep());
+
+            // 6. id (Điều kiện WHERE ép kiểu UUID)
+            ps.setString(6, session.getId());
 
             // Thực thi và trả về true nếu có ít nhất 1 dòng được cập nhật thành công
             return ps.executeUpdate() > 0;
@@ -238,7 +244,7 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
     public SessionInfoResponseDTO getSessionInfo(String sessionId){
         String sql="with item_info as(\n" +
                 "  select i.name,i.seller_id,i.description,i.image_url,i.category,i.condition,i.artist_name,i.warranty_months,\n" +
-                "         a.id,a.status,a.start_price,a.start_time,a.end_time\n" +
+                "         a.id,a.status,a.start_price,a.bid_step,a.start_time,a.end_time\n" +
                 "  from items i\n" +
                 "  join auction_sessions a on i.id=a.item_id\n" +
                 "  where a.id=?::uuid\n" +
@@ -258,6 +264,7 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
                 dto.setStartTime(rs.getTimestamp("start_time").toLocalDateTime());
                 dto.setEndTime(rs.getTimestamp("end_time").toLocalDateTime());
                 dto.setStartPrice(rs.getBigDecimal("start_price"));
+                dto.setBidStep(rs.getBigDecimal("bid_step"));
                 dto.setDescription(rs.getString("description"));
                 dto.setImageUrl(rs.getString("image_url"));
                 dto.setItemName(rs.getString("name"));

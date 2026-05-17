@@ -2,8 +2,6 @@ package com.uet.BiddingApplication.DTO.Request;
 
 import com.uet.BiddingApplication.Enum.RoleType;
 
-import java.io.Serializable;
-
 public class RegisterRequestDTO {
 
     public RegisterRequestDTO() {

@@ -42,6 +42,7 @@ public class AuctionViewMapper {
         SessionInfoResponseDTO dto = new SessionInfoResponseDTO();
         dto.setSessionId(session.getId());
         dto.setStartPrice(session.getStartPrice());
+        dto.setBidStep(session.getBidStep());
         dto.setStartTime(session.getStartTime());
         dto.setEndTime(session.getEndTime());
         dto.setStatus(session.getStatus());

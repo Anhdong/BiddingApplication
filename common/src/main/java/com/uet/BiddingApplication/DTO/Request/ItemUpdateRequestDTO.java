@@ -2,7 +2,6 @@ package com.uet.BiddingApplication.DTO.Request;
 
 import com.uet.BiddingApplication.Enum.Category;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -16,6 +15,7 @@ public class ItemUpdateRequestDTO  {
     private String imageExtension;
     private String attribute;
     private BigDecimal startPrice;
+    private BigDecimal bidStep;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 
@@ -24,7 +24,7 @@ public class ItemUpdateRequestDTO  {
 
     public ItemUpdateRequestDTO(String itemId, String name, String description, Category category,
                                 String oldImageURL, byte[] imageBytes, String imageExtension,
-                                String attribute, BigDecimal startPrice, LocalDateTime startTime,
+                                String attribute, BigDecimal startPrice,BigDecimal bidStep, LocalDateTime startTime,
                                 LocalDateTime endTime) {
         this.itemId = itemId;
         this.name = name;
@@ -35,8 +35,17 @@ public class ItemUpdateRequestDTO  {
         this.imageExtension = imageExtension;
         this.attribute = attribute;
         this.startPrice = startPrice;
+        this.bidStep = bidStep;
         this.startTime = startTime;
         this.endTime = endTime;
+    }
+
+    public BigDecimal getBidStep() {
+        return bidStep;
+    }
+
+    public void setBidStep(BigDecimal bidStep) {
+        this.bidStep = bidStep;
     }
 
     public String getItemId() {

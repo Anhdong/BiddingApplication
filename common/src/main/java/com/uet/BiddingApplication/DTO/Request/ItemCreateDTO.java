@@ -1,6 +1,5 @@
 package com.uet.BiddingApplication.DTO.Request;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -11,6 +10,7 @@ public class ItemCreateDTO  {
     private byte[] imageBytes;
     private String imageExtension;
     private BigDecimal startPrice;
+    private BigDecimal bidStep;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String attribute;
@@ -20,7 +20,7 @@ public class ItemCreateDTO  {
 
 
     public ItemCreateDTO(String name, String description, String category, byte[] imageBytes,
-                         String imageExtension, BigDecimal startPrice, LocalDateTime startTime,
+                         String imageExtension, BigDecimal startPrice,BigDecimal bidStep, LocalDateTime startTime,
                          LocalDateTime endTime, String attribute) {
         this.name = name;
         this.description = description;
@@ -28,6 +28,7 @@ public class ItemCreateDTO  {
         this.imageBytes = imageBytes;
         this.imageExtension = imageExtension;
         this.startPrice = startPrice;
+        this.bidStep = bidStep;
         this.startTime = startTime;
         this.endTime = endTime;
         this.attribute = attribute;
@@ -59,6 +60,14 @@ public class ItemCreateDTO  {
 
     public byte[] getImageBytes() {
         return imageBytes;
+    }
+
+    public BigDecimal getBidStep() {
+        return bidStep;
+    }
+
+    public void setBidStep(BigDecimal bidStep) {
+        this.bidStep = bidStep;
     }
 
     public void setImageBytes(byte[] imageBytes) {

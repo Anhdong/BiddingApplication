@@ -13,6 +13,7 @@ import com.uet.BiddingApplication.DTO.Response.SessionResultDTO;
 import com.uet.BiddingApplication.DTO.Response.SessionTargetDTO;
 import com.uet.BiddingApplication.Enum.ActionType;
 import com.uet.BiddingApplication.Enum.SessionStatus;
+import com.uet.BiddingApplication.Exception.BusinessException;
 import com.uet.BiddingApplication.Model.AuctionSession;
 import com.uet.BiddingApplication.Service.AutoBidManager;
 import com.uet.BiddingApplication.Service.RealtimeBroadcastService;
@@ -178,7 +179,7 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
             AutoBidManager.getInstance().triggerAutoBid(sessionId, req.getBidAmount(),task.bidderId());
         }
         else{
-
+            throw new BusinessException("Giá không hợp lệ");
         }
     }
 
@@ -186,8 +187,8 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
         if (LocalDateTime.now().isAfter(session.getEndTime())) {
             return false;
         }
-        BigDecimal minimumRequired = session.getCurrentPrice();
-        return bidAmount.compareTo(minimumRequired) > 0;
+        BigDecimal minimumRequired = session.getCurrentPrice().add(session.getBidStep());
+        return bidAmount.compareTo(minimumRequired) >= 0;
     }
 
     public boolean checkAndHandleAntiSniping(AuctionSession session) {

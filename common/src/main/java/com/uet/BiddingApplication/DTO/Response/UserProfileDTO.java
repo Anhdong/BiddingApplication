@@ -2,8 +2,6 @@ package com.uet.BiddingApplication.DTO.Response;
 
 import com.uet.BiddingApplication.Enum.RoleType;
 
-import java.io.Serializable;
-
 public class UserProfileDTO  {
     private String username;
     private String id;

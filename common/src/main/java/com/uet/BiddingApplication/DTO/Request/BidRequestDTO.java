@@ -2,7 +2,6 @@ package com.uet.BiddingApplication.DTO.Request;
 
 import com.uet.BiddingApplication.Enum.BidType;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 public class BidRequestDTO  {

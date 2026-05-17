@@ -1,7 +1,5 @@
 package com.uet.BiddingApplication.DTO.Request;
 
-import java.io.Serializable;
-
 public class PasswordChangeRequestDTO {
     private String oldPassword;
     private String newPassword;

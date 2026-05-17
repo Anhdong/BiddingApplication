@@ -1,6 +1,5 @@
 package com.uet.BiddingApplication.DTO.Response;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 

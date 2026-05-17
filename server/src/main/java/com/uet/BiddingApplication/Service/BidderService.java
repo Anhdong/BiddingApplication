@@ -1,5 +1,6 @@
 package com.uet.BiddingApplication.Service;
 
+import java.time.ZoneId;
 import java.util.List;
 
 import com.uet.BiddingApplication.DAO.Impl.AuctionSessionDAO;
@@ -247,11 +248,13 @@ public class BidderService {
         RealtimeBroadcastService.getInstance().subscribe(sessionId, bidderId);
 
         // 6. Trả về đúng DTO mà Client mong đợi theo Registry (Fix: getSessionId -> getId)
+        long endTime=session.getEndTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         return new AuctionRoomSyncDTO(
                 session.getId(),
                 imageURL,
                 session.getCurrentPrice(),
-                session.getEndTime(),
+                session.getBidStep(),
+                endTime-System.currentTimeMillis(),
                 sessionHistory,
                 highestBidderName
         );

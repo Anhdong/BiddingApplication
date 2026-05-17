@@ -1,7 +1,5 @@
 package com.uet.BiddingApplication.DTO.Request;
 
-import java.io.Serializable;
-
 public class AuthRequestDTO {
     private String username;
     private String password;
