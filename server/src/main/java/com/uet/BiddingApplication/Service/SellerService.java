@@ -1,5 +1,6 @@
 package com.uet.BiddingApplication.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,9 +97,26 @@ public class SellerService {
 
         // BỌC NULL CHECK: Tránh NullPointerException nếu Item chưa có Session
         if (session != null) {
-            session.setStartTime(request.getStartTime());
-            session.setEndTime(request.getEndTime());
-            session.setStartPrice(request.getStartPrice());
+            // Cập nhật StartTime và EndTime (nên có null-check nếu form update cho phép bỏ trống)
+            if (request.getStartTime() != null) session.setStartTime(request.getStartTime());
+            if (request.getEndTime() != null) session.setEndTime(request.getEndTime());
+
+            // Xử lý StartPrice
+            if (request.getStartPrice() != null) {
+                if (request.getStartPrice().compareTo(BigDecimal.ZERO) <= 0) {
+                    throw new BusinessException("Giá khởi điểm phải lớn hơn 0.");
+                }
+                session.setStartPrice(request.getStartPrice());
+            }
+
+            // XỬ LÝ BIDSTEP
+            if (request.getBidStep() != null) {
+                if (request.getBidStep().compareTo(BigDecimal.ZERO) <= 0) {
+                    throw new BusinessException("Bước giá phải lớn hơn 0.");
+                }
+                session.setBidStep(request.getBidStep()); // Đè giá trị mới
+                // Nếu request.getBidStep() == null, code bỏ qua nhánh này, session giữ nguyên bidStep cũ
+            }
         }
 
         // 5. Cập nhật Database
