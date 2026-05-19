@@ -1,10 +1,15 @@
 package com.uet.BiddingApplication.Controller.SellerController;
 
+import com.uet.BiddingApplication.Controller.MainViewController;
 import com.uet.BiddingApplication.DTO.Packet.RequestPacket;
+import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
 import com.uet.BiddingApplication.DTO.Request.ItemCreateDTO;
 import com.uet.BiddingApplication.Enum.ActionType;
 import com.uet.BiddingApplication.Enum.Category;
+import com.uet.BiddingApplication.Enum.ViewPath;
+import com.uet.BiddingApplication.Interface.ViewControllerLifecycle;
 import com.uet.BiddingApplication.Session.ClientSession;
+import com.uet.BiddingApplication.Session.ResponseDispatcher;
 import com.uet.BiddingApplication.Session.ServerConnection;
 import com.uet.BiddingApplication.Util.NotificationUtil;
 import com.uet.BiddingApplication.Util.UIUtil;
@@ -26,12 +31,13 @@ import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.uet.BiddingApplication.BiddingApplication.primaryStage;
 
-public class SellerItemsFormController implements Initializable {
+public class SellerItemsFormController implements Initializable, ViewControllerLifecycle {
     //--LOG--
     private static final Logger log = LoggerFactory.getLogger(SellerItemsFormController.class);
 
@@ -45,6 +51,10 @@ public class SellerItemsFormController implements Initializable {
     @FXML DatePicker datePicker;
     @FXML Spinner<Integer> spnStartHour, spnStartMinute, spnEndHour, spnEndMinute;
     @FXML Button btnAction;
+
+    //CALLBACKS
+    private final Consumer<ResponsePacket<?>> addItemCallback = this::handleAddItemResponse;
+
 
     //--STATE--
     private String currentItemId = null;
@@ -89,10 +99,28 @@ public class SellerItemsFormController implements Initializable {
         spnStartMinute.setValueFactory(startMinuteFactory);
         spnEndMinute.setValueFactory(endMinuteFactory);
 
-        //--Subscribe
-
     }
 
+    //LIFE CYCLE--
+    @Override
+    public void onShow() {
+        if(isUpdateMode()){
+            //TODO add update response handle
+        } else{
+            ResponseDispatcher.getInstance().subscribe(ActionType.CREATE_ITEM,addItemCallback);
+        }
+
+    }
+    @Override
+    public void onHide() {
+        if(isUpdateMode()){
+            //TODO add update response handle
+        } else{
+            ResponseDispatcher.getInstance().unsubscribe(ActionType.CREATE_ITEM,addItemCallback);
+        }
+    }
+
+    //--MAIN METHODS--
     private boolean validateInput(){
         LocalDateTime now = LocalDateTime.now();
         LocalTime startTime = LocalTime.of(spnStartHour.getValue(),spnStartMinute.getValue());
@@ -205,6 +233,17 @@ public class SellerItemsFormController implements Initializable {
             log.info("[SellerItemsFormController] Gửi đăng kí tạo sản phầm đấu giá mới");
             ServerConnection.getInstance().sendRequest(request);
 
+        }
+    }
+
+    //--HANDLE RESPONSE--
+    private void handleAddItemResponse(ResponsePacket<?> response) {
+        if (response.getStatusCode() == 200) {
+            NotificationUtil.showInfo("Add item successfully!");
+            log.info("[SellerItemsFormController] Thêm sản phẩm thành công.");
+            MainViewController.getInstance().loadView(ViewPath.SELLER_ITEMS);
+        } else {
+            log.error("[SellerItemsFormController] Lỗi từ server: {}", response.getMessage());
         }
     }
 }

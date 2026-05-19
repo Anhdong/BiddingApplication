@@ -31,7 +31,7 @@ public abstract class BaseBrowseController implements ViewControllerLifecycle {
     //help update single items without render all again
     protected List<AuctionCardDTO> currentAuctions = new ArrayList<>();
 
-    //--LifeCycle--
+    //--LIFE CYCLE--
     @Override
     public void onShow() {setupSubscriptions();}
 
