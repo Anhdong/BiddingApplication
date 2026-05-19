@@ -48,6 +48,9 @@ public class ItemCardController implements Initializable {
             lblName.setText(cardDto.getItemName());
             setlblDatetime(cardDto.getStatus(),cardDto.getStartTime(),cardDto.getEndTime());
             lblPrice.setText("$"+cardDto.getStartPrice().toString());
+
+            //Hide button base on session status
+            setButtonVisible(cardDto.getStatus() == SessionStatus.OPEN);
         });
     }
 
