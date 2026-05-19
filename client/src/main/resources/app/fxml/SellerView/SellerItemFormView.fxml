@@ -15,6 +15,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.uet.BiddingApplication.Controller.SellerController.SellerItemsFormController">
    <children>
@@ -120,23 +121,22 @@
                         <String fx:value="bg-default" />
                      </styleClass>
                      <children>
-                        <Label text="Date">
-                           <styleClass>
-                              <String fx:value="text-muted" />
-                              <String fx:value="title-4" />
-                           </styleClass>
-                        </Label>
-                        <DatePicker fx:id="datePicker" maxWidth="1.7976931348623157E308" />
+                        <HBox />
                         <Label layoutX="35.0" layoutY="30.0" text="Start Time">
                            <styleClass>
                               <String fx:value="text-muted" />
                               <String fx:value="title-4" />
                            </styleClass>
                         </Label>
+                        <DatePicker fx:id="dpStart" maxWidth="1.7976931348623157E308" />
                         <HBox prefHeight="60.0" prefWidth="350.0" spacing="32.0">
                            <children>
                               <Spinner fx:id="spnStartHour" editable="true" prefHeight="60.0" prefWidth="138.0" styleClass="title-2" />
-                              <Label prefHeight="60.0" styleClass="title-2" text=":" textAlignment="CENTER" />
+                              <FontIcon iconLiteral="mdi2a-arrow-right-bold" styleClass="large-icon" textAlignment="CENTER" wrappingWidth="73.0">
+                                 <HBox.margin>
+                                    <Insets bottom="16.0" top="16.0" />
+                                 </HBox.margin>
+                              </FontIcon>
                               <Spinner fx:id="spnStartMinute" editable="true" layoutX="10.0" layoutY="10.0" prefHeight="60.0" prefWidth="138.0" styleClass="title-2" />
                            </children>
                         </HBox>
@@ -146,10 +146,15 @@
                               <String fx:value="title-4" />
                            </styleClass>
                         </Label>
+                        <DatePicker fx:id="dpEnd" maxWidth="1.7976931348623157E308" />
                         <HBox layoutX="35.0" layoutY="174.0" prefHeight="60.0" prefWidth="350.0" spacing="32.0">
                            <children>
                               <Spinner fx:id="spnEndHour" editable="true" prefHeight="60.0" prefWidth="138.0" styleClass="title-2" />
-                              <Label prefHeight="60.0" styleClass="title-2" text=":" textAlignment="CENTER" />
+                              <FontIcon iconLiteral="mdi2a-arrow-right-bold" styleClass="large-icon" textAlignment="CENTER" wrappingWidth="73.0">
+                                 <HBox.margin>
+                                    <Insets bottom="16.0" top="16.0" />
+                                 </HBox.margin>
+                              </FontIcon>
                               <Spinner fx:id="spnEndMinute" editable="true" layoutX="10.0" layoutY="10.0" prefHeight="60.0" prefWidth="138.0" styleClass="title-2" />
                            </children>
                         </HBox>

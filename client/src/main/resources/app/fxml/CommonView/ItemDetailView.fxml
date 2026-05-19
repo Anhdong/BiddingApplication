@@ -61,13 +61,38 @@
                <children>
                   <VBox prefWidth="400.0" spacing="8.0">
                      <children>
+                        <Label text="Status">
+                           <styleClass>
+                              <String fx:value="text-muted" />
+                              <String fx:value="text-bold" />
+                           </styleClass>
+                        </Label>
+                        <Label fx:id="lblStatus" styleClass="title-1" text="None" />
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="25.0" right="25.0" top="15.0" />
+                     </padding>
+                     <styleClass>
+                        <String fx:value="rounded" />
+                        <String fx:value="bg-default" />
+                     </styleClass>
+                  </VBox>
+                  <VBox prefWidth="400.0" spacing="8.0">
+                     <children>
                         <Label text="Start time">
                            <styleClass>
                               <String fx:value="text-muted" />
                               <String fx:value="text-bold" />
                            </styleClass>
                         </Label>
-                        <Label fx:id="lblDatetime" styleClass="title-1" text="hh:mm - dd/mm/yyyy" />
+                        <Label fx:id="lblStartDatetime" styleClass="title-1" text="hh:mm - dd/mm/yyyy" />
+                        <Label layoutX="35.0" layoutY="25.0" text="End time">
+                           <styleClass>
+                              <String fx:value="text-muted" />
+                              <String fx:value="text-bold" />
+                           </styleClass>
+                        </Label>
+                        <Label fx:id="lblEndDatetime" layoutX="35.0" layoutY="51.0" styleClass="title-1" text="hh:mm - dd/mm/yyyy" />
                      </children>
                      <padding>
                         <Insets bottom="15.0" left="25.0" right="25.0" top="15.0" />

@@ -36,7 +36,7 @@ public class ItemDetailController implements Initializable, ViewControllerLifecy
 
     @FXML
     ImageView imgItem;
-    @FXML Label lblName, lblDatetime, lblStartBid, lblMinBid, lblCategory, lblAction;
+    @FXML Label lblName, lblStatus, lblStartDatetime, lblEndDatetime, lblStartBid, lblMinBid, lblCategory, lblAction;
     @FXML Text txtDesc;
     @FXML Button btnAction;
 
@@ -105,7 +105,8 @@ public class ItemDetailController implements Initializable, ViewControllerLifecy
             log.info("Item Image URL: {}", sessionInfoDTO.getImageUrl());
             if(sessionInfoDTO.getImageUrl()!= null) imgItem.setImage(new Image(sessionInfoDTO.getImageUrl()));
             lblName.setText(sessionInfoDTO.getItemName());
-            setlblDatetime(sessionInfoDTO.getStatus(),sessionInfoDTO.getStartTime(),sessionInfoDTO.getEndTime());
+            lblStatus.setText(sentenceCase(sessionInfoDTO.getStatus().toString()));
+            setlblDatetime(sessionInfoDTO.getStartTime(),sessionInfoDTO.getEndTime());
             lblStartBid.setText("$"+sessionInfoDTO.getStartPrice().toString());
             lblMinBid.setText("$"+sessionInfoDTO.getBidStep().toString());
             lblCategory.setText(sentenceCase(sessionInfoDTO.getCategory().name()));
@@ -113,25 +114,14 @@ public class ItemDetailController implements Initializable, ViewControllerLifecy
         });
     }
 
-    private void setlblDatetime(SessionStatus status,LocalDateTime startTime, LocalDateTime endTime){
-        if (Objects.requireNonNull(status) == SessionStatus.OPEN) {
-            // Định dạng giờ:phút
-            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-            // Định dạng ngày:tháng/năm
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private void setlblDatetime(LocalDateTime startTime, LocalDateTime endTime){
+            // Định dạng mặc định
+            DateTimeFormatter format = DateTimeFormatter.ofPattern("HH:mm - dd/MM/yyyy");
 
-            LocalDateTime now = LocalDateTime.now();
-            //Xu ly format neu cung ngay hoac khac ngay
             Platform.runLater(()->{
-                if (now.toLocalDate().equals(startTime.toLocalDate())) {
-                    lblDatetime.setText(startTime.format(timeFormatter) + " - " + endTime.format(timeFormatter));
-                } else {
-                    lblDatetime.setText(startTime.format(timeFormatter) + " - " + endTime.format(dateFormatter));
-                }
+                lblStartDatetime.setText(startTime.format(format));
+                lblEndDatetime.setText(endTime.format(format));
             });
-        } else {
-            Platform.runLater(()->lblDatetime.setText(sentenceCase((status.toString()))));
-        }
     }
 
     private String sentenceCase(String original) {

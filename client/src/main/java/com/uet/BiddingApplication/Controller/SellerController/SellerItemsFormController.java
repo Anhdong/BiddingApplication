@@ -48,7 +48,7 @@ public class SellerItemsFormController implements Initializable, ViewControllerL
     @FXML TextArea txtDesc;
     @FXML TextField txtName, txtStartPrice, txtMinBid;
     @FXML ChoiceBox<Category> cbxCategory;
-    @FXML DatePicker datePicker;
+    @FXML DatePicker dpStart, dpEnd;
     @FXML Spinner<Integer> spnStartHour, spnStartMinute, spnEndHour, spnEndMinute;
     @FXML Button btnAction;
 
@@ -123,8 +123,8 @@ public class SellerItemsFormController implements Initializable, ViewControllerL
     //--MAIN METHODS--
     private boolean validateInput(){
         LocalDateTime now = LocalDateTime.now();
-        LocalTime startTime = LocalTime.of(spnStartHour.getValue(),spnStartMinute.getValue());
-        LocalTime endTime = LocalTime.of(spnEndHour.getValue(),spnEndMinute.getValue());
+        LocalDateTime startTime = LocalDateTime.of(dpStart.getValue(),LocalTime.of(spnStartHour.getValue(),spnStartMinute.getValue()));
+        LocalDateTime endTime = LocalDateTime.of(dpEnd.getValue(),LocalTime.of(spnEndHour.getValue(),spnEndMinute.getValue()));
 
         if(txtName.getText().isEmpty()){
             NotificationUtil.showError("Item name cannot be empty.");
@@ -142,16 +142,16 @@ public class SellerItemsFormController implements Initializable, ViewControllerL
             NotificationUtil.showError("Please choose a suitable Category!");
             return false;
         }
-        if(datePicker.getValue() == null){
+        if(dpStart.getValue() == null || dpEnd.getValue() == null){
             NotificationUtil.showError("Please choose a date!");
             return false;
         }
-        if(datePicker.getValue().isBefore(now.toLocalDate())){
+        if(startTime.isBefore(now)){
             NotificationUtil.showError("Choosen Date is in the past");
             return false;
         }
         if(!startTime.isBefore(endTime)){
-            NotificationUtil.showError("Choosen Time is invalid!");
+            NotificationUtil.showError("Choosen Date/Time is invalid!");
             return false;
         }
 
@@ -211,8 +211,8 @@ public class SellerItemsFormController implements Initializable, ViewControllerL
         BigDecimal startPrice = new BigDecimal(txtStartPrice.getText());
         BigDecimal minBid = new BigDecimal(txtMinBid.getText());
         String category  = cbxCategory.getValue().name();
-        LocalDateTime startDateTime = LocalDateTime.of(datePicker.getValue(),LocalTime.of(spnStartHour.getValue(),spnStartMinute.getValue()));
-        LocalDateTime endDateTime = LocalDateTime.of(datePicker.getValue(),LocalTime.of(spnEndHour.getValue(),spnEndMinute.getValue()));
+        LocalDateTime startDateTime = LocalDateTime.of(dpStart.getValue(),LocalTime.of(spnStartHour.getValue(),spnStartMinute.getValue()));
+        LocalDateTime endDateTime = LocalDateTime.of(dpEnd.getValue(),LocalTime.of(spnEndHour.getValue(),spnEndMinute.getValue()));
 
         //Send request
         if (isUpdateMode()) {
