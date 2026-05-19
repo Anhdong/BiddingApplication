@@ -1,5 +1,6 @@
 package com.uet.BiddingApplication.Controller.CommonController;
 
+import com.uet.BiddingApplication.Controller.BidderController.BidderBrowseController;
 import com.uet.BiddingApplication.DTO.Response.AuctionCardDTO;
 import com.uet.BiddingApplication.Enum.SessionStatus;
 import com.uet.BiddingApplication.Util.UIUtil;
@@ -13,6 +14,8 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -21,7 +24,10 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class ItemCardController implements Initializable {
+    //--LOG--
+    private static final Logger log = LoggerFactory.getLogger(ItemCardController.class);
 
+    //--FXML--
     @FXML private VBox vbxCard;
     @FXML private ImageView imgItem;
     @FXML private Label lblName, lblDatetime, lblPrice;

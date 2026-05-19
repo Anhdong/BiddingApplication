@@ -22,7 +22,7 @@ public abstract class BaseBrowseController implements ViewControllerLifecycle {
     //--LOG--
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(BaseBrowseController.class);
 
-    // --FXML FIELDS--
+    // --FXML--
     @FXML protected TilePane itemContainer;
     @FXML protected TextField searchField;
     protected String currentSearchKeyword = "";

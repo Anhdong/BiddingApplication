@@ -29,8 +29,9 @@ import java.util.function.Consumer;
 import static com.uet.BiddingApplication.BiddingApplication.primaryStage;
 
 public class RegisterController implements Initializable {
+    //--LOG--
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RegisterController.class);
-
+    //--FXML--
     @FXML private TextField txtUsername, txtEmail, txtPhoneNumber;
     @FXML private PasswordField txtPassword;
     @FXML private ToggleGroup roleGroup;
@@ -38,6 +39,7 @@ public class RegisterController implements Initializable {
 
     private final Consumer<ResponsePacket<?>> registerCallback = this::handleRegisterResponse;
 
+    //--INIT--
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         log.info("[RegisterController] Assign role option to radioBtn");
@@ -50,7 +52,7 @@ public class RegisterController implements Initializable {
     }
 
 
-    //Main func
+    //--MAIN METHODS--
     @FXML
     private void handleRegister(){
         //Check validate

@@ -65,7 +65,7 @@ public class SellerItemsFormController implements Initializable {
         return currentItemId != null;
     }
 
-    //--Initialize--
+    //--INIT--
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         //ImageView
@@ -88,6 +88,8 @@ public class SellerItemsFormController implements Initializable {
         spnEndHour.setValueFactory(endHourFactory);
         spnStartMinute.setValueFactory(startMinuteFactory);
         spnEndMinute.setValueFactory(endMinuteFactory);
+
+        //--Subscribe
 
     }
 

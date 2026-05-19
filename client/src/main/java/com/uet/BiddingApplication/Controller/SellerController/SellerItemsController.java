@@ -58,7 +58,7 @@ public class SellerItemsController extends BaseBrowseController {
         });
     }
 
-    // --- XỬ LÝ DỮ LIỆU TỪ SERVER ---
+    // --- HANDLE RESPONSE ---
 
     private void handleItemsListResponse(ResponsePacket<?> response) {
         if (response.getStatusCode() == 200) {
@@ -76,7 +76,7 @@ public class SellerItemsController extends BaseBrowseController {
         }
     }
 
-    //--Add Item button
+    //--ADD BUTTON--
     @FXML
     private void switchToAddItem(){
         MainViewController.getInstance().loadView(ViewPath.SELLER_ITEM_FORM,(SellerItemsFormController c)->{

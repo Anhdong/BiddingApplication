@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class BidderBrowseController extends BaseBrowseController {
-
+    //--LOG--
     private static final Logger log = LoggerFactory.getLogger(BidderBrowseController.class);
 
     // Định nghĩa các Callback để có thể Subscribe/Unsubscribe chính xác
@@ -50,7 +50,7 @@ public class BidderBrowseController extends BaseBrowseController {
         });
     }
 
-    // --- XỬ LÝ DỮ LIỆU TỪ SERVER ---
+    // --- HANDLE RESPONSE ---
 
     private void handleAuctionListResponse(ResponsePacket<?> response) {
         if (response.getStatusCode() == 200) {

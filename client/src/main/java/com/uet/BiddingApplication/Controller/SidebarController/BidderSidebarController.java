@@ -11,10 +11,12 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class BidderSidebarController implements Initializable {
+    //--LOG--
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(BidderSidebarController.class);
+    //--FXML--
     @FXML private ToggleGroup sidebarGroup; // Inject từ FXML qua @FXML
     @FXML private ToggleButton btnBrowse, btnWatchlist, btnHistory;
-
+    //--INIT--
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Cannot click off selected button & reload if reclick
@@ -24,7 +26,7 @@ public class BidderSidebarController implements Initializable {
             }
         });
     }
-
+    //--HANDLE NAVIGATE--
     @FXML
     private void handleBrowse() {
         MainViewController.getInstance().loadView(ViewPath.BIDDER_BROWSE);

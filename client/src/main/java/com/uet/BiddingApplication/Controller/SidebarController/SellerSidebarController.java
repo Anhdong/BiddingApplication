@@ -11,10 +11,12 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class SellerSidebarController implements Initializable {
+    //--LOG--
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(SellerSidebarController.class);
+    //--FXML
     @FXML private ToggleGroup sidebarGroup; // Inject từ FXML qua @FXML
     @FXML private ToggleButton btnItems, btnHistory;
-
+    //--INIT--
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Cannot click off selected button & reload if reclick
@@ -24,7 +26,7 @@ public class SellerSidebarController implements Initializable {
             }
         });
     }
-
+    //--HANDLE NAVIGATE--
     @FXML
     private void handleItems() {MainViewController.getInstance().loadView(ViewPath.SELLER_ITEMS);}
 

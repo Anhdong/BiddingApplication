@@ -28,21 +28,23 @@ import java.util.function.Consumer;
 import static com.uet.BiddingApplication.BiddingApplication.primaryStage;
 
 public class LoginController implements Initializable {
+    //--LOG--
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(LoginController.class);
-
+    //--FXML--
     @FXML private TextField txtUsername;
     @FXML private PasswordField txtPassword;
 
     // Định nghĩa callback thành một biến để có thể unsubscribe chính xác
     private final Consumer<ResponsePacket<?>> loginCallback = this::handleLoginResponse;
 
+    //--INIT--
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // 1. Đăng ký lắng nghe sự kiện trả về cho luồng Đăng nhập
         ResponseDispatcher.getInstance().subscribe(ActionType.LOGIN, loginCallback);
     }
 
-    //Main func
+    //--MAIN METHODs--
     @FXML
     private void handleLogin(){
         //Check điều kiện
