@@ -4,7 +4,7 @@ import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
 import com.uet.BiddingApplication.Utils.GsonPacketParser;
 import java.io.BufferedReader;
 
-public class ResponseListenerThread implements Runnable {
+public class    ResponseListenerThread implements Runnable {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ResponseListenerThread.class);
 
     private final BufferedReader in;
@@ -38,6 +38,7 @@ public class ResponseListenerThread implements Runnable {
 
                 // Giải phóng luồng cũ trước khi tìm cái mới
                 running = false;
+                ServerConnection.getInstance().setConnected(false);
 
                 // Gọi còi báo động
                 ServerConnection.getInstance().startAutoReconnect();

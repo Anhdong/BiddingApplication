@@ -1,12 +1,14 @@
 package com.uet.BiddingApplication.DTO.Request;
 
+import com.uet.BiddingApplication.Enum.Category;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class ItemCreateDTO  {
     private String name;
     private String description;
-    private String category;
+    private Category category;
     private byte[] imageBytes;
     private String imageExtension;
     private BigDecimal startPrice;
@@ -19,7 +21,7 @@ public class ItemCreateDTO  {
     }
 
 
-    public ItemCreateDTO(String name, String description, String category, byte[] imageBytes,
+    public ItemCreateDTO(String name, String description, Category category, byte[] imageBytes,
                          String imageExtension, BigDecimal startPrice,BigDecimal bidStep, LocalDateTime startTime,
                          LocalDateTime endTime, String attribute) {
         this.name = name;
@@ -50,11 +52,11 @@ public class ItemCreateDTO  {
         this.description = description;
     }
 
-    public String getCategory() {
+    public Category getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
 

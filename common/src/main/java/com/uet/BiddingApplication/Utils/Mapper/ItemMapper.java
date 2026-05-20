@@ -42,12 +42,7 @@ public class ItemMapper {
         entity.setDescription(dto.getDescription());
         entity.setSellerId(sellerId);
         entity.setImageURL(imageUrl);
-
-        try {
-            entity.setCategory(Category.valueOf(dto.getCategory().toUpperCase()));
-        } catch (IllegalArgumentException ignored) {
-            // Xử lý nếu Enum không khớp (Nên ghi log ở đây)
-        }
+        entity.setCategory(dto.getCategory());
 
         // Tái sử dụng hàm map thuộc tính đặc thù
         mapSpecificAttribute(entity, dto.getAttribute());
@@ -58,7 +53,7 @@ public class ItemMapper {
     public static Item toEntity(ItemUpdateRequestDTO dto, String imageUrl) {
         if (dto == null) return null;
 
-        Item entity = ItemFactory.createItem(dto.getCategory().toString());
+        Item entity = ItemFactory.createItem(dto.getCategory());
         entity.setName(dto.getName());
         entity.setDescription(dto.getDescription());
         entity.setImageURL(imageUrl);

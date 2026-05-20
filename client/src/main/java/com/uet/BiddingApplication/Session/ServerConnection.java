@@ -17,6 +17,7 @@ public class ServerConnection {
 
     // Singleton pattern
     private static volatile ServerConnection instance;
+    private volatile boolean connected = false; // Cờ kiểm soát trạng thái
     private volatile boolean isReconnecting = false; // Cờ chặn việc chạy nhiều luồng Reconnect cùng lúc
 
     private Socket socket;
@@ -38,6 +39,9 @@ public class ServerConnection {
         }
         return instance;
     }
+    public void setConnected(boolean connected) {
+        this.connected = connected;
+    }
 
     public boolean connect(String host, int port) {
         try {
@@ -58,6 +62,7 @@ public class ServerConnection {
             this.threadHandle.start();
 
             log.info("Đã kết nối Server thành công và bật luồng lắng nghe!");
+            this.connected = true;
             return true;
         } catch (Exception e) {
             log.error("Lỗi kết nối Server: " + e.getMessage());
@@ -67,6 +72,7 @@ public class ServerConnection {
 
     public void disconnect() {
         try {
+            this.connected = false;
             // 1. Ra lệnh cho luồng nghe dừng lại
             if (listenerThread != null) {
                 listenerThread.stopListening();
@@ -89,16 +95,22 @@ public class ServerConnection {
 
     // Hàm thay thế cho out.print() rải rác ở khắp nơi
     public void sendRequest(RequestPacket<?> request) {
-        if (out != null) {
-            try {
-                String jsonStr = GsonPacketParser.serialize(request);
-                out.println(jsonStr);
-                // log.info("[Client -> Server] Đã gửi: " + jsonStr);
-            } catch (Exception e) {
-                log.error("Lỗi đóng gói dữ liệu: " + e.getMessage());
-            }
-        } else {
-            log.error("Chưa kết nối Server, không thể gửi request!");
+        if (!connected || out == null) {
+            log.info("[Client] Đang mất mạng, hủy bỏ thao tác gửi gói tin: " + request.getAction());
+
+            // Nhờ JavaFX Thread báo lỗi lên màn hình để user không bấm mù quáng nữa
+            javafx.application.Platform.runLater(() -> {
+                // Hiển thị Toast hoặc Alert tùy bạn
+                NotificationUtil.showAlert(Alert.AlertType.ERROR,"Mất kết nối", "Hệ thống đang gián đoạn, vui lòng chờ trong giây lát...");
+            });
+            return;
+        }
+        try {
+            String jsonStr = GsonPacketParser.serialize(request);
+            out.println(jsonStr);
+            // log.info("[Client -> Server] Đã gửi: " + jsonStr);
+        } catch (Exception e) {
+            log.error("Lỗi đóng gói dữ liệu: " + e.getMessage());
         }
     }
     /**
