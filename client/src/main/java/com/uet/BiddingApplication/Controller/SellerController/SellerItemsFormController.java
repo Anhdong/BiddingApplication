@@ -210,7 +210,7 @@ public class SellerItemsFormController implements Initializable, ViewControllerL
         String description = txtDesc.getText();
         BigDecimal startPrice = new BigDecimal(txtStartPrice.getText());
         BigDecimal minBid = new BigDecimal(txtMinBid.getText());
-        String category  = cbxCategory.getValue().name();
+        Category category  = cbxCategory.getValue();
         LocalDateTime startDateTime = LocalDateTime.of(dpStart.getValue(),LocalTime.of(spnStartHour.getValue(),spnStartMinute.getValue()));
         LocalDateTime endDateTime = LocalDateTime.of(dpEnd.getValue(),LocalTime.of(spnEndHour.getValue(),spnEndMinute.getValue()));
 
