@@ -2,9 +2,11 @@ package com.uet.BiddingApplication.DAO.Impl;
 
 import com.uet.BiddingApplication.DAO.Interface.IItemDAO;
 import com.uet.BiddingApplication.DTO.Response.AuctionCardDTO;
+import com.uet.BiddingApplication.Enum.Category;
 import com.uet.BiddingApplication.Enum.SessionStatus;
 import com.uet.BiddingApplication.Model.*;
 import com.uet.BiddingApplication.Utils.DatabaseConnectionPool;
+import com.uet.BiddingApplication.Utils.Factory.ItemFactory;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -281,25 +283,8 @@ public class ItemDAO implements IItemDAO {
 
     // --- Helper Method: Tránh lặp lại code ---
     private Item mapRowToItem(ResultSet rs) throws SQLException {
-        String category = rs.getString("category");
-        Item item = null;
-
-        // Factory logic khởi tạo lớp con
-        if ("ELECTRONICS".equalsIgnoreCase(category)) {
-            Electronics elec = new Electronics();
-            elec.setWarrantyMonths(rs.getInt("warranty_months"));
-            item = elec;
-        } else if ("ART".equalsIgnoreCase(category)) {
-            Art art = new Art();
-            art.setArtistName(rs.getString("artist_name"));
-            item = art;
-        } else if ("VEHICLE".equalsIgnoreCase(category)) {
-            Vehicle vehicle = new Vehicle();
-            vehicle.setCondition(rs.getString("condition"));
-            item = vehicle;
-        } else {
-            item = new Others(); // Lớp con rỗng cho các đồ vật khác
-        }
+        Category category = Category.valueOf(rs.getString("category"));
+        Item item= ItemFactory.createItem(category);
 
         // Mapping các trường chung
         item.setId(rs.getString("id"));
@@ -307,6 +292,7 @@ public class ItemDAO implements IItemDAO {
         item.setDescription(rs.getString("description"));
         item.setImageURL(rs.getString("image_url"));
         item.setSellerId(rs.getString("seller_id"));
+        item.setCategory(category);
 
         Timestamp createdAt = rs.getTimestamp("created_at");
         if (createdAt != null) {
