@@ -7,6 +7,7 @@ import com.uet.BiddingApplication.DTO.Response.SessionInfoResponseDTO;
 import com.uet.BiddingApplication.Enum.SessionStatus;
 import com.uet.BiddingApplication.Model.AuctionSession;
 import com.uet.BiddingApplication.Model.Item;
+import com.uet.BiddingApplication.Service.AuctionService;
 import com.uet.BiddingApplication.Utils.Mapper.AuctionViewMapper;
 
 import java.math.BigDecimal;
@@ -105,7 +106,7 @@ public class SearchCacheManager implements ISearchCacheManager{
      */
     @Override
     public SessionInfoResponseDTO getSessionDetailDto(String sessionId) {
-        return AuctionSessionDAO.getInstance().getSessionInfo(sessionId);
+        return AuctionService.getInstance().getItemDetail(sessionId);
     }
 
     // =========================================================================

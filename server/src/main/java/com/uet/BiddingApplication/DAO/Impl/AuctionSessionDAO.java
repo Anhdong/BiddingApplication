@@ -250,7 +250,7 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
                 "  where a.id=?::uuid\n" +
                 ")\n" +
                 "select info.name,info.description,info.image_url,info.category,info.condition,info.artist_name,info.warranty_months,\n" +
-                "      info.id,info.status,info.start_price,info.start_time,info.end_time,u.username\n" +
+                "      info.id,info.status,info.start_price,info.bid_step,info.start_time,info.end_time,u.username\n" +
                 "from item_info info\n" +
                 "join users u on u.id=info.seller_id;";
         SessionInfoResponseDTO dto=new SessionInfoResponseDTO();
