@@ -13,6 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,9 +49,6 @@ public class ItemCardController implements Initializable {
             lblName.setText(cardDto.getItemName());
             setlblDatetime(cardDto.getStatus(),cardDto.getStartTime(),cardDto.getEndTime());
             lblPrice.setText("$"+cardDto.getStartPrice().toString());
-
-            //Hide button base on session status
-            setButtonVisible(cardDto.getStatus() == SessionStatus.OPEN);
         });
     }
 
@@ -80,6 +78,11 @@ public class ItemCardController implements Initializable {
             return original;
         }
         return original.substring(0, 1).toUpperCase() + original.substring(1).toLowerCase();
+    }
+
+    //--CARD ACTION--
+    public void setCardAction(EventHandler<MouseEvent> actionHandler){
+        vbxCard.setOnMouseClicked(actionHandler);
     }
 
     //--BUTTON ACTION--

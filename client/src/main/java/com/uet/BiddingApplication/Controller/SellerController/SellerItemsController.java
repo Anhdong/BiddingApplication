@@ -1,6 +1,5 @@
 package com.uet.BiddingApplication.Controller.SellerController;
 
-
 import com.uet.BiddingApplication.Controller.BaseController.BaseBrowseController;
 import com.uet.BiddingApplication.Controller.CommonController.ItemCardController;
 import com.uet.BiddingApplication.Controller.MainViewController;
@@ -12,6 +11,7 @@ import com.uet.BiddingApplication.Enum.ViewPath;
 import com.uet.BiddingApplication.Session.ClientSession;
 import com.uet.BiddingApplication.Session.ResponseDispatcher;
 import com.uet.BiddingApplication.Session.ServerConnection;
+import com.uet.BiddingApplication.Util.AppExecutor;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import org.slf4j.Logger;
@@ -25,17 +25,43 @@ public class SellerItemsController extends BaseBrowseController {
     private static final Logger log = LoggerFactory.getLogger(SellerItemsController.class);
 
     //--FXML--
-    @FXML Button btnAdd;
+    @FXML private Button btnAdd;
 
-
-    // Định nghĩa các Callback để có thể Subscribe/Unsubscribe chính xác
-    private final Consumer<ResponsePacket<?>> ItemsListCallback = this::handleItemsListResponse;
+    //--CALLBACKS--
+    private final Consumer<ResponsePacket<?>> itemsListCallback = this::handleItemsListResponse;
 
     @Override
     protected void setupSubscriptions() {
         log.info("[SellerBrowse] Đăng ký lắng nghe các vật phẩm đăng bán.");
-        ResponseDispatcher.getInstance().subscribe(ActionType.GET_SELLER_ITEMS, ItemsListCallback);
+        ResponseDispatcher.getInstance().subscribe(ActionType.GET_SELLER_ITEMS, itemsListCallback);
 
+        requestSellerItems();
+    }
+
+    @Override
+    protected void unsubscribeAll() {
+        log.info("[SellerBrowse] Hủy đăng ký lắng nghe sự kiện.");
+        ResponseDispatcher.getInstance().unsubscribe(ActionType.GET_SELLER_ITEMS, itemsListCallback);
+    }
+
+    @Override
+    protected void configureItem(ItemCardController controller, AuctionCardDTO item) {
+        // Cấu hình hiển thị nút sửa sản phẩm
+        controller.setButtonVisible(true);
+        controller.setBtnAction("Edit", event -> {
+            log.info("[SellerBrowse] Seller chọn chỉnh sửa sản phẩm: {}", item.getItemName());
+
+            // Giải quyết TODO: Điều hướng sang Form chỉnh sửa, truyền sessionId của item hiện tại vào
+            MainViewController.getInstance().loadView(ViewPath.SELLER_ITEM_FORM, (SellerItemsFormController c) -> {
+                c.setupFormMode(item.getSessionId());
+            });
+        });
+
+    }
+
+    // --- NETWORK REQUEST HELPERS ---
+
+    private void requestSellerItems() {
         log.info("[SellerBrowse] Đang gửi yêu cầu lấy danh sách vật phẩm đăng bán...");
         RequestPacket<Void> request = new RequestPacket<>();
         request.setAction(ActionType.GET_SELLER_ITEMS);
@@ -44,43 +70,31 @@ public class SellerItemsController extends BaseBrowseController {
         ServerConnection.getInstance().sendRequest(request);
     }
 
-    @Override
-    protected void unsubscribeAll() {
-        log.info("[SellerBrowse] Hủy đăng ký lắng nghe sự kiện.");
-        ResponseDispatcher.getInstance().unsubscribe(ActionType.GET_SELLER_ITEMS, ItemsListCallback);
-    }
-
-    @Override
-    protected void configureItem(ItemCardController controller, AuctionCardDTO item) {
-        controller.setBtnAction("Edit", event -> {
-            log.info("[SellerBrowse] Bidder chọn chỉnh sửa sản phẩm: {}", item.getItemName());
-            // TODO: Chuyển sang màn hình chi tiết phiên đấu giá (Auction Detail)
-        });
-    }
-
     // --- HANDLE RESPONSE ---
 
     private void handleItemsListResponse(ResponsePacket<?> response) {
         if (response.getStatusCode() == 200) {
-            // Ép kiểu payload về danh sách DTO
-            List<AuctionCardDTO> items = (List<AuctionCardDTO>) response.getPayload();
-            // Lưu vào list gốc của Base để phục vụ Search Enter
-            this.currentAuctions = items;
+            AppExecutor.execute(() -> {
+                List<AuctionCardDTO> items = (List<AuctionCardDTO>) response.getPayload();
 
-            // Render lên giao diện (BaseBrowse đã lo phần này)
-            renderItems(items);
+                // Lưu vào danh sách gốc của lớp cha để phục vụ tính năng tìm kiếm (onSearchEnter) không bị lỗi dữ liệu
+                this.currentAuctions = items;
 
-            log.info("[SellerBrowse] Đã load thành công {} sản phẩm.", items.size());
+                // Gọi hàm render đồng bộ thông minh của BaseBrowseController
+                renderItems(items);
+
+                log.info("[SellerBrowse] Đã đồng bộ thành công {} sản phẩm lên màn hình hiển thị.", items.size());
+            });
         } else {
-            log.error("[SellerBrowse] Lỗi từ server: {}", response.getMessage());
+            log.error("[SellerBrowse] Lỗi từ server khi tải danh sách vật phẩm: {}", response.getMessage());
         }
     }
 
-    //--ADD BUTTON--
+    //--ADD BUTTON ACTION--
     @FXML
-    private void switchToAddItem(){
-        MainViewController.getInstance().loadView(ViewPath.SELLER_ITEM_FORM,(SellerItemsFormController c)->{
-            c.setupFormMode(null);
+    private void switchToAddItem() {
+        MainViewController.getInstance().loadView(ViewPath.SELLER_ITEM_FORM, (SellerItemsFormController c) -> {
+            c.setupFormMode(null); // Mode tạo mới sản phẩm (truyền null)
         });
     }
 }

@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="rootNode" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="280.0" prefWidth="210.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.uet.BiddingApplication.Controller.CommonController.ItemCardController">
+<VBox fx:id="vbxCard" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="280.0" prefWidth="210.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.uet.BiddingApplication.Controller.CommonController.ItemCardController">
    <children>
       <ImageView fx:id="imgItem" fitHeight="150.0" fitWidth="150.0" nodeOrientation="INHERIT" pickOnBounds="true" styleClass="elevated-4">
          <image>

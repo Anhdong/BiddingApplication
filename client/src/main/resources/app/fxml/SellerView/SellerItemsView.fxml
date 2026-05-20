@@ -24,13 +24,17 @@
                   </TilePane>
                </content>
             </ScrollPane>
-            <Button fx:id="btnAdd" defaultButton="true" mnemonicParsing="false" onAction="#switchToAddItem" styleClass="title-1" text="ADD" StackPane.alignment="BOTTOM_RIGHT">
+            <Button fx:id="btnAdd" mnemonicParsing="false" onAction="#switchToAddItem" text="ADD" StackPane.alignment="BOTTOM_RIGHT">
                <graphic>
                   <FontIcon iconLiteral="mdi2p-plus" styleClass="large-icon" />
                </graphic>
                <StackPane.margin>
                   <Insets bottom="24.0" right="24.0" />
                </StackPane.margin>
+               <styleClass>
+                  <String fx:value="title-1" />
+                  <String fx:value="accent" />
+               </styleClass>
             </Button>
          </children>
       </StackPane>
