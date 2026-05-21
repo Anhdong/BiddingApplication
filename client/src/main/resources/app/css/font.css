@@ -2,25 +2,19 @@
 @font-face {
     font-family: "Google Sans";
     src: url("/app/fonts/GoogleSans-Regular.ttf");
-    -fx-font-weight: normal;
 }
 
 @font-face {
     font-family: "Google Sans";
     src: url("/app/fonts/GoogleSans-Bold.ttf");
-    -fx-font-weight: bold;
 }
 
 @font-face {
-    font-family: "Domine";
-    src: url("/app/fonts/Domine-Regular.ttf");
-    -fx-font-weight: normal;
+    src: url("/app/fonts/Tinos-Regular.ttf");
 }
 
 @font-face {
-    font-family: "Domine";
-    src: url("/app/fonts/Domine-Bold.ttf");
-    -fx-font-weight: bold;
+    src: url("/app/fonts/Tinos-Bold.ttf");
 }
 
 /*Apply GSans to whole system*/
@@ -30,7 +24,7 @@
 
 /*Special font for header*/
 .main-title {
-    -fx-font-family:"Domine";
+    -fx-font-family:"Tinos";
     -fx-font-size: 50;
 
 }
