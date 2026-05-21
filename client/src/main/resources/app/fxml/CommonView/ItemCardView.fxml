@@ -40,14 +40,14 @@
       </Label>
       <HBox alignment="CENTER" maxWidth="1.7976931348623157E308">
          <children>
-            <Label fx:id="lblPrice" maxWidth="1.7976931348623157E308" text="\$0" HBox.hgrow="NEVER">
+            <Label fx:id="lblPrice" text="\$0">
                <styleClass>
                   <String fx:value="success" />
                   <String fx:value="title-4" />
                </styleClass>
             </Label>
             <Region maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-            <Button fx:id="btnAction" alignment="CENTER" mnemonicParsing="false" text="Btn">
+            <Button fx:id="btnAction" alignment="CENTER" minWidth="54.0" mnemonicParsing="false" prefWidth="54.0" text="Add">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>

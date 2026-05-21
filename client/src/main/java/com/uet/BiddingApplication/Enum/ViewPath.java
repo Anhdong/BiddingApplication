@@ -27,7 +27,7 @@ public enum ViewPath {
     // SELLER
     SELLER_ITEMS("/app/fxml/SellerView/SellerItemsView.fxml",true),
     SELLER_HISTORY("/app/fxml/SellerView/SellerHistoryView.fxml",true),
-    SELLER_ITEM_FORM("/app/fxml/SellerView/SellerItemFormView.fxml", true),  // CACHE: Để người dùng gõ dở thông tin lỡ ấn sang tab khác không bị mất form
+    SELLER_ITEM_FORM("/app/fxml/SellerView/SellerItemFormView.fxml", false),  // CACHE: Để người dùng gõ dở thông tin lỡ ấn sang tab khác không bị mất form
 
     // ADMIN
     ADMIN_DASHBOARD("",true);

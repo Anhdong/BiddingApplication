@@ -123,27 +123,29 @@ public class SellerItemsFormController implements Initializable, ViewControllerL
     //--MAIN METHODS--
     private boolean validateInput(){
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime startTime = LocalDateTime.of(dpStart.getValue(),LocalTime.of(spnStartHour.getValue(),spnStartMinute.getValue()));
-        LocalDateTime endTime = LocalDateTime.of(dpEnd.getValue(),LocalTime.of(spnEndHour.getValue(),spnEndMinute.getValue()));
+        LocalDateTime startTime, endTime;
+        try {
+             startTime = LocalDateTime.of(dpStart.getValue(), LocalTime.of(spnStartHour.getValue(), spnStartMinute.getValue()));
+             endTime = LocalDateTime.of(dpEnd.getValue(), LocalTime.of(spnEndHour.getValue(), spnEndMinute.getValue()));
+        } catch (NullPointerException e) {
+            NotificationUtil.showError("Please choose a date!");
+            return false;
+        }
 
         if(txtName.getText().isEmpty()){
             NotificationUtil.showError("Item name cannot be empty.");
             return false;
         }
-        if(txtStartPrice.getText().isEmpty() || !txtStartPrice.getText().matches("\\d+")){
+        if(txtStartPrice.getText().isEmpty() || !txtStartPrice.getText().matches("\\d+(\\.\\d+)?")){
             NotificationUtil.showError("StartPrice is invalid.");
             return false;
         }
-        if(txtMinBid.getText().isEmpty() || !txtStartPrice.getText().matches("\\d+")){
+        if(txtMinBid.getText().isEmpty() || !txtStartPrice.getText().matches("\\d+(\\.\\d+)?")){
             NotificationUtil.showError("Minimum Bid increment is invalid.");
             return false;
         }
         if(cbxCategory.getValue() == null){
             NotificationUtil.showError("Please choose a suitable Category!");
-            return false;
-        }
-        if(dpStart.getValue() == null || dpEnd.getValue() == null){
-            NotificationUtil.showError("Please choose a date!");
             return false;
         }
         if(startTime.isBefore(now)){
