@@ -41,7 +41,7 @@ public class BidderBrowseController extends BaseBrowseController {
     // Sử dụng Set để tối ưu hóa tốc độ tìm kiếm (.contains) khi lọc danh sách
 
     @Override
-    protected void setupSubscriptions() {
+    public void onShow() {
         log.info("[BidderBrowse] Đăng ký lắng nghe các sự kiện đấu giá.");
         ResponseDispatcher.getInstance().subscribe(ActionType.GET_ACTIVE_SESSIONS, auctionListCallback);
         ResponseDispatcher.getInstance().subscribe(ActionType.PRE_REGISTER_SESSION, preRegisterCallback);
@@ -55,7 +55,7 @@ public class BidderBrowseController extends BaseBrowseController {
     }
 
     @Override
-    protected void unsubscribeAll() {
+    public void onHide() {
         log.info("[BidderBrowse] Hủy đăng ký lắng nghe sự kiện.");
         ResponseDispatcher.getInstance().unsubscribe(ActionType.GET_ACTIVE_SESSIONS, auctionListCallback);
         ResponseDispatcher.getInstance().unsubscribe(ActionType.PRE_REGISTER_SESSION, preRegisterCallback);

@@ -32,7 +32,7 @@ public class BidderWatchlistController extends BaseBrowseController {
     private final Consumer<ResponsePacket<?>> delRegisterCallback = this::handleDelRegisterResponse;
 
     @Override
-    protected void setupSubscriptions() {
+    public void onShow() {
         log.info("[BidderWatchlist] Đăng ký lắng nghe các vật phẩm đã đăng kí.");
         ResponseDispatcher.getInstance().subscribe(ActionType.GET_REGISTERED_SESSIONS, registeredListCallback);
         ResponseDispatcher.getInstance().subscribe(ActionType.DELETE_REGISTER_SESSION, delRegisterCallback);
@@ -42,7 +42,7 @@ public class BidderWatchlistController extends BaseBrowseController {
     }
 
     @Override
-    protected void unsubscribeAll() {
+    public void onHide() {
         log.info("[BidderWatchlist] Hủy đăng ký lắng nghe sự kiện.");
         ResponseDispatcher.getInstance().unsubscribe(ActionType.GET_REGISTERED_SESSIONS, registeredListCallback);
         ResponseDispatcher.getInstance().unsubscribe(ActionType.DELETE_REGISTER_SESSION, delRegisterCallback);

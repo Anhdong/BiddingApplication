@@ -37,13 +37,6 @@ public abstract class BaseBrowseController implements ViewControllerLifecycle {
     // Map quản lý các card đang hiển thị trên màn hình (Key: SessionID, Value: RenderedCard)
     protected final Map<String, RenderedCard> renderedCardsMap = new HashMap<>();
 
-    //--LIFE CYCLE--
-    @Override
-    public void onShow() { setupSubscriptions(); }
-
-    @Override
-    public void onHide() { unsubscribeAll(); }
-
     //--METHODS--
     protected void renderItems(List<AuctionCardDTO> items) {
         log.info("Bắt đầu cập nhật cây giao diện tối ưu. Số lượng: {}", items.size());
@@ -130,7 +123,5 @@ public abstract class BaseBrowseController implements ViewControllerLifecycle {
     // =========================================================================
     // ABSTRACT FUNCTION
     // =========================================================================
-    protected abstract void setupSubscriptions();
-    protected abstract void unsubscribeAll();
     protected abstract void configureItem(ItemCardController controller, AuctionCardDTO item);
 }

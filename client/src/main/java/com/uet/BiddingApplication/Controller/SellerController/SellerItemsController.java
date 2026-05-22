@@ -31,7 +31,7 @@ public class SellerItemsController extends BaseBrowseController {
     private final Consumer<ResponsePacket<?>> itemsListCallback = this::handleItemsListResponse;
 
     @Override
-    protected void setupSubscriptions() {
+    public void onShow() {
         log.info("[SellerBrowse] Đăng ký lắng nghe các vật phẩm đăng bán.");
         ResponseDispatcher.getInstance().subscribe(ActionType.GET_SELLER_ITEMS, itemsListCallback);
 
@@ -39,7 +39,7 @@ public class SellerItemsController extends BaseBrowseController {
     }
 
     @Override
-    protected void unsubscribeAll() {
+    public void onHide() {
         log.info("[SellerBrowse] Hủy đăng ký lắng nghe sự kiện.");
         ResponseDispatcher.getInstance().unsubscribe(ActionType.GET_SELLER_ITEMS, itemsListCallback);
     }
