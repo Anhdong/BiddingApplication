@@ -16,6 +16,7 @@ import com.uet.BiddingApplication.Session.ResponseDispatcher;
 import com.uet.BiddingApplication.Session.ServerConnection;
 import com.uet.BiddingApplication.Util.AppExecutor;
 import com.uet.BiddingApplication.Util.NotificationUtil;
+import com.uet.BiddingApplication.Util.RegisteredSessionUtil;
 import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +24,6 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public class BidderBrowseController extends BaseBrowseController {
@@ -33,19 +32,16 @@ public class BidderBrowseController extends BaseBrowseController {
 
     //--CALLBACKS--
     private final Consumer<ResponsePacket<?>> auctionListCallback = this::handleAuctionListResponse;
-    private final Consumer<ResponsePacket<?>> registeredListCallback = this::handleRegisteredListResponse;
     private final Consumer<ResponsePacket<?>> preRegisterCallback = this::handlePreRegisterResponse;
 
     //--DATA STORAGE FOR FILTERING--
     private List<AuctionCardDTO> rawActiveAuctions = new ArrayList<>();
     // Sử dụng Set để tối ưu hóa tốc độ tìm kiếm (.contains) khi lọc danh sách
-    private final Set<String> registeredSessionIds = ConcurrentHashMap.newKeySet();
 
     @Override
     protected void setupSubscriptions() {
         log.info("[BidderBrowse] Đăng ký lắng nghe các sự kiện đấu giá.");
         ResponseDispatcher.getInstance().subscribe(ActionType.GET_ACTIVE_SESSIONS, auctionListCallback);
-        ResponseDispatcher.getInstance().subscribe(ActionType.GET_REGISTERED_SESSIONS, registeredListCallback);
         ResponseDispatcher.getInstance().subscribe(ActionType.PRE_REGISTER_SESSION, preRegisterCallback);
 
         // Gửi các yêu cầu lấy dữ liệu ban đầu
@@ -57,7 +53,6 @@ public class BidderBrowseController extends BaseBrowseController {
     protected void unsubscribeAll() {
         log.info("[BidderBrowse] Hủy đăng ký lắng nghe sự kiện.");
         ResponseDispatcher.getInstance().unsubscribe(ActionType.GET_ACTIVE_SESSIONS, auctionListCallback);
-        ResponseDispatcher.getInstance().unsubscribe(ActionType.GET_REGISTERED_SESSIONS, registeredListCallback);
         ResponseDispatcher.getInstance().unsubscribe(ActionType.PRE_REGISTER_SESSION, preRegisterCallback);
     }
 
@@ -115,11 +110,11 @@ public class BidderBrowseController extends BaseBrowseController {
      * Hàm cốt lõi gộp việc lọc loại bỏ các Session đã đăng ký
      * Chạy hoàn toàn dưới luồng nền (AppExecutor) để giữ UI mượt mà.
      */
-    private void filterAndRender() {
+    private void filterPreRegister() {
         AppExecutor.execute(() -> {
             // 1. Lọc bỏ các phiên mà người dùng đã đăng ký thành công trước đó
             List<AuctionCardDTO> filteredList = rawActiveAuctions.stream()
-                    .filter(auction -> !registeredSessionIds.contains(auction.getSessionId()))
+                    .filter(auction -> !RegisteredSessionUtil.getInstance().isRegistered(auction.getSessionId()))
                     .toList();
 
             // 2. Gán lại danh sách sạch này cho class Base để khi nhấn Enter Search không bị tính toán sai lệch
@@ -138,34 +133,12 @@ public class BidderBrowseController extends BaseBrowseController {
             log.info("[BidderBrowse] Nhận được {} phiên đấu giá hoạt động từ server.", rawActiveAuctions.size());
 
             // Kích hoạt tính toán lại bộ lọc công khai
-            filterAndRender();
+            filterPreRegister();
         } else {
             log.error("[BidderBrowse] Lỗi lấy danh sách từ server: {}", response.getMessage());
         }
     }
 
-    private void handleRegisteredListResponse(ResponsePacket<?> response) {
-        if (response.getStatusCode() == 200) {
-            List<?> payload = (List<?>) response.getPayload();
-            registeredSessionIds.clear();
-
-            if (payload != null) {
-                for (Object obj : payload) {
-                    if (obj instanceof AuctionCardDTO dto) {
-                        registeredSessionIds.add(dto.getSessionId());
-                    } else if (obj instanceof String id) {
-                        registeredSessionIds.add(id);
-                    }
-                }
-            }
-            log.info("[BidderBrowse] Nhận được {} phiên đã đăng ký từ server.", registeredSessionIds.size());
-
-            // Kích hoạt tính toán lại bộ lọc công khai
-            filterAndRender();
-        } else {
-            log.error("[BidderBrowse] Lỗi lấy danh sách đã đăng ký: {}", response.getMessage());
-        }
-    }
 
     private void handlePreRegisterResponse(ResponsePacket<?> response) {
         if (response.getStatusCode() == 200) {
