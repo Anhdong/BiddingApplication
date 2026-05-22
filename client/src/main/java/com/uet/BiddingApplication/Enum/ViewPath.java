@@ -19,8 +19,7 @@ public enum ViewPath {
 
     // BIDDER
     BIDDER_BROWSE("/app/fxml/BidderView/BidderBrowseView.fxml", true),   // CACHE: Cần mượt mà, giữ trạng thái Socket ngầm
-    //ADD later
-    BIDDER_WATCHLIST("",true),
+    BIDDER_WATCHLIST("/app/fxml/BidderView/BidderWatchlistView.fxml",true),
     BIDDER_HISTORY("/app/fxml/BidderView/BidderHistoryView.fxml", true),  // CACHE: Danh sách tĩnh, ít khi thay đổi
     BIDDER_AUCTION("/app/fxml/BidderView/BidderAuctionView.fxml", false), // KHÔNG CACHE: Phải load mới 100% mỗi khi vào 1 phòng đấu giá khác nhau
 

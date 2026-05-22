@@ -46,7 +46,6 @@ public class BidderBrowseController extends BaseBrowseController {
 
         // Gửi các yêu cầu lấy dữ liệu ban đầu
         requestActiveSessions();
-        requestRegisteredSessions();
     }
 
     @Override
@@ -70,15 +69,7 @@ public class BidderBrowseController extends BaseBrowseController {
         // Button Action (Chỉ hiện nút Đăng ký khi trạng thái OPEN hoặc RUNNING)
         if (status == SessionStatus.OPEN || status == SessionStatus.RUNNING) {
             controller.setButtonVisible(true);
-            controller.setBtnAction("Add", event -> {
-                log.info("[BidderBrowse] Đang gửi yêu cầu đăng ký trước phiên: {}", sessionId);
-                RequestPacket<SessionRegisterRequestDTO> request = new RequestPacket<>();
-                request.setAction(ActionType.PRE_REGISTER_SESSION);
-                request.setUserId(ClientSession.getInstance().getCurrentUser().getId());
-                request.setToken(ClientSession.getInstance().getCurrentToken());
-                request.setPayload(new SessionRegisterRequestDTO(sessionId));
-                ServerConnection.getInstance().sendRequest(request);
-            });
+            controller.setBtnAction("Add", event -> requestPreRegister(sessionId));
         } else {
             controller.setButtonVisible(false);
         }
@@ -94,13 +85,13 @@ public class BidderBrowseController extends BaseBrowseController {
         request.setToken(ClientSession.getInstance().getCurrentToken());
         ServerConnection.getInstance().sendRequest(request);
     }
-
-    private void requestRegisteredSessions() {
-        log.info("[BidderBrowse] Đang gửi yêu cầu lấy danh sách đấu giá đã đăng ký...");
-        RequestPacket<Void> request = new RequestPacket<>();
-        request.setAction(ActionType.GET_REGISTERED_SESSIONS);
+    private  void requestPreRegister(String sessionId){
+        log.info("[BidderBrowse] Đang gửi yêu cầu đăng ký trước phiên: {}", sessionId);
+        RequestPacket<SessionRegisterRequestDTO> request = new RequestPacket<>();
+        request.setAction(ActionType.PRE_REGISTER_SESSION);
         request.setUserId(ClientSession.getInstance().getCurrentUser().getId());
         request.setToken(ClientSession.getInstance().getCurrentToken());
+        request.setPayload(new SessionRegisterRequestDTO(sessionId));
         ServerConnection.getInstance().sendRequest(request);
     }
 
@@ -145,8 +136,8 @@ public class BidderBrowseController extends BaseBrowseController {
             Platform.runLater(() -> NotificationUtil.showInfo("Thành công", "Đăng ký tham gia đấu giá thành công!"));
             log.info("[BidderBrowse] Đăng ký sản phẩm thành công. Đang cập nhật lại danh sách...");
 
-            // Cách làm chuẩn kiến trúc mạng: Request lại danh sách đã đăng ký mới từ Server để làm sạch UI
-            requestRegisteredSessions();
+            // Kích hoạt tính toán lại bộ lọc công khai
+            filterPreRegister();
         } else {
             Platform.runLater(() -> NotificationUtil.showError("Thất bại", response.getMessage()));
             log.error("[BidderBrowse] Đăng ký sản phẩm không thành công: {}", response.getMessage());
