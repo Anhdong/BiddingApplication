@@ -17,7 +17,7 @@ import com.uet.BiddingApplication.Session.ServerConnection;
 import com.uet.BiddingApplication.Util.AppExecutor;
 import com.uet.BiddingApplication.Util.NotificationUtil;
 import com.uet.BiddingApplication.Util.RegisteredSessionUtil;
-import javafx.application.Platform;
+import com.uet.BiddingApplication.Utils.PacketTypeRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +34,8 @@ public class BidderBrowseController extends BaseBrowseController {
     private final Consumer<ResponsePacket<?>> auctionListCallback = this::handleAuctionListResponse;
     private final Consumer<ResponsePacket<?>> preRegisterCallback = this::handlePreRegisterResponse;
 
+    private final Consumer<ResponsePacket<?>> registeredListCallback = this::handleRegisteredListResponse;
+
     //--DATA STORAGE FOR FILTERING--
     private List<AuctionCardDTO> rawActiveAuctions = new ArrayList<>();
     // Sử dụng Set để tối ưu hóa tốc độ tìm kiếm (.contains) khi lọc danh sách
@@ -44,8 +46,12 @@ public class BidderBrowseController extends BaseBrowseController {
         ResponseDispatcher.getInstance().subscribe(ActionType.GET_ACTIVE_SESSIONS, auctionListCallback);
         ResponseDispatcher.getInstance().subscribe(ActionType.PRE_REGISTER_SESSION, preRegisterCallback);
 
+        //Get response for when list is updated
+        ResponseDispatcher.getInstance().subscribe(ActionType.GET_REGISTERED_SESSIONS,registeredListCallback);
+
         // Gửi các yêu cầu lấy dữ liệu ban đầu
         requestActiveSessions();
+        RegisteredSessionUtil.getInstance().requestRegisteredSessions();
     }
 
     @Override
@@ -53,6 +59,9 @@ public class BidderBrowseController extends BaseBrowseController {
         log.info("[BidderBrowse] Hủy đăng ký lắng nghe sự kiện.");
         ResponseDispatcher.getInstance().unsubscribe(ActionType.GET_ACTIVE_SESSIONS, auctionListCallback);
         ResponseDispatcher.getInstance().unsubscribe(ActionType.PRE_REGISTER_SESSION, preRegisterCallback);
+
+        ResponseDispatcher.getInstance().unsubscribe(ActionType.GET_REGISTERED_SESSIONS,registeredListCallback);
+
     }
 
     @Override
@@ -97,21 +106,21 @@ public class BidderBrowseController extends BaseBrowseController {
 
     // --- CORE FILTER & RENDER LOGIC ---
 
-    /**
-     * Hàm cốt lõi gộp việc lọc loại bỏ các Session đã đăng ký
-     * Chạy hoàn toàn dưới luồng nền (AppExecutor) để giữ UI mượt mà.
-     */
     private void filterPreRegister() {
         AppExecutor.execute(() -> {
-            // 1. Lọc bỏ các phiên mà người dùng đã đăng ký thành công trước đó
+            //Guard for even driven
+            if (rawActiveAuctions == null || rawActiveAuctions.isEmpty()) {
+                return;
+            }
+
+            log.info("[BidderBrowse] Bắt đầu lọc đăng kí từ danh sách nhận được");
             List<AuctionCardDTO> filteredList = rawActiveAuctions.stream()
                     .filter(auction -> !RegisteredSessionUtil.getInstance().isRegistered(auction.getSessionId()))
                     .toList();
 
-            // 2. Gán lại danh sách sạch này cho class Base để khi nhấn Enter Search không bị tính toán sai lệch
+            // Add to currentAuctions for search
             this.currentAuctions = filteredList;
 
-            // 4. Đẩy ra màn hình qua hàm render tối ưu của BaseBrowseController
             renderItems(filteredList);
         });
     }
@@ -133,14 +142,24 @@ public class BidderBrowseController extends BaseBrowseController {
 
     private void handlePreRegisterResponse(ResponsePacket<?> response) {
         if (response.getStatusCode() == 200) {
-            Platform.runLater(() -> NotificationUtil.showInfo("Thành công", "Đăng ký tham gia đấu giá thành công!"));
+            NotificationUtil.showInfo("Thành công", "Đăng ký tham gia đấu giá thành công!");
             log.info("[BidderBrowse] Đăng ký sản phẩm thành công. Đang cập nhật lại danh sách...");
 
-            // Kích hoạt tính toán lại bộ lọc công khai
+            RegisteredSessionUtil.getInstance().requestRegisteredSessions();
+            requestActiveSessions();
+
+        } else {
+            NotificationUtil.showError("Thất bại", response.getMessage());
+            log.error("[BidderBrowse] Đăng ký sản phẩm không thành công: {}", response.getMessage());
+        }
+    }
+
+    private void handleRegisteredListResponse(ResponsePacket<?> response) {
+        if (response.getStatusCode() == 200) {
+            log.info("[BidderBrowse] RegisteredSessionUtil list updated");
             filterPreRegister();
         } else {
-            Platform.runLater(() -> NotificationUtil.showError("Thất bại", response.getMessage()));
-            log.error("[BidderBrowse] Đăng ký sản phẩm không thành công: {}", response.getMessage());
+            log.error("[BidderBrowse] RegisteredSessionUtil list could not update: {}", response.getMessage());
         }
     }
 }

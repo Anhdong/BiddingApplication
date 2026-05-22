@@ -46,7 +46,6 @@ public class SellerItemsController extends BaseBrowseController {
 
     @Override
     protected void configureItem(ItemCardController controller, AuctionCardDTO item) {
-        // Cấu hình hiển thị nút sửa sản phẩm
         controller.setButtonVisible(true);
         controller.setBtnAction("Edit", event -> {
             log.info("[SellerBrowse] Seller chọn chỉnh sửa sản phẩm: {}", item.getItemName());

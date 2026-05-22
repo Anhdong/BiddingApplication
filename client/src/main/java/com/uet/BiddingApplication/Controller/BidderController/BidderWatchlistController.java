@@ -16,7 +16,6 @@ import com.uet.BiddingApplication.Session.ResponseDispatcher;
 import com.uet.BiddingApplication.Session.ServerConnection;
 import com.uet.BiddingApplication.Util.AppExecutor;
 import com.uet.BiddingApplication.Util.NotificationUtil;
-import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,13 +111,14 @@ public class BidderWatchlistController extends BaseBrowseController {
 
     private void handleDelRegisterResponse(ResponsePacket<?> response) {
         if (response.getStatusCode() == 200) {
-            Platform.runLater(() -> NotificationUtil.showInfo("Thành công", "Hủy đăng ký tham gia đấu giá thành công!"));
-            log.info("[BidderWatchlist] Hủy đăng ký sản phẩm thành công. Đang cập nhật lại danh sách...");
-
-            //Gọi lại danh sách để làm mới view
-            renderItems(currentAuctions);
+            NotificationUtil.showInfo("Thành công", "Hủy đăng ký tham gia đấu giá thành công!");
+            AppExecutor.execute(()->{
+                log.info("[BidderWatchlist] Hủy đăng ký sản phẩm thành công. Đang cập nhật lại danh sách...");
+                //Gọi lại danh sách để làm mới view
+                requestRegisteredSessions();
+            });
         } else {
-            Platform.runLater(() -> NotificationUtil.showError("Thất bại", response.getMessage()));
+            NotificationUtil.showError("Thất bại", response.getMessage());
             log.error("[BidderWatchlist] Hủy đăng ký sản phẩm không thành công: {}", response.getMessage());
         }
     }

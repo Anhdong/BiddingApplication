@@ -31,7 +31,7 @@ public abstract class BaseBrowseController implements ViewControllerLifecycle {
     //--LIST & MAP OPTIMIZATION--
     protected List<AuctionCardDTO> currentAuctions = new ArrayList<>();
 
-    // Record đóng vai trò là một Tuple lưu cặp đối tượng (Node giao diện + Controller điều khiển)
+    // Record là Tuple lưu cặp đối tượng để làm value trong Map
     protected record RenderedCard(Node node, ItemCardController controller) {}
 
     // Map quản lý các card đang hiển thị trên màn hình (Key: SessionID, Value: RenderedCard)
@@ -52,46 +52,36 @@ public abstract class BaseBrowseController implements ViewControllerLifecycle {
         List<Node> orderedNodes = new ArrayList<>();
         // Map tạm thời để lưu trạng thái mới sau khi xử lý xong xuôi
         Map<String, RenderedCard> newMap = new HashMap<>();
-        // Danh sách các tác vụ cập nhật dữ liệu của Card CŨ (phải chạy trên UI Thread)
+        // Danh sách các tác vụ cập nhật dữ liệu của Card CŨ (UI Thread)
         List<Runnable> updateUiTasks = new ArrayList<>();
 
-        // Vòng lặp chạy trên Background Thread (do AppExecutor gọi) giúp giảm tải cho UI
         for (AuctionCardDTO item : items) {
             String sessionId = item.getSessionId();
 
             if (renderedCardsMap.containsKey(sessionId)) {
-                // -------------------------------------------------------------
-                // TRƯỜNG HỢP 1: CARD ĐÃ TỒN TẠI (Giữ nguyên, không load lại FXML)
-                // -------------------------------------------------------------
                 RenderedCard existingCard = renderedCardsMap.get(sessionId);
 
-                // Vì Card cũ đang hiển thị trên màn hình, việc cập nhật text/button của nó
-                // BẮT BUỘC phải đưa vào danh sách chờ để chạy trên JavaFX Application Thread sau.
+                //Add update existing card to taskList
                 updateUiTasks.add(() -> {
                     existingCard.controller().setData(item);
                     configureItem(existingCard.controller(), item);
                 });
 
-                // Vẫn giữ lại Node cũ đưa vào danh sách hiển thị mới
+                // ReAdd already load node to new list
                 orderedNodes.add(existingCard.node());
                 newMap.put(sessionId, existingCard);
 
             } else {
-                // -------------------------------------------------------------
-                // TRƯỜNG HỢP 2: CARD MỚI TOÀN BỘ (Thêm mới -> Load FXML)
-                // -------------------------------------------------------------
                 try {
-                    // Việc nạp FXML diễn ra ở luồng nền (Background) giúp app không bị giật lag khi gõ tìm kiếm nhanh
                     FXMLLoader loader = new FXMLLoader(getClass().getResource(ViewPath.ITEM_CARD.getPath()));
                     Node itemNode = loader.load();
-
                     ItemCardController itemController = loader.getController();
 
-                    // Vì Node này chưa được đính (attach) vào Scene đang hiển thị công khai,
-                    // việc gọi setData và configure ngay tại đây là hoàn toàn an toàn và mượt mà.
+                    //View not on scene yet so can setData right here
                     itemController.setData(item);
                     configureItem(itemController, item);
 
+                    //Add to new list
                     RenderedCard newCard = new RenderedCard(itemNode, itemController);
                     orderedNodes.add(itemNode);
                     newMap.put(sessionId, newCard);
@@ -102,20 +92,18 @@ public abstract class BaseBrowseController implements ViewControllerLifecycle {
             }
         }
 
-        // Đồng bộ map theo dõi ngay lập tức ở luồng nền để tránh race-condition nếu hàm này bị gọi dồn dập
+        // Update in backgroundThread (Synchronoized to prevent race-condition)
         synchronized (renderedCardsMap) {
             renderedCardsMap.clear();
             renderedCardsMap.putAll(newMap);
         }
 
-        // Đẩy toàn bộ thay đổi lên JavaFX Application Thread duy nhất 1 lần (Grouped Batch Update)
+        // Run task in FxThread (Grouped Batch Update)
         Platform.runLater(() -> {
-            // 1. Cập nhật dữ liệu mới cho các Card cũ đang giữ nguyên
             for (Runnable task : updateUiTasks) {
                 task.run();
             }
 
-            // 2. Đồng bộ danh sách con của TilePane.
             // setAll sẽ tự động thêm các node mới, xóa các node thiếu, và không đụng vào các node giữ nguyên.
             itemContainer.getChildren().setAll(orderedNodes);
         });
