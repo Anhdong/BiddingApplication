@@ -53,7 +53,10 @@ public class ItemDetailController implements Initializable, ViewControllerLifecy
     //Session ID đc nhận từ bên ngoài
     String currentSessionID = null;
 
-    public void setCurrentSessionID(String sessionID){currentSessionID=sessionID;}
+    public void setCurrentSessionID(String sessionID){
+        currentSessionID=sessionID;
+        if(currentSessionID == null) log.error("[ItemDetail] ItemDetail is not contain any sessionId yet");
+    }
 
 
     //--Initialize and setup--
@@ -65,8 +68,6 @@ public class ItemDetailController implements Initializable, ViewControllerLifecy
     
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        if(currentSessionID == null) log.error("[ItemDetail] ItemDetail is not contain any sessionId yet");
-
         Platform.runLater(()-> UIUtil.roundedImageView(imgItem));
     }
 
@@ -174,6 +175,9 @@ public class ItemDetailController implements Initializable, ViewControllerLifecy
 
             //Gọi set dữ liệu lên màn hình
             setData(info);
+
+            //Lấy giữ liệu để set up ActionButton
+            handleBtnAction();
             log.info("[ItemDetail] Đã load thành công.");
         } else {
             log.error("[ItemDetail] Lỗi từ server: {}", response.getMessage());
@@ -219,13 +223,15 @@ public class ItemDetailController implements Initializable, ViewControllerLifecy
     private void handleBtnAction(){
         if(ClientSession.getInstance().getCurrentUser().getRole() == RoleType.BIDDER){
             if(RegisteredSessionUtil.getInstance().isRegistered(currentSessionID)){
-                setBtnAction("Reomve item from watchlist","Remove",(event)-> requestDeleteRegister(currentSessionID));
+                setBtnAction("Remove item from watchlist","Remove",(event)-> requestDeleteRegister(currentSessionID));
             } else{
                 setBtnAction("Add item to watchlist","Add",(event)->requestPreRegister(currentSessionID));
             }
         } else if(ClientSession.getInstance().getCurrentUser().getRole() == RoleType.SELLER){
-            MainViewController.getInstance().loadView(ViewPath.SELLER_ITEM_FORM,(SellerItemsFormController c) -> {
-                c.setupFormMode(currentSessionID, currentItem.getItemId();
+            setBtnAction("Edit this item","Edit",(event)->{
+                MainViewController.getInstance().loadView(ViewPath.SELLER_ITEM_FORM,(SellerItemsFormController c) -> {
+                    c.setupFormMode(currentSessionID, currentItem.getItemId());
+                });
             });
         } else {log.error("[ItemDetail] RoleType is invalid.");}
 
