@@ -240,13 +240,13 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
     @Override
     public SessionInfoResponseDTO getSessionInfo(String sessionId){
         String sql="with item_info as(\n" +
-                "  select i.name,i.seller_id,i.description,i.image_url,i.category,i.condition,i.artist_name,i.warranty_months,\n" +
+                "  select i.name,i.id as item_id,i.seller_id,i.description,i.image_url,i.category,i.condition,i.artist_name,i.warranty_months,\n" +
                 "         a.id,a.status,a.start_price,a.bid_step,a.start_time,a.end_time\n" +
                 "  from items i\n" +
                 "  join auction_sessions a on i.id=a.item_id\n" +
                 "  where a.id=?::uuid\n" +
                 ")\n" +
-                "select info.name,info.description,info.image_url,info.category,info.condition,info.artist_name,info.warranty_months,\n" +
+                "select info.name,info.item_id,info.description,info.image_url,info.category,info.condition,info.artist_name,info.warranty_months,\n" +
                 "      info.id,info.status,info.start_price,info.bid_step,info.start_time,info.end_time,u.username\n" +
                 "from item_info info\n" +
                 "join users u on u.id=info.seller_id;";
@@ -257,6 +257,7 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
             ResultSet rs=ps.executeQuery();
             if(rs.next()){
                 dto.setSessionId(rs.getString("id"));
+                dto.setItemId(rs.getString("item_id"));
                 dto.setStatus(SessionStatus.valueOf(rs.getString("status")));
                 dto.setStartTime(rs.getTimestamp("start_time").toLocalDateTime());
                 dto.setEndTime(rs.getTimestamp("end_time").toLocalDateTime());
