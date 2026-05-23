@@ -4,6 +4,9 @@ import com.uet.BiddingApplication.Controller.MainViewController;
 import com.uet.BiddingApplication.DTO.Packet.RequestPacket;
 import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
 import com.uet.BiddingApplication.DTO.Request.ItemCreateDTO;
+import com.uet.BiddingApplication.DTO.Request.ItemUpdateRequestDTO;
+import com.uet.BiddingApplication.DTO.Request.SessionTargetRequestDTO;
+import com.uet.BiddingApplication.DTO.Response.SessionInfoResponseDTO;
 import com.uet.BiddingApplication.Enum.ActionType;
 import com.uet.BiddingApplication.Enum.Category;
 import com.uet.BiddingApplication.Enum.ViewPath;
@@ -12,6 +15,7 @@ import com.uet.BiddingApplication.Session.ClientSession;
 import com.uet.BiddingApplication.Session.ResponseDispatcher;
 import com.uet.BiddingApplication.Session.ServerConnection;
 import com.uet.BiddingApplication.Util.NotificationUtil;
+import com.uet.BiddingApplication.Util.SupabaseUtil;
 import com.uet.BiddingApplication.Util.UIUtil;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -43,6 +47,7 @@ public class SellerItemsFormController implements Initializable, ViewControllerL
 
     //--FXML--
     @FXML ImageView imgItem;
+    String imageURL = null;
     byte[] imageBytes = null;
     String imageExtension = null;
     @FXML TextArea txtDesc;
@@ -54,6 +59,9 @@ public class SellerItemsFormController implements Initializable, ViewControllerL
 
     //CALLBACKS
     private final Consumer<ResponsePacket<?>> addItemCallback = this::handleAddItemResponse;
+
+    private final Consumer<ResponsePacket<?>> updateItemCallback = this::handleUpdateItemResponse;
+    private final Consumer<ResponsePacket<?>> sessionDetailCallback = this::handleSessionInfoResponse;
 
 
     //--STATE--
@@ -105,7 +113,13 @@ public class SellerItemsFormController implements Initializable, ViewControllerL
     @Override
     public void onShow() {
         if(isUpdateMode()){
-            //TODO add update response handle
+            //Subscribe update handler
+            ResponseDispatcher.getInstance().subscribe(ActionType.UPDATE_ITEM,updateItemCallback);
+            ResponseDispatcher.getInstance().subscribe(ActionType.GET_SESSION_DETAIL,sessionDetailCallback);
+
+            //Request get Item Data
+            requestItemDetail(currentItemId);
+
         } else{
             ResponseDispatcher.getInstance().subscribe(ActionType.CREATE_ITEM,addItemCallback);
         }
@@ -114,7 +128,8 @@ public class SellerItemsFormController implements Initializable, ViewControllerL
     @Override
     public void onHide() {
         if(isUpdateMode()){
-            //TODO add update response handle
+            ResponseDispatcher.getInstance().unsubscribe(ActionType.UPDATE_ITEM,updateItemCallback);
+            ResponseDispatcher.getInstance().unsubscribe(ActionType.GET_SESSION_DETAIL,sessionDetailCallback);
         } else{
             ResponseDispatcher.getInstance().unsubscribe(ActionType.CREATE_ITEM,addItemCallback);
         }
@@ -218,24 +233,84 @@ public class SellerItemsFormController implements Initializable, ViewControllerL
 
         //Send request
         if (isUpdateMode()) {
-            //TODO:get Item info, place and send request
+            requestUpdateItem(currentItemId,name,description,category,imageURL,imageBytes,imageExtension,startPrice,minBid,startDateTime,endDateTime);
         } else {
-            ItemCreateDTO itemCreateDTO = new ItemCreateDTO(
-                    name,description,category,imageBytes,imageExtension,startPrice,minBid,startDateTime,endDateTime,null
-            );
-
-            RequestPacket<ItemCreateDTO> request = new RequestPacket<>();
-            request.setAction(ActionType.CREATE_ITEM);
-            request.setUserId(ClientSession.getInstance().getCurrentUser().getId());
-            request.setToken(ClientSession.getInstance().getCurrentToken());
-            request.setPayload(itemCreateDTO);
-
-            if(!NotificationUtil.showConfirmation("Create new item?","Are you sure???")) return;
-
-            log.info("[SellerItemsFormController] Gửi đăng kí tạo sản phầm đấu giá mới");
-            ServerConnection.getInstance().sendRequest(request);
-
+            requestAddItem(name,description,category,imageBytes,imageExtension,startPrice,minBid,startDateTime,endDateTime);
         }
+    }
+
+    public void setData(SessionInfoResponseDTO sessionInfoDTO){
+        Platform.runLater(()->{
+            if(sessionInfoDTO.getImageUrl()!= null) {
+                imageURL = sessionInfoDTO.getImageUrl();
+                imgItem.setImage(new Image(imageURL));
+                imageBytes = SupabaseUtil.downloadImageBytes(sessionInfoDTO.getImageUrl());
+                imageExtension = SupabaseUtil.getExtensionFromUrl(sessionInfoDTO.getImageUrl());
+            }
+            txtName.setText(sessionInfoDTO.getItemName());
+
+            dpStart.setValue(sessionInfoDTO.getStartTime().toLocalDate());
+            dpEnd.setValue(sessionInfoDTO.getEndTime().toLocalDate());
+            spnStartHour.getValueFactory().setValue(sessionInfoDTO.getStartTime().getHour());
+            spnEndHour.getValueFactory().setValue(sessionInfoDTO.getEndTime().getHour());
+            spnStartMinute.getValueFactory().setValue(sessionInfoDTO.getStartTime().getMinute());
+            spnEndMinute.getValueFactory().setValue(sessionInfoDTO.getEndTime().getMinute());
+
+            txtStartPrice.setText(sessionInfoDTO.getStartPrice().toString());
+            txtMinBid.setText(sessionInfoDTO.getBidStep().toString());
+            cbxCategory.setValue(sessionInfoDTO.getCategory());
+            txtDesc.setText(sessionInfoDTO.getDescription());
+        });
+    }
+
+    //--HANDLE REQUEST--
+    private void requestAddItem(String name, String description, Category category, byte[] imageBytes,
+                                String imageExtension, BigDecimal startPrice,BigDecimal bidStep, LocalDateTime startTime,
+                                LocalDateTime endTime){
+        ItemCreateDTO itemCreateDTO = new ItemCreateDTO(name, description, category, imageBytes,
+                                                        imageExtension, startPrice, bidStep, startTime,
+                                                        endTime, null);
+
+        RequestPacket<ItemCreateDTO> request = new RequestPacket<>();
+        request.setAction(ActionType.CREATE_ITEM);
+        request.setUserId(ClientSession.getInstance().getCurrentUser().getId());
+        request.setToken(ClientSession.getInstance().getCurrentToken());
+        request.setPayload(itemCreateDTO);
+
+        if(!NotificationUtil.showConfirmation("Create new item?","Are you sure???")) return;
+
+        log.info("[SellerItemsFormController] Gửi đăng kí tạo sản phầm đấu giá mới");
+        ServerConnection.getInstance().sendRequest(request);
+    }
+
+    private void requestUpdateItem(String itemId, String name, String description, Category category, String oldImageURL, byte[] imageBytes,
+                                String imageExtension, BigDecimal startPrice,BigDecimal bidStep, LocalDateTime startTime,
+                                LocalDateTime endTime){
+        ItemUpdateRequestDTO itemUpdateDTO = new ItemUpdateRequestDTO(itemId,name,description,category,oldImageURL,imageBytes,imageExtension,null,startPrice,bidStep,startTime,endTime);
+
+        RequestPacket<ItemUpdateRequestDTO> request = new RequestPacket<>();
+        request.setAction(ActionType.UPDATE_ITEM);
+        request.setUserId(ClientSession.getInstance().getCurrentUser().getId());
+        request.setToken(ClientSession.getInstance().getCurrentToken());
+        request.setPayload(itemUpdateDTO);
+
+        if(!NotificationUtil.showConfirmation("Update current item?","Are you sure???")) return;
+
+        log.info("[SellerItemsFormController] Gửi đăng kí cập nhật thông tin sản phẩm đấu giá mới");
+        ServerConnection.getInstance().sendRequest(request);
+    }
+
+    private void requestItemDetail(String sessionId){
+            SessionTargetRequestDTO sessionTargetDTO = new SessionTargetRequestDTO(sessionId);
+
+            RequestPacket<SessionTargetRequestDTO> request = new RequestPacket<>();
+
+            request.setToken(ClientSession.getInstance().getCurrentToken());
+            request.setUserId(ClientSession.getInstance().getCurrentUser().getId());
+            request.setAction(ActionType.GET_SESSION_DETAIL);
+            request.setPayload(sessionTargetDTO);
+
+            ServerConnection.getInstance().sendRequest(request);
     }
 
     //--HANDLE RESPONSE--
@@ -245,7 +320,27 @@ public class SellerItemsFormController implements Initializable, ViewControllerL
             log.info("[SellerItemsFormController] Thêm sản phẩm thành công.");
             MainViewController.getInstance().loadView(ViewPath.SELLER_ITEMS);
         } else {
-            log.error("[SellerItemsFormController] Lỗi từ server: {}", response.getMessage());
+            log.error("[SellerItemsFormController] Không thể thêm sản phẩm: {}", response.getMessage());
+        }
+    }
+
+    private void handleUpdateItemResponse(ResponsePacket<?> response) {
+        if (response.getStatusCode() == 200) {
+            NotificationUtil.showInfo("Update item successfully!");
+            log.info("[SellerItemsFormController] Cập nhật thông tin sản phẩm thành công.");
+            MainViewController.getInstance().loadView(ViewPath.SELLER_ITEMS);
+        } else {
+            log.error("[SellerItemsFormController] Không thể cập nhật thông tin sản phẩm: {}", response.getMessage());
+        }
+    }
+
+    private void handleSessionInfoResponse(ResponsePacket<?> response) {
+        if (response.getStatusCode() == 200) {
+            log.info("[SellerItemsFormController] Đang tải thông tin của sản phẩm.");
+            SessionInfoResponseDTO info = (SessionInfoResponseDTO) response.getPayload();
+            setData(info);
+        } else {
+            log.error("[SellerItemsFormController] Không thể tải thông tin của sản phẩm {}", response.getMessage());
         }
     }
 }

@@ -49,8 +49,6 @@ public class SellerItemsController extends BaseBrowseController {
         controller.setButtonVisible(true);
         controller.setBtnAction("Edit", event -> {
             log.info("[SellerBrowse] Seller chọn chỉnh sửa sản phẩm: {}", item.getItemName());
-
-            // Giải quyết TODO: Điều hướng sang Form chỉnh sửa, truyền sessionId của item hiện tại vào
             MainViewController.getInstance().loadView(ViewPath.SELLER_ITEM_FORM, (SellerItemsFormController c) -> {
                 c.setupFormMode(item.getSessionId());
             });
