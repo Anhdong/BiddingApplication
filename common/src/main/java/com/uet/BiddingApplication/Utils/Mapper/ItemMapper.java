@@ -58,6 +58,7 @@ public class ItemMapper {
         entity.setDescription(dto.getDescription());
         entity.setImageURL(imageUrl);
         entity.setCategory(dto.getCategory());
+        entity.setId(dto.getItemId());
 
         // Tái sử dụng hàm map thuộc tính đặc thù
         mapSpecificAttribute(entity, dto.getAttribute());

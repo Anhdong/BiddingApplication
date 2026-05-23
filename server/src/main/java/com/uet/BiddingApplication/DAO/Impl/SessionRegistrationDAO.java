@@ -114,7 +114,7 @@ public class SessionRegistrationDAO implements ISessionRegistrationDAO {
                 "FROM session_registrations sr " +
                 "INNER JOIN auction_sessions a ON sr.session_id = a.id " +
                 "INNER JOIN items i ON a.item_id = i.id " +
-                "WHERE sr.bidder_id = ?::uuid";
+                "WHERE sr.bidder_id = ?::uuid and a.status in ('RUNNING','OPEN')";
 
         try (Connection conn = DatabaseConnectionPool.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
