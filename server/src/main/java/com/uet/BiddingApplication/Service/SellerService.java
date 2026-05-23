@@ -130,6 +130,7 @@ public class SellerService {
         }
 
         // 6. Xử lý kết quả & Đồng bộ
+        System.out.println(isItemUpdated + " " + isSessionUpdated);
         if (isItemUpdated && isSessionUpdated) {
             // 6.1 Đồng bộ Cache
             SearchCacheManager.getInstance().updateItem(itemId, updateItem);
