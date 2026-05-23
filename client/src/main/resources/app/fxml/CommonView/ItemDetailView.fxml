@@ -173,13 +173,13 @@
                         <String fx:value="bg-default" />
                      </styleClass>
                      <children>
-                        <Label fx:id="lblAction" text="Add to Watchlist">
+                        <Label fx:id="lblAction" text="Label">
                            <styleClass>
                               <String fx:value="text-muted" />
                               <String fx:value="text-bold" />
                            </styleClass>
                         </Label>
-                        <Button fx:id="btnAction" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="40.0" text="ADD">
+                        <Button fx:id="btnAction" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="40.0" text="Btn">
                            <styleClass>
                               <String fx:value="title-3" />
                               <String fx:value="accent" />

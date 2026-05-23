@@ -2,11 +2,13 @@ package com.uet.BiddingApplication.Controller.SellerController;
 
 import com.uet.BiddingApplication.Controller.BaseController.BaseBrowseController;
 import com.uet.BiddingApplication.Controller.CommonController.ItemCardController;
+import com.uet.BiddingApplication.Controller.CommonController.ItemDetailController;
 import com.uet.BiddingApplication.Controller.MainViewController;
 import com.uet.BiddingApplication.DTO.Packet.RequestPacket;
 import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
 import com.uet.BiddingApplication.DTO.Response.AuctionCardDTO;
 import com.uet.BiddingApplication.Enum.ActionType;
+import com.uet.BiddingApplication.Enum.SessionStatus;
 import com.uet.BiddingApplication.Enum.ViewPath;
 import com.uet.BiddingApplication.Session.ClientSession;
 import com.uet.BiddingApplication.Session.ResponseDispatcher;
@@ -18,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class SellerItemsController extends BaseBrowseController {
@@ -46,13 +49,29 @@ public class SellerItemsController extends BaseBrowseController {
 
     @Override
     protected void configureItem(ItemCardController controller, AuctionCardDTO item) {
-        controller.setButtonVisible(true);
-        controller.setBtnAction("Edit", event -> {
-            log.info("[SellerBrowse] Seller chọn chỉnh sửa sản phẩm: {}", item.getItemName());
-            MainViewController.getInstance().loadView(ViewPath.SELLER_ITEM_FORM, (SellerItemsFormController c) -> {
-                c.setupFormMode(item.getSessionId(), item.getItemId());
+        SessionStatus status = item.getStatus();
+        String sessionId = item.getSessionId();
+
+        // Card Action
+        if (Objects.requireNonNull(status) == SessionStatus.OPEN) {
+            controller.setCardAction(event -> MainViewController.getInstance().loadView(ViewPath.ITEM_DETAIL,
+                    (ItemDetailController c) -> c.setCurrentSessionID(sessionId)));
+        } //TODO: add logic to set up auction room khi STATUS == RUNNING
+
+
+        // Button Action (Chỉ hiện nút chỉnh sửa khi OPEN)
+        if (status == SessionStatus.OPEN) {
+            controller.setButtonVisible(true);
+            controller.setBtnAction("Edit", event -> {
+                log.info("[SellerBrowse] Seller chọn chỉnh sửa sản phẩm: {}", item.getItemName());
+                MainViewController.getInstance().loadView(ViewPath.SELLER_ITEM_FORM, (SellerItemsFormController c) -> {
+                    c.setupFormMode(item.getSessionId(), item.getItemId());
+                });
             });
-        });
+        } else {
+            controller.setButtonVisible(false);
+        }
+
 
     }
 
