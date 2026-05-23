@@ -4,6 +4,7 @@ import com.uet.BiddingApplication.Controller.MainViewController;
 import com.uet.BiddingApplication.DTO.Packet.RequestPacket;
 import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
 import com.uet.BiddingApplication.DTO.Request.ItemCreateDTO;
+import com.uet.BiddingApplication.DTO.Request.ItemTargetRequestDTO;
 import com.uet.BiddingApplication.DTO.Request.ItemUpdateRequestDTO;
 import com.uet.BiddingApplication.DTO.Request.SessionTargetRequestDTO;
 import com.uet.BiddingApplication.DTO.Response.SessionInfoResponseDTO;
@@ -55,19 +56,21 @@ public class SellerItemsFormController implements Initializable, ViewControllerL
     @FXML ChoiceBox<Category> cbxCategory;
     @FXML DatePicker dpStart, dpEnd;
     @FXML Spinner<Integer> spnStartHour, spnStartMinute, spnEndHour, spnEndMinute;
-    @FXML Button btnAction;
+    @FXML Button btnAction, btnDelete;
 
     //CALLBACKS
     private final Consumer<ResponsePacket<?>> addItemCallback = this::handleAddItemResponse;
-
+    private final Consumer<ResponsePacket<?>> deleteItemCallback = this::handleDeleteItemResponse;
     private final Consumer<ResponsePacket<?>> updateItemCallback = this::handleUpdateItemResponse;
     private final Consumer<ResponsePacket<?>> sessionDetailCallback = this::handleSessionInfoResponse;
 
 
     //--STATE--
+    private String currentSessionId = null;
     private String currentItemId = null;
 
-    public void setupFormMode(String itemId) {
+    public void setupFormMode(String sessionId, String itemId) {
+        this.currentSessionId = sessionId;
         this.currentItemId = itemId;
         log.info("Item form set to  {} mode", isUpdateMode() ? "Update" : "Create");
         Platform.runLater(() -> {
@@ -80,7 +83,7 @@ public class SellerItemsFormController implements Initializable, ViewControllerL
     }
 
     private boolean isUpdateMode() {
-        return currentItemId != null;
+        return currentItemId != null && currentSessionId != null;
     }
 
     //--INIT--
@@ -113,21 +116,31 @@ public class SellerItemsFormController implements Initializable, ViewControllerL
     @Override
     public void onShow() {
         if(isUpdateMode()){
+            //Subscribe delete handler
+            ResponseDispatcher.getInstance().subscribe(ActionType.DELETE_ITEM,deleteItemCallback);
+            
             //Subscribe update handler
             ResponseDispatcher.getInstance().subscribe(ActionType.UPDATE_ITEM,updateItemCallback);
             ResponseDispatcher.getInstance().subscribe(ActionType.GET_SESSION_DETAIL,sessionDetailCallback);
 
             //Request get Item Data
-            requestItemDetail(currentItemId);
+            requestItemDetail(currentSessionId);
 
         } else{
             ResponseDispatcher.getInstance().subscribe(ActionType.CREATE_ITEM,addItemCallback);
+
+            //Hide delete button
+            btnDelete.setManaged(false);
+            btnDelete.setVisible(false);
         }
 
     }
     @Override
     public void onHide() {
         if(isUpdateMode()){
+            //UnSubscribe delete handler
+            ResponseDispatcher.getInstance().unsubscribe(ActionType.DELETE_ITEM,deleteItemCallback);
+
             ResponseDispatcher.getInstance().unsubscribe(ActionType.UPDATE_ITEM,updateItemCallback);
             ResponseDispatcher.getInstance().unsubscribe(ActionType.GET_SESSION_DETAIL,sessionDetailCallback);
         } else{
@@ -239,6 +252,11 @@ public class SellerItemsFormController implements Initializable, ViewControllerL
         }
     }
 
+    @FXML
+    private void handleBtnDelete(){
+        requestDeleteItem(currentItemId);
+    }
+
     public void setData(SessionInfoResponseDTO sessionInfoDTO){
         Platform.runLater(()->{
             if(sessionInfoDTO.getImageUrl()!= null) {
@@ -283,6 +301,19 @@ public class SellerItemsFormController implements Initializable, ViewControllerL
         ServerConnection.getInstance().sendRequest(request);
     }
 
+    private void requestDeleteItem(String itemId){
+        RequestPacket<ItemTargetRequestDTO> request = new RequestPacket<>();
+        request.setAction(ActionType.DELETE_ITEM);
+        request.setUserId(ClientSession.getInstance().getCurrentUser().getId());
+        request.setToken(ClientSession.getInstance().getCurrentToken());
+        request.setPayload(new ItemTargetRequestDTO(itemId));
+
+        if(!NotificationUtil.showConfirmation("Delete item?","Are you sure???")) return;
+
+        log.info("[SellerItemsFormController] Gửi đăng kí xóa sản phầm đấu giá");
+        ServerConnection.getInstance().sendRequest(request);
+    }
+
     private void requestUpdateItem(String itemId, String name, String description, Category category, String oldImageURL, byte[] imageBytes,
                                 String imageExtension, BigDecimal startPrice,BigDecimal bidStep, LocalDateTime startTime,
                                 LocalDateTime endTime){
@@ -321,6 +352,16 @@ public class SellerItemsFormController implements Initializable, ViewControllerL
             MainViewController.getInstance().loadView(ViewPath.SELLER_ITEMS);
         } else {
             log.error("[SellerItemsFormController] Không thể thêm sản phẩm: {}", response.getMessage());
+        }
+    }
+
+    private void handleDeleteItemResponse(ResponsePacket<?> response) {
+        if (response.getStatusCode() == 200) {
+            NotificationUtil.showInfo("Delete item successfully!");
+            log.info("[SellerItemsFormController] Xóa sản phẩm thành công.");
+            MainViewController.getInstance().loadView(ViewPath.SELLER_ITEMS);
+        } else {
+            log.error("[SellerItemsFormController] Không thể xóa sản phẩm: {}", response.getMessage());
         }
     }
 

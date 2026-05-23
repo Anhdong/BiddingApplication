@@ -50,7 +50,7 @@ public class SellerItemsController extends BaseBrowseController {
         controller.setBtnAction("Edit", event -> {
             log.info("[SellerBrowse] Seller chọn chỉnh sửa sản phẩm: {}", item.getItemName());
             MainViewController.getInstance().loadView(ViewPath.SELLER_ITEM_FORM, (SellerItemsFormController c) -> {
-                c.setupFormMode(item.getSessionId());
+                c.setupFormMode(item.getSessionId(), item.getItemId());
             });
         });
 
@@ -91,7 +91,7 @@ public class SellerItemsController extends BaseBrowseController {
     @FXML
     private void switchToAddItem() {
         MainViewController.getInstance().loadView(ViewPath.SELLER_ITEM_FORM, (SellerItemsFormController c) -> {
-            c.setupFormMode(null); // Mode tạo mới sản phẩm (truyền null)
+            c.setupFormMode(null,null); // Mode tạo mới sản phẩm (truyền null)
         });
     }
 }

@@ -151,17 +151,32 @@
                         </HBox>
                      </children>
                   </VBox>
-                  <Button fx:id="btnAction" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleBtnAction" prefHeight="50.0" text="Button">
-                     <styleClass>
-                        <String fx:value="title-1" />
-                        <String fx:value="accent" />
-                        <String fx:value="rounded" />
-                        <String fx:value="interactive-card" />
-                     </styleClass>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </Button>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Button fx:id="btnDelete" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleBtnDelete" prefHeight="50.0" text="Delete" HBox.hgrow="ALWAYS">
+                           <styleClass>
+                              <String fx:value="title-1" />
+                              <String fx:value="danger" />
+                              <String fx:value="rounded" />
+                              <String fx:value="interactive-card" />
+                           </styleClass>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Button>
+                        <Button fx:id="btnAction" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleBtnAction" prefHeight="50.0" text="Button" HBox.hgrow="ALWAYS">
+                           <styleClass>
+                              <String fx:value="title-1" />
+                              <String fx:value="accent" />
+                              <String fx:value="rounded" />
+                              <String fx:value="interactive-card" />
+                           </styleClass>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Button>
+                     </children>
+                  </HBox>
                </children>
             </VBox>
          </children>
