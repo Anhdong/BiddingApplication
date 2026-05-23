@@ -34,8 +34,8 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
 
     @Override
     public boolean insertSession(AuctionSession session) {
-        String sql = "INSERT INTO auction_sessions (id, item_id, seller_id, start_time, end_time, status, start_price, current_price, bid_step, created_at) " +
-                "VALUES (?::uuid, ?::uuid, ?::uuid, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO auction_sessions (id, item_id, seller_id, start_time, end_time, status, start_price, bid_step, created_at) " +
+                "VALUES (?::uuid, ?::uuid, ?::uuid, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnectionPool.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -47,9 +47,8 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
             ps.setTimestamp(5, Timestamp.valueOf(session.getEndTime()));
             ps.setString(6, session.getStatus().name());
             ps.setBigDecimal(7, session.getStartPrice());
-            ps.setBigDecimal(8, session.getStartPrice());
-            ps.setBigDecimal(9, session.getBidStep());
-            ps.setTimestamp(10, Timestamp.valueOf(session.getCreatedAt()));
+            ps.setBigDecimal(8, session.getBidStep());
+            ps.setTimestamp(9, Timestamp.valueOf(session.getCreatedAt()));
 
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -66,8 +65,7 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
                 "start_time = ?, " +
                 "end_time = ?, " +
                 "start_price = ?, " +
-                "current_price = ?, " +
-                "bid_step = ?, " +
+                "bid_step = ? " +
                 "WHERE id = ?::uuid";
 
         try (Connection conn = DatabaseConnectionPool.getConnection();
@@ -87,15 +85,14 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
                 ps.setNull(2, java.sql.Types.TIMESTAMP);
             }
 
-            // 3+4. start_price+currentPrice
+            // 3. start_price
             ps.setBigDecimal(3, session.getStartPrice());
-            ps.setBigDecimal(4, session.getStartPrice());
 
-            //5.bidStep
-            ps.setBigDecimal(5, session.getBidStep());
+            //4.bidStep
+            ps.setBigDecimal(4, session.getBidStep());
 
-            // 6. id (Điều kiện WHERE ép kiểu UUID)
-            ps.setString(6, session.getId());
+            // 5. id (Điều kiện WHERE ép kiểu UUID)
+            ps.setString(5, session.getId());
 
             // Thực thi và trả về true nếu có ít nhất 1 dòng được cập nhật thành công
             return ps.executeUpdate() > 0;
@@ -243,13 +240,13 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
     @Override
     public SessionInfoResponseDTO getSessionInfo(String sessionId){
         String sql="with item_info as(\n" +
-                "  select i.name,i.seller_id,i.description,i.image_url,i.category,i.condition,i.artist_name,i.warranty_months,\n" +
+                "  select i.name,i.id as item_id,i.seller_id,i.description,i.image_url,i.category,i.condition,i.artist_name,i.warranty_months,\n" +
                 "         a.id,a.status,a.start_price,a.bid_step,a.start_time,a.end_time\n" +
                 "  from items i\n" +
                 "  join auction_sessions a on i.id=a.item_id\n" +
                 "  where a.id=?::uuid\n" +
                 ")\n" +
-                "select info.name,info.description,info.image_url,info.category,info.condition,info.artist_name,info.warranty_months,\n" +
+                "select info.name,info.item_id,info.description,info.image_url,info.category,info.condition,info.artist_name,info.warranty_months,\n" +
                 "      info.id,info.status,info.start_price,info.bid_step,info.start_time,info.end_time,u.username\n" +
                 "from item_info info\n" +
                 "join users u on u.id=info.seller_id;";
@@ -260,6 +257,7 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
             ResultSet rs=ps.executeQuery();
             if(rs.next()){
                 dto.setSessionId(rs.getString("id"));
+                dto.setItemId(rs.getString("item_id"));
                 dto.setStatus(SessionStatus.valueOf(rs.getString("status")));
                 dto.setStartTime(rs.getTimestamp("start_time").toLocalDateTime());
                 dto.setEndTime(rs.getTimestamp("end_time").toLocalDateTime());

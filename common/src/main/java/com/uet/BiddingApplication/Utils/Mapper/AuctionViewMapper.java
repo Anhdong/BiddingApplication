@@ -41,6 +41,7 @@ public class AuctionViewMapper {
         // 1. Khởi tạo DTO và ánh xạ các trường cơ bản từ AuctionSession
         SessionInfoResponseDTO dto = new SessionInfoResponseDTO();
         dto.setSessionId(session.getId());
+        dto.setItemId(item.getId());
         dto.setStartPrice(session.getStartPrice());
         dto.setBidStep(session.getBidStep());
         dto.setStartTime(session.getStartTime());

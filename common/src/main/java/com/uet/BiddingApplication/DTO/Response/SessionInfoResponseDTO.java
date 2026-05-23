@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 public class SessionInfoResponseDTO  {
     private String sessionId;
+    private String ItemId;
     private String sellerName;
     private String itemName;
     private String description;
@@ -20,11 +21,12 @@ public class SessionInfoResponseDTO  {
     private LocalDateTime endTime;
     private SessionStatus status;
 
-    public SessionInfoResponseDTO(String sessionId,String sellerName, String itemName, String description,
+    public SessionInfoResponseDTO(String sessionId,String ItemId,String sellerName, String itemName, String description,
                                   String imageUrl, Category category, String attribute,
                                   BigDecimal startPrice,BigDecimal bidStep, LocalDateTime startTime, LocalDateTime endTime,
                                   SessionStatus status) {
         this.sessionId = sessionId;
+        this.ItemId = ItemId;
         this.sellerName = sellerName;
         this.itemName = itemName;
         this.description = description;
@@ -36,6 +38,14 @@ public class SessionInfoResponseDTO  {
         this.startTime = startTime;
         this.endTime = endTime;
         this.status = status;
+    }
+
+    public String getItemId() {
+        return ItemId;
+    }
+
+    public void setItemId(String itemId) {
+        ItemId = itemId;
     }
 
     public BigDecimal getBidStep() {
