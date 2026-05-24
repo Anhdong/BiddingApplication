@@ -1,6 +1,5 @@
 package com.uet.BiddingApplication.Controller.CommonController;
 
-import com.uet.BiddingApplication.Controller.BidderController.BidderBrowseController;
 import com.uet.BiddingApplication.DTO.Response.AuctionCardDTO;
 import com.uet.BiddingApplication.Enum.SessionStatus;
 import com.uet.BiddingApplication.Util.UIUtil;
@@ -38,7 +37,7 @@ public class ItemCardController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        Platform.runLater(()->UIUtil.roundedImageView(imgItem));
+        UIUtil.roundedImageView(imgItem);
     }
 
     //--SET/FORMAT DATA

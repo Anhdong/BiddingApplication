@@ -9,13 +9,11 @@ import com.uet.BiddingApplication.DTO.Request.SessionTargetRequestDTO;
 import com.uet.BiddingApplication.DTO.Response.SessionInfoResponseDTO;
 import com.uet.BiddingApplication.Enum.ActionType;
 import com.uet.BiddingApplication.Enum.RoleType;
-import com.uet.BiddingApplication.Enum.SessionStatus;
 import com.uet.BiddingApplication.Enum.ViewPath;
 import com.uet.BiddingApplication.Interface.ViewControllerLifecycle;
 import com.uet.BiddingApplication.Session.ClientSession;
 import com.uet.BiddingApplication.Session.ResponseDispatcher;
 import com.uet.BiddingApplication.Session.ServerConnection;
-import com.uet.BiddingApplication.Util.AppExecutor;
 import com.uet.BiddingApplication.Util.NotificationUtil;
 import com.uet.BiddingApplication.Util.RegisteredSessionUtil;
 import com.uet.BiddingApplication.Util.UIUtil;
@@ -35,7 +33,6 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
@@ -68,7 +65,7 @@ public class ItemDetailController implements Initializable, ViewControllerLifecy
     
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        Platform.runLater(()-> UIUtil.roundedImageView(imgItem));
+        UIUtil.roundedImageView(imgItem);
     }
 
     @Override

@@ -25,7 +25,7 @@
                <children>
                   <StackPane prefHeight="480.0" prefWidth="480.0">
                      <children>
-                        <ImageView fitHeight="480.0" fitWidth="480.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="imgItem" fitHeight="480.0" fitWidth="480.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../assets/default-items.png" />
                            </image>
@@ -36,13 +36,13 @@
                         <String fx:value="bg-default" />
                      </styleClass>
                   </StackPane>
-                  <Label maxWidth="1.7976931348623157E308" text="ItemName">
+                  <Label fx:id="lblItemName" maxWidth="1.7976931348623157E308" text="ItemName">
                      <styleClass>
                         <String fx:value="main-title" />
                         <String fx:value="text-bold" />
                      </styleClass>
                   </Label>
-                  <VBox prefHeight="210.0" prefWidth="480.0">
+                  <VBox fx:id="txtDesc" prefHeight="210.0" prefWidth="480.0">
                      <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="No description" textAlignment="JUSTIFY" wrappingWidth="440.0" />
                      </children>
@@ -72,7 +72,7 @@
                               <String fx:value="text-bold" />
                            </styleClass>
                         </Label>
-                        <Label text="hh:mm:ss">
+                        <Label fx:id="lblTimer" text="hh:mm:ss">
                            <styleClass>
                               <String fx:value="title-1" />
                               <String fx:value="danger" />
@@ -98,13 +98,13 @@
                               <String fx:value="text-bold" />
                            </styleClass>
                         </Label>
-                        <Label text="\$0">
+                        <Label fx:id="lblCurrentBid" text="\$0">
                            <styleClass>
                               <String fx:value="main-title" />
                               <String fx:value="success" />
                            </styleClass>
                         </Label>
-                        <Label text="Bidder Name">
+                        <Label fx:id="lblBidder" text="Bidder Name">
                            <styleClass>
                               <String fx:value="text-muted" />
                               <String fx:value="text-bold" />
@@ -115,7 +115,7 @@
                             <CategoryAxis side="BOTTOM" />
                           </xAxis>
                           <yAxis>
-                            <NumberAxis side="LEFT" tickMarkVisible="false" />
+                            <NumberAxis fx:id="lineChart" side="LEFT" tickMarkVisible="false" />
                           </yAxis>
                         </LineChart>
                      </children>
@@ -185,13 +185,13 @@
                               <String fx:value="text-bold" />
                            </styleClass>
                         </Label>
-                        <TextField maxWidth="1.7976931348623157E308" prefHeight="40.0" promptText="Bid Amount">
+                        <TextField fx:id="txtBid" maxWidth="1.7976931348623157E308" prefHeight="40.0" promptText="Bid Amount">
                            <styleClass>
                               <String fx:value="text-bold" />
                               <String fx:value="rounded" />
                            </styleClass>
                         </TextField>
-                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="40.0" text="BID">
+                        <Button fx:id="btnBid" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="40.0" text="BID">
                            <styleClass>
                               <String fx:value="title-3" />
                               <String fx:value="accent" />
