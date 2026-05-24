@@ -1,6 +1,7 @@
 package com.uet.BiddingApplication.Controller.BidderController;
 
 import com.uet.BiddingApplication.Controller.BaseController.BaseBrowseController;
+import com.uet.BiddingApplication.Controller.CommonController.AuctionController;
 import com.uet.BiddingApplication.Controller.CommonController.ItemCardController;
 import com.uet.BiddingApplication.Controller.CommonController.ItemDetailController;
 import com.uet.BiddingApplication.Controller.MainViewController;
@@ -19,6 +20,7 @@ import com.uet.BiddingApplication.Util.NotificationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -57,10 +59,13 @@ public class BidderWatchlistController extends BaseBrowseController {
         if (Objects.requireNonNull(status) == SessionStatus.OPEN) {
             controller.setCardAction(event -> MainViewController.getInstance().loadView(ViewPath.ITEM_DETAIL,
                     (ItemDetailController c) -> c.setCurrentSessionID(sessionId)));
-        } //TODO: add logic to set up auction room khi STATUS == RUNNING
+        } else if(status == SessionStatus.RUNNING) {
+            controller.setCardAction(event -> MainViewController.getInstance().loadView(ViewPath.AUCTION,
+                    (AuctionController c) -> c.setCurrentSessionId(sessionId)));
+        }
 
         // Button Action (Chỉ hiện nút Hủy đăng ký khi trạng thái OPEN hoặc RUNNING)
-        if (status == SessionStatus.OPEN || status == SessionStatus.RUNNING) {
+        if (status == SessionStatus.OPEN) {
             controller.setButtonVisible(true);
             controller.setBtnAction("Remove", event -> requestDeleteRegister(sessionId));
         } else {

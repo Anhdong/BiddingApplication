@@ -16,12 +16,13 @@ public enum ViewPath {
     //COMMON
     ITEM_CARD("/app/fxml/CommonView/ItemCardView.fxml",false),
     ITEM_DETAIL("/app/fxml/CommonView/ItemDetailView.fxml",false),
+    AUCTION("/app/fxml/CommonView/AuctionRoomView.fxml", false), // KHÔNG CACHE: Phải load mới 100% mỗi khi vào 1 phòng đấu giá khác nhau
+
 
     // BIDDER
     BIDDER_BROWSE("/app/fxml/BidderView/BidderBrowseView.fxml", true),   // CACHE: Cần mượt mà, giữ trạng thái Socket ngầm
     BIDDER_WATCHLIST("/app/fxml/BidderView/BidderWatchlistView.fxml",true),
     BIDDER_HISTORY("/app/fxml/BidderView/BidderHistoryView.fxml", true),  // CACHE: Danh sách tĩnh, ít khi thay đổi
-    BIDDER_AUCTION("/app/fxml/BidderView/BidderAuctionView.fxml", false), // KHÔNG CACHE: Phải load mới 100% mỗi khi vào 1 phòng đấu giá khác nhau
 
     // SELLER
     SELLER_ITEMS("/app/fxml/SellerView/SellerItemsView.fxml",true),
