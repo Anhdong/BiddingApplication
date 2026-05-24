@@ -1,27 +1,46 @@
 package com.uet.BiddingApplication.DTO.Response;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class AuctionRoomSyncDTO {
     private String sessionId;
+    private String itemName;
     private String imageURL;
+    private String description;
     private BigDecimal currentPrice;
     private BigDecimal bidStep;
     private long remainingMillis; // Để chạy đồng hồ đếm ngược
     private List<BidHistoryDTO> history; // Để vẽ ngay lập tức cái table lúc mới vào
     private String highestBidderName; // Tên người đang giữ giá cao nhất hiện tại
 
-    public AuctionRoomSyncDTO(String sessionId,String imageURL ,BigDecimal currentPrice,BigDecimal bidStep, long remainingMillis,
+    public AuctionRoomSyncDTO(String sessionId,String sessionName,String imageURL,String description ,BigDecimal currentPrice,BigDecimal bidStep, long remainingMillis,
                               List<BidHistoryDTO> history, String highestBidderName) {
         this.sessionId = sessionId;
+        this.itemName = sessionName;
         this.imageURL = imageURL;
+        this.description = description;
         this.currentPrice = currentPrice;
         this.bidStep = bidStep;
         this.remainingMillis=remainingMillis;
         this.history = history;
         this.highestBidderName = highestBidderName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
     }
 
     public AuctionRoomSyncDTO() {

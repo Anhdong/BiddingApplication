@@ -228,8 +228,9 @@ public class BidderService {
         // 4.1. Lấy Image URL thông qua itemId (Fix: getImageUrl -> getImageURL)
         String imageURL = null;
         String itemId = session.getItemId();
+        Item item =null;
         if (itemId != null) {
-            Item item = ItemDAO.getInstance().getItemById(itemId);
+            item = ItemDAO.getInstance().getItemById(itemId);
             if (item != null) {
                 imageURL = item.getImageURL();
             }
@@ -251,7 +252,9 @@ public class BidderService {
         long endTime=session.getEndTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         return new AuctionRoomSyncDTO(
                 session.getId(),
+                item.getName(),
                 imageURL,
+                item.getDescription(),
                 session.getCurrentPrice(),
                 session.getBidStep(),
                 endTime-System.currentTimeMillis(),
