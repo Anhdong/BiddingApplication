@@ -96,8 +96,8 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
 
         btnAutoBid.textProperty().bind(
                 javafx.beans.binding.Bindings.when(btnAutoBid.selectedProperty())
-                        .then("Disable")
-                        .otherwise("Enable")
+                        .then("Enable")
+                        .otherwise("Disable")
         );
 
         UIUtil.roundedImageView(imgItem);
@@ -159,8 +159,8 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
             if(autoBidSetting != null) {
                 txtBidStep.setText(autoBidSetting.getIncrement().toString());
                 txtMaxBid.setText(autoBidSetting.getMaxBid().toString());
-                btnAutoBid.setSelected(true);
-            }
+                btnAutoBid.setSelected(false);
+            } else btnAutoBid.setSelected(true);
 
             // Khởi tạo series
             bidHistorySeries = new XYChart.Series<>();
@@ -375,7 +375,7 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
 
     private void handleAutoBidCancelResponse(ResponsePacket<?> response) {
         if (response.getStatusCode() == 200) {
-            Platform.runLater(() -> btnAutoBid.setSelected(false));
+            Platform.runLater(() -> btnAutoBid.setSelected(true));
             log.info("[Auction] Hủy đăng kí Auto Bid do vượt quá Max Bid");
         } else {
             log.error("[Aution] Không thể hủy đăng kí Auto Bid {}", response.getMessage());
@@ -415,16 +415,15 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
 
     @FXML
     public void handleAutoBid(){
-        // Nếu user bấm để TẮT Auto-Bid, thì ta KHÔNG CẦN validate ô nhập chữ, cứ cho họ tắt bình thường!
-        if (!btnAutoBid.isSelected()) {
+        // Selected == orange == enable == isDisable
+        if (btnAutoBid.isSelected()) {
             requestCancelAutoBid();
             return;
         }
 
-        // Xuống đến đây tức là user đang bấm BẬT (isSelected == true)
         if(txtMaxBid.getText().isEmpty() || txtBidStep.getText().isEmpty()) {
             NotificationUtil.showError("Bid increment or Max Bid cannot be empty");
-            btnAutoBid.setSelected(false);
+            btnAutoBid.setSelected(true);
             return;
         }
 
@@ -432,14 +431,14 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
             BigDecimal step = new BigDecimal(txtBidStep.getText());
             if(step.compareTo(minBid) < 0) {
                 NotificationUtil.showError("Bid step amount cannot be smaller than session minimum bid");
-                btnAutoBid.setSelected(false);
+                btnAutoBid.setSelected(true);
                 return;
             }
             requestRegisterAutoBid();
 
         } catch (NumberFormatException e) {
             NotificationUtil.showError("Number only");
-            btnAutoBid.setSelected(false);
+            btnAutoBid.setSelected(true);
         }
     }
 }
