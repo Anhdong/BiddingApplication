@@ -48,7 +48,7 @@ public class RequestRouter {
             if (currentAction == null) {
                 throw new BusinessException("Gói tin thiếu trường ActionType");
             }
-            if(currentAction!=ActionType.LOGIN && currentAction!=ActionType.REGISTER &&(userId==null || !userId.equals(request.getUserId()))) {
+            if(currentAction!=ActionType.LOGIN && currentAction!=ActionType.REGISTER && currentAction!=ActionType.RECONNECT_SESSION &&(userId==null || !userId.equals(request.getUserId()))) {
                 throw new BusinessException("User id hoặc token không hợp lệ");
             }
 

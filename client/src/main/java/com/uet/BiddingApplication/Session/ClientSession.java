@@ -32,6 +32,9 @@ public class ClientSession {
     public UserProfileDTO getCurrentUser() {
         return currentUser;
     }
+    public boolean isLoggedIn() {
+        return currentToken != null;
+    }
 
     public String getCurrentToken() {
         return currentToken;

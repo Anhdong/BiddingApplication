@@ -85,6 +85,7 @@ public class AuthService {
         // 3. Tạo Token và lưu vào Cache RAM
         String token = UUID.randomUUID().toString();
         userCache.put(token, userId);
+        userDAO.updateSessionToken(userId, token);
 
         // 4. FIX BUG: Trả về AuthResponseDTO chứa cả Token và Profile [cite: 679]
         UserProfileDTO userProfile = UserMapper.toDto(user);
@@ -139,6 +140,7 @@ public class AuthService {
         if (userId != null) {
             // 2. Hủy thẻ từ (Token) khỏi RAM
             userCache.remove(token);
+            userDAO.updateSessionToken(userId, null);
 
             // 3. Dọn dẹp: Rút người dùng khỏi tất cả các phòng đấu giá đang theo dõi
             // Nhớ import com.uet.BiddingApplication.Service.RealtimeBroadcastService;
@@ -193,6 +195,21 @@ public class AuthService {
             throw new BusinessException("Lỗi DAO không update được tài khoản");
         }
         return true;
+    }
+    public void reconnect(String userId,String oldToken) {
+        if (oldToken == null || oldToken.trim().isEmpty()) {
+            throw new BusinessException("Token không được để trống.");
+        }
+
+        // 1. Query Database để đối chiếu Token
+        String token=userDAO.getTokenById(userId);
+        if (!token.equals(oldToken)) {
+            throw new BusinessException("Phiên đăng nhập không hợp lệ hoặc đã hết hạn.");
+        }
+
+        // 2. Cấp lại định danh cho Socket mới (Đây là mục đích duy nhất của hàm này)
+        userCache.put(token, userId);
+        // Không cần return gì cả!
     }
 
     // --- Các phương thức bổ trợ nội bộ (Helper methods) ---
