@@ -15,6 +15,7 @@ import com.uet.BiddingApplication.Enum.BidType;
 import com.uet.BiddingApplication.Enum.RoleType;
 import com.uet.BiddingApplication.Enum.ViewPath;
 import com.uet.BiddingApplication.Interface.ViewControllerLifecycle;
+import com.uet.BiddingApplication.Model.AutoBidSetting;
 import com.uet.BiddingApplication.Session.ClientSession;
 import com.uet.BiddingApplication.Session.ResponseDispatcher;
 import com.uet.BiddingApplication.Session.ServerConnection;
@@ -91,6 +92,12 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
             vbxManualBid.setVisible(false);
         } else log.info("[Auction] Prepare auction room for bidder");
 
+        btnAutoBid.textProperty().bind(
+                javafx.beans.binding.Bindings.when(btnAutoBid.selectedProperty())
+                        .then("Enabled")
+                        .otherwise("Disabled")
+        );
+
         UIUtil.roundedImageView(imgItem);
     }
 
@@ -133,13 +140,20 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
 
         minBid = dto.getBidStep();
         if (dto.getCurrentPrice() != null) currentBid = dto.getCurrentPrice();
-        //TODO set autoBid button on join
 
         Platform.runLater(()->{
             if(dto.getCurrentPrice() != null) lblCurrentBid.setText(dto.getCurrentPrice().toString());
             if(dto.getHighestBidderName() != null) lblBidder.setText(dto.getHighestBidderName());
             lblName.setText(dto.getItemName());
             txtDesc.setText(dto.getDescription());
+
+            //Khoi phuc set up nut auto Bid
+            AutoBidSetting autoBidSetting = dto.getAutoBidSetting();
+            if(autoBidSetting != null) {
+                txtBidStep.setText(autoBidSetting.getIncrement().toString());
+                txtMaxBid.setText(autoBidSetting.getMaxBid().toString());
+                btnAutoBid.setSelected(true);
+            }
 
             // Khởi tạo series
             bidHistorySeries = new XYChart.Series<>();
@@ -149,7 +163,7 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
             if (dto.getImageURL() != null) imgItem.setImage(new Image(dto.getImageURL()));
         });
 
-        for (BidHistoryDTO newBid : dto.getHistory()) handleNewBidHistory(newBid);
+        for (BidHistoryDTO newBid : dto.getHistory().reversed()) handleNewBidHistory(newBid);
     }
 
     private void startCountdownTimer(long remainingMillis) {
