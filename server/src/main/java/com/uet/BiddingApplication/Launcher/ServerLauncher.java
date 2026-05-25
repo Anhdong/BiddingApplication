@@ -5,9 +5,12 @@ import com.uet.BiddingApplication.CoreService.InMemoryBidServiceImpl;
 import com.uet.BiddingApplication.CoreService.SearchCacheManager;
 
 import com.uet.BiddingApplication.CoreService.SessionStartScheduler;
+import com.uet.BiddingApplication.DAO.Impl.AutoBidSettingDAO;
 import com.uet.BiddingApplication.Enum.SessionStatus;
 import com.uet.BiddingApplication.Model.AuctionSession;
+import com.uet.BiddingApplication.Model.AutoBidSetting;
 import com.uet.BiddingApplication.ServerClass.AuctionServer;
+import com.uet.BiddingApplication.Service.AutoBidManager;
 
 import java.util.List;
 
@@ -33,6 +36,12 @@ public class ServerLauncher {
 
             // BƯỚC 2: KHÔI PHỤC TRẠNG THÁI HỆ THỐNG (RECOVERY LOGIC)
             log.info("[2/4] Đang khôi phục các luồng xử lý phiên...");
+
+            // Khôi phục autoBid cho các phiên hiện tại
+            List<AutoBidSetting> activeAutoBids = AutoBidSettingDAO.getInstance().getAllAutoBids();
+            for (AutoBidSetting setting : activeAutoBids) {
+                AutoBidManager.getInstance().registerAutoBid(setting);
+            }
 
             // Lấy danh sách thô từ Cache vừa nạp
             List<AuctionSession> allRunningSessions = cacheManager.getSessionsByStatus(SessionStatus.RUNNING);

@@ -1,6 +1,7 @@
 package com.uet.BiddingApplication.Session;
 
 import com.uet.BiddingApplication.DTO.Packet.RequestPacket;
+import com.uet.BiddingApplication.Enum.ActionType;
 import com.uet.BiddingApplication.Util.NotificationUtil;
 import com.uet.BiddingApplication.Utils.GsonPacketParser;
 import javafx.application.Platform;
@@ -178,6 +179,24 @@ public class ServerConnection {
                     boolean success = connect(serverIp, 8080);
 
                     if (success) {
+                        ClientSession session = ClientSession.getInstance();
+
+                        // Nếu trước khi rớt mạng, người dùng đã đăng nhập (có Token)
+                        if (session.isLoggedIn()) {
+                            // Tạo gói tin YÊU CẦU KHÔI PHỤC, chỉ gửi Token (nằm ở header/token field của RequestPacket)
+                            RequestPacket<Void> reconnectPacket = new RequestPacket<>();
+                            reconnectPacket.setAction(ActionType.RECONNECT_SESSION);
+                            reconnectPacket.setToken(session.getCurrentToken());
+                            reconnectPacket.setUserId(session.getCurrentUser().getId());
+
+                            try {
+                                String jsonStr = GsonPacketParser.serialize(reconnectPacket);
+                                out.println(jsonStr);
+                                out.flush();
+                            } catch (Exception e) {
+                                System.err.println("Lỗi gửi gói khôi phục!");
+                            }
+                        }
                         isReconnecting = false; // Dừng vòng lặp
                         log.info("[Watchdog] Kết nối lại THÀNH CÔNG tại IP: " + serverIp);
 

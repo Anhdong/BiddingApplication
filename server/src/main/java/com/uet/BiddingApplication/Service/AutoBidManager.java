@@ -1,26 +1,5 @@
 package com.uet.BiddingApplication.Service;
-/**
- * @TODO [Dành cho Thành viên 3 - Service]
- * Nâng cấp trải nghiệm người dùng (UX) và chống kẹt Queue cho Auto-Bid.
- *
- * YÊU CẦU CẬP NHẬT:
- * 1. Đổi kiểu dữ liệu của Queue từ PriorityQueue sang ConcurrentLinkedQueue (FIFO)
- *    để đảm bảo tính công bằng theo thời gian đăng ký (ai vào trước xử lý trước).
- *
- * 2. Cập nhật logic trong vòng lặp của hàm triggerAutoBid():
- *    - Khi duyệt Iterator, nếu phát hiện user có maxBid < currentPrice + increment:
- *      a) Gọi iterator.remove() để xóa vĩnh viễn cài đặt này khỏi Queue.
- *      b) THÔNG BÁO CHO USER: Đóng gói AutoBidCancelResponseDTO (chứa sessionId, bidderId).
- *      c) Gọi RealtimeBroadcastService.sendPrivateMessage(bidderId, packet)< cần tạo thêm hàm này >để báo cho
- *         máy khách tự động tắt nút Auto-bid trên giao diện.
- *      d) Dùng 'continue' để xét tiếp người phía sau trong Queue.
- *
- *    - Nếu user đủ tiền NHƯNG đang là người dẫn đầu (highestBidderId):
- *      Chỉ dùng 'continue' để bỏ qua (không xóa khỏi Queue, chống tự cắn đuôi).
- *
- *    - Nếu tìm thấy user hợp lệ đầu tiên: Đẩy BidRequestDTO vào InMemoryBidServiceImpl
- *      và 'break' (KẾT THÚC HÀM NGAY LẬP TỨC) để nhường luồng cho Tầng Core xử lý.
- */
+
 import com.uet.BiddingApplication.CoreService.InMemoryBidServiceImpl;
 import com.uet.BiddingApplication.CoreService.SearchCacheManager;
 import com.uet.BiddingApplication.DTO.Request.BidRequestDTO;
@@ -28,13 +7,12 @@ import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
 import com.uet.BiddingApplication.Enum.ActionType;
 import com.uet.BiddingApplication.Model.AuctionSession;
 import com.uet.BiddingApplication.Model.AutoBidSetting;
-// Các import giả định tùy theo cấu trúc thư mục của nhóm bạn:
-// import com.uet.BiddingApplication.Network.AuctionServer;
-// import com.uet.BiddingApplication.Network.ClientConnectionHandler;
-// import com.uet.BiddingApplication.Enum.ActionType;
+// Giả định import DAO bạn vừa tạo
+import com.uet.BiddingApplication.DAO.Impl.AutoBidSettingDAO;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -45,7 +23,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class AutoBidManager {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AutoBidManager.class);
 
-    // Sử dụng ConcurrentLinkedQueue (FIFO) thay cho PriorityQueue để đảm bảo công bằng: ai vào trước, xử lý trước.
     private ConcurrentHashMap<String, ConcurrentLinkedQueue<AutoBidSetting>> autoBidQueues;
 
     private static volatile AutoBidManager instance = null;
@@ -73,12 +50,20 @@ public class AutoBidManager {
             return;
         }
 
+        // [LOGIC DATABASE 1]: Lưu xuống DB trước.
+        // Sử dụng hàm DAO (Upsert hoặc Delete rồi Insert) để đảm bảo ràng buộc UNIQUE dưới Database.
+        boolean dbSuccess = AutoBidSettingDAO.getInstance().upsertAutoBid(setting);
+        if (!dbSuccess) {
+            log.error("[LỖI] Không thể lưu Auto-bid xuống Database cho User [" + setting.getBidderId() + "]. Hủy thao tác trên RAM.");
+            return;
+        }
+
         ConcurrentLinkedQueue<AutoBidSetting> queue = autoBidQueues.computeIfAbsent(
                 setting.getSessionId(),
                 k -> new ConcurrentLinkedQueue<>()
         );
 
-        // Chống Spam/Trùng lặp: Xóa cài đặt cũ của người này (nếu có) trước khi nhét cài đặt mới vào.
+        // Chống Spam/Trùng lặp trên RAM
         queue.removeIf(existing -> existing.getBidderId().equals(setting.getBidderId()));
 
         queue.add(setting);
@@ -93,14 +78,19 @@ public class AutoBidManager {
 
         ConcurrentLinkedQueue<AutoBidSetting> queue = autoBidQueues.get(sessionId);
         if (queue != null) {
-            // Xóa nhanh chóng và an toàn trong đa luồng (Java 8+)
+            // Cập nhật trên RAM
             boolean removed = queue.removeIf(setting -> setting.getBidderId().equals(bidderId));
 
             if (removed) {
+                // [LOGIC DATABASE 2]: Xóa khỏi DB (Bất đồng bộ để phản hồi Client nhanh nhất)
+                CompletableFuture.runAsync(() -> {
+                    AutoBidSettingDAO.getInstance().deleteAutoBid(sessionId, bidderId);
+                });
+
                 log.info("[INFO] User [" + bidderId + "] đã hủy Auto-bid tại phiên [" + sessionId + "]");
             }
 
-            // Mẹo tối ưu RAM: Nếu phòng đã trống, dọn luôn phòng đó khỏi HashMap
+            // Dọn phòng trống trên RAM
             if (queue.isEmpty()) {
                 autoBidQueues.remove(sessionId);
             }
@@ -114,34 +104,37 @@ public class AutoBidManager {
         ConcurrentLinkedQueue<AutoBidSetting> queue = autoBidQueues.get(sessionId);
 
         if (queue == null || queue.isEmpty()) {
-            return; // Phòng không có ai đăng ký auto-bid
+            return;
         }
 
-        // BỔ SUNG QUAN TRỌNG: Lấy thông tin phiên từ RAM để biết bước giá quy định (bidStep)
         AuctionSession session = SearchCacheManager.getInstance().getSession(sessionId);
-        if (session == null) return; // Phiên đã kết thúc và bị xóa khỏi RAM
+        if (session == null) return;
 
         Iterator<AutoBidSetting> iterator = queue.iterator();
 
         while (iterator.hasNext()) {
             AutoBidSetting setting = iterator.next();
 
-            // --- ĐIỀU KIỆN 1: Đang là người dẫn đầu (Chống tự đôn giá) ---
+            // --- ĐIỀU KIỆN 1: Đang là người dẫn đầu ---
             if (setting.getBidderId().equals(highestBidderId)) {
-                continue; // Giữ nguyên vị trí trong Queue và đi tiếp
+                continue;
             }
 
-            // --- ĐIỀU KIỆN 2: Tính toán bước giá hợp lệ (CHỐNG ĐỨT GÃY CHUỖI) ---
-            // Đảm bảo increment của người dùng KHÔNG BAO GIỜ nhỏ hơn bidStep của hệ thống
+            // --- ĐIỀU KIỆN 2: Tính toán bước giá hợp lệ ---
             BigDecimal validIncrement = setting.getIncrement().max(session.getBidStep());
             BigDecimal nextBidPrice = currentPrice.add(validIncrement);
 
             // --- ĐIỀU KIỆN 3: Chạm ngưỡng Max Bid (Hết tiền) ---
             if (setting.getMaxBid().compareTo(nextBidPrice) < 0) {
-                // a) Xóa vĩnh viễn user này khỏi hàng đợi Auto-bid
+                // a) Xóa vĩnh viễn user này khỏi hàng đợi Auto-bid RAM
                 iterator.remove();
 
-                // b) Đóng gói Packet thông báo
+                // b) [LOGIC DATABASE 3]: Xóa vĩnh viễn khỏi DB (Bắt buộc dùng luồng riêng để không kẹt luồng AutoBid)
+                CompletableFuture.runAsync(() -> {
+                    AutoBidSettingDAO.getInstance().deleteAutoBid(sessionId, setting.getBidderId());
+                });
+
+                // c) Đóng gói Packet thông báo
                 ResponsePacket<Void> cancelPacket = new ResponsePacket<>(
                         ActionType.CANCEL_AUTO_BID,
                         400,
@@ -149,11 +142,11 @@ public class AutoBidManager {
                         null
                 );
 
-                // c) Gửi thông báo riêng rẽ
+                // d) Gửi thông báo riêng rẽ
                 RealtimeBroadcastService.getInstance().sendPrivateMessage(setting.getBidderId(), cancelPacket);
                 log.info("[INFO] Đã gỡ Auto-Bid của User [" + setting.getBidderId() + "] do chạm ngưỡng maxBid.");
 
-                continue; // Vẫn tiếp tục vòng lặp để xét người đủ tiền phía sau!
+                continue;
             }
 
             // --- ĐIỀU KIỆN 4: Đủ điều kiện đấu giá ---
@@ -163,11 +156,54 @@ public class AutoBidManager {
 
             log.info("[INFO] Kích hoạt Auto-Bid cho User [" + setting.getBidderId() + "], giá đặt tự động: " + nextBidPrice);
 
-            // Đẩy lệnh trả giá vào lưới xử lý lõi
             InMemoryBidServiceImpl.getInstance().enqueueBid(autoRequest, setting.getBidderId());
 
-            // BREAK ĐỂ NHƯỜNG LUỒNG, Tránh xả 1 lúc 10 request gây nghẽn Queue
             break;
+        }
+    }
+
+    /**
+     * Dọn dẹp toàn bộ AutoBid trên RAM khi phiên kết thúc.
+     * (Lệnh xóa DB toàn bộ theo SessionId sẽ được gọi ở InMemoryBidServiceImpl.handleAuctionEnd)
+     */
+    public void clearSessionQueue(String sessionId) {
+        if (sessionId != null) {
+            autoBidQueues.remove(sessionId);
+            AutoBidSettingDAO.getInstance().deleteAllBySessionId(sessionId);
+            log.info("[INFO] Đã dọn dẹp hàng đợi Auto-bid cho phiên [" + sessionId + "]");
+        }
+    }
+    /**
+     * Dọn dẹp toàn bộ Auto-bid trên RAM (và DB) khi một User bị khóa/ban tài khoản.
+     * Đảm bảo User bị ban không thể tiếp tục "bóng ma" trả giá ở bất kỳ phiên nào.
+     * * @param bannedUserId ID của người dùng vừa bị khóa/xóa.
+     */
+    public void removeAutoBidsForBannedUser(String bannedUserId) {
+        if (bannedUserId == null) return;
+        AutoBidSettingDAO.getInstance().deleteAllByBidderId(bannedUserId);
+
+        int removedCount = 0;
+
+        // Duyệt qua tất cả các hàng đợi Auto-bid của tất cả các phiên đang chạy
+        // Dùng entrySet() thay vì keySet() để duyệt nhanh hơn (O(n) thay vì O(n log n))
+        for (java.util.Map.Entry<String, ConcurrentLinkedQueue<AutoBidSetting>> entry : autoBidQueues.entrySet()) {
+            String sessionId = entry.getKey();
+            ConcurrentLinkedQueue<AutoBidSetting> queue = entry.getValue();
+
+            // Lọc và xóa ngay lập tức user bị ban khỏi hàng đợi của phiên này
+            boolean removed = queue.removeIf(setting -> setting.getBidderId().equals(bannedUserId));
+
+            if (removed) {
+                removedCount++;
+                // Tối ưu RAM: Xóa luôn cái key của phòng nếu phòng đó không còn ai dùng Auto-bid nữa
+                if (queue.isEmpty()) {
+                    autoBidQueues.remove(sessionId);
+                }
+            }
+        }
+
+        if (removedCount > 0) {
+            log.info("[INFO] BAN USER: Đã dọn dẹp thành công " + removedCount + " cài đặt Auto-bid của User [" + bannedUserId + "].");
         }
     }
 }

@@ -312,4 +312,51 @@ public class UserDAO implements IUserDAO {
         }
         return false;
     }
+    @Override
+    public boolean updateSessionToken(String userId, String token) {
+        // Chỉ cập nhật duy nhất cột session_token dựa theo id (ép kiểu UUID)
+        String sql = "UPDATE users SET session_token = ?::uuid WHERE id = ?::uuid";
+
+        try (Connection conn = DatabaseConnectionPool.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            // Truyền giá trị token (có thể là null nếu hủy phiên/logout)
+            if (token != null) {
+                ps.setString(1, token);
+            } else {
+                ps.setNull(1, Types.VARCHAR);
+            }
+
+            ps.setString(2, userId);
+
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            // Ghi nhận lỗi chi tiết kèm stacktrace qua SLF4J
+            log.error("[UserDAO] Lỗi updateSessionToken: ", e);
+            return false;
+        }
+    }
+    @Override
+    public String getTokenById(String userId) {
+        // Chỉ select đúng cột session_token để tối ưu tốc độ và dung lượng truyền tải
+        String sql = "SELECT session_token FROM users WHERE id = ?::uuid";
+
+        try (Connection conn = DatabaseConnectionPool.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            // Ép kiểu ?::uuid trực tiếp trong SQL cho khóa chính PostgreSQL
+            ps.setString(1, userId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("session_token"); // Có thể trả về chuỗi token hoặc null nếu chưa đăng nhập
+                }
+            }
+        } catch (SQLException e) {
+            // Ghi nhận lỗi kèm đầy đủ Stack Trace qua SLF4J
+            log.error("[UserDAO] Lỗi getTokenById: ", e);
+        }
+        return null; // Trả về null nếu xảy ra ngoại lệ hoặc không tìm thấy User
+    }
 }

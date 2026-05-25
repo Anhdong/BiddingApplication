@@ -106,6 +106,8 @@ public class AdminService {
         if (!isUpdated) {
             throw new BusinessException("Lỗi hệ thống: Không thể cập nhật trạng thái người dùng.");
         }
+        //4.1  Xóa các cài đặt hiện có của bidder trong các phiên đấu giá
+        AutoBidManager.getInstance().removeAutoBidsForBannedUser(request.getTargetId());
 
         // 5. Thực hiện nghiệp vụ (Bước 2): Ngắt kết nối Socket (Side-effect) [cite: 970]
         // Sau khi lưu DB thành công mới "đá" người dùng ra khỏi mạng

@@ -15,4 +15,6 @@ public interface IUserDAO {
     public List<User> getAllUsers();
     public List<User> searchUsers(String keyword, String role, Boolean status);
     public boolean deleteUser(String userId);
+    boolean updateSessionToken(String userId, String token);
+    String getTokenById(String userId);
 }

@@ -1,5 +1,6 @@
 package com.uet.BiddingApplication.ServerClass;
 
+import com.uet.BiddingApplication.DAO.Impl.UserDAO;
 import com.uet.BiddingApplication.DTO.Packet.RequestPacket;
 import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
 import com.uet.BiddingApplication.Enum.ActionType;
@@ -73,7 +74,16 @@ public class ClientConnectionHandler implements Runnable {
             forceClose("Luồng đọc dữ liệu kết thúc (Client ngắt kết nối hoặc lỗi mạng)");
 
             if (userId != null) {
-                // 2. Dọn dẹp phòng Realtime: Đảm bảo Server không gửi tin vào kết nối chết
+                // 2. Dọn dẹp
+                //2.1 token
+                try {
+                    // Gọi DAO để set session_token = null cho user này
+                    UserDAO.getInstance().updateSessionToken(userId, null);
+                    log.info("[Cleanup] Đã xóa Token trong DB cho user bị ngắt kết nối: " + userId);
+                } catch (Exception e) {
+                    log.error("[Cleanup] Lỗi xóa Token trong DB cho user " + userId + ": " + e.getMessage());
+                }
+                //2.2 phòng
                 try {
                     // Gọi hàm xóa theo đúng góp ý của bạn để chống lỗi phòng đấu giá
                     RealtimeBroadcastService.getInstance().unsubscribeFromAll(userId);

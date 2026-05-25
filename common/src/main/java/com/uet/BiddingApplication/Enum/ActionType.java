@@ -10,6 +10,7 @@ public enum ActionType {
     JOIN_SESSION, //Gửi khi Bidder nhấn nút vào phòng.
     LEAVE_SESSION,//Gửi khi Bidder chủ động thoát phòng.
     FORCE_LOGOUT, //Server bắn xuống để thông báo tài khoản bị "đá" hoặc bị khóa.
+    RECONNECT_SESSION,
 
     // Nhóm Admin (Quản trị viên - 5 hành động)
     GET_ALL_USERS, // Lấy danh sách User để quản lý

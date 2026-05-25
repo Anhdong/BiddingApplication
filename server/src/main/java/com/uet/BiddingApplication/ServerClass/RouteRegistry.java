@@ -77,6 +77,11 @@ public class RouteRegistry {
             return new ResponsePacket<>(ActionType.UPDATE_PROFILE, 200, "Cập nhật thông tin thành công", null);
         });
 
+        registry.put(ActionType.RECONNECT_SESSION,req ->{
+            AuthService.getInstance().reconnect(req.getUserId(), req.getToken());
+            return new ResponsePacket<>(ActionType.RECONNECT_SESSION,200,"Khôi phục kết nối thành công",null);
+        });
+
         // ==============================================================================
         // 2. NHÓM QUẢN TRỊ VIÊN (AdminService)
         // ==============================================================================
