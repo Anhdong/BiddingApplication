@@ -79,6 +79,8 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
     private final Consumer<ResponsePacket<?>> priceUpdateCallback = this::handlePriceUpdateResponse;
     private final Consumer<ResponsePacket<?>> sessionEndCallback = this::handleSessionEndResponse;
     private final Consumer<ResponsePacket<?>> autoBidCancelCallback = this::handleAutoBidCancelResponse;
+
+    private final Consumer<ResponsePacket<?>> placeManualBidCallback = this::handlePlaceManualBidResponse;
     //--INIT--
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -107,6 +109,9 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
         ResponseDispatcher.getInstance().subscribe(ActionType.REALTIME_PRICE_UPDATE, priceUpdateCallback);
         ResponseDispatcher.getInstance().subscribe(ActionType.REALTIME_SESSION_END, sessionEndCallback);
         ResponseDispatcher.getInstance().subscribe(ActionType.AUTO_BID_CANCEL, autoBidCancelCallback);
+
+        ResponseDispatcher.getInstance().subscribe(ActionType.PLACE_MANUAL_BID, placeManualBidCallback);
+
         //Request join room
         requestJoinSession();
         requestSubscribeRealtime();
@@ -121,6 +126,8 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
         ResponseDispatcher.getInstance().unsubscribe(ActionType.REALTIME_PRICE_UPDATE, priceUpdateCallback);
         ResponseDispatcher.getInstance().unsubscribe(ActionType.REALTIME_SESSION_END, sessionEndCallback);
         ResponseDispatcher.getInstance().unsubscribe(ActionType.AUTO_BID_CANCEL, autoBidCancelCallback);
+
+        ResponseDispatcher.getInstance().unsubscribe(ActionType.PLACE_MANUAL_BID, placeManualBidCallback);
 
         //Request leave room
         requestLeaveSession();
@@ -142,7 +149,7 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
         if (dto.getCurrentPrice() != null) currentBid = dto.getCurrentPrice();
 
         Platform.runLater(()->{
-            if(dto.getCurrentPrice() != null) lblCurrentBid.setText(dto.getCurrentPrice().toString());
+            if(dto.getCurrentPrice() != null) lblCurrentBid.setText("$"+dto.getCurrentPrice().toString());
             if(dto.getHighestBidderName() != null) lblBidder.setText(dto.getHighestBidderName());
             lblName.setText(dto.getItemName());
             txtDesc.setText(dto.getDescription());
@@ -216,7 +223,7 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
         Platform.runLater(() -> {
 
             currentBid = newBid.getBidAmount();
-            lblCurrentBid.setText(currentBid.toString());
+            lblCurrentBid.setText("$"+currentBid.toString());
             lblBidder.setText(newBid.getBidderName());
 
             // 1. Format thời gian thành chuỗi (ví dụ: "14:30:15") làm nhãn trục X
@@ -372,6 +379,16 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
             log.info("[Auction] Hủy đăng kí Auto Bid do vượt quá Max Bid");
         } else {
             log.error("[Aution] Không thể hủy đăng kí Auto Bid {}", response.getMessage());
+        }
+    }
+
+    //Place Manual Bid Reponse
+    private void handlePlaceManualBidResponse(ResponsePacket<?> response) {
+        if (response.getStatusCode() == 200) {
+            log.info("[Auction] Đặt giá thành công!");
+        } else {
+            NotificationUtil.showError(response.getMessage());
+            log.error("[Aution] Không thể đặt giá{}", response.getMessage());
         }
     }
 
