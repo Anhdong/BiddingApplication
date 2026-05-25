@@ -96,8 +96,8 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
 
         btnAutoBid.textProperty().bind(
                 javafx.beans.binding.Bindings.when(btnAutoBid.selectedProperty())
-                        .then("Enabled")
-                        .otherwise("Disabled")
+                        .then("Disable")
+                        .otherwise("Enable")
         );
 
         UIUtil.roundedImageView(imgItem);
