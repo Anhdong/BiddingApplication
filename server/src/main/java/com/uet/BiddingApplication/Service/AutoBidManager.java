@@ -5,6 +5,7 @@ import com.uet.BiddingApplication.CoreService.SearchCacheManager;
 import com.uet.BiddingApplication.DTO.Request.BidRequestDTO;
 import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
 import com.uet.BiddingApplication.Enum.ActionType;
+import com.uet.BiddingApplication.Enum.BidType;
 import com.uet.BiddingApplication.Model.AuctionSession;
 import com.uet.BiddingApplication.Model.AutoBidSetting;
 // Giả định import DAO bạn vừa tạo
@@ -130,13 +131,13 @@ public class AutoBidManager {
 
                 // b) [LOGIC DATABASE 3]: Xóa vĩnh viễn khỏi DB (Bắt buộc dùng luồng riêng để không kẹt luồng AutoBid)
                 CompletableFuture.runAsync(() -> {
-                    AutoBidSettingDAO.getInstance().deleteAutoBid(sessionId, setting.getBidderId());
+                    AutoBidSettingDAO.getInstance().deleteAutoBid(setting.getBidderId(),sessionId);
                 });
 
                 // c) Đóng gói Packet thông báo
                 ResponsePacket<Void> cancelPacket = new ResponsePacket<>(
-                        ActionType.CANCEL_AUTO_BID,
-                        400,
+                        ActionType.AUTO_BID_CANCEL,
+                        200,
                         "Hệ thống đã ngừng Auto-Bid do giới hạn giá tối đa của bạn không đủ để theo vòng mới.",
                         null
                 );
@@ -152,6 +153,7 @@ public class AutoBidManager {
             BidRequestDTO autoRequest = new BidRequestDTO();
             autoRequest.setSessionId(sessionId);
             autoRequest.setBidAmount(nextBidPrice);
+            autoRequest.setBidType(BidType.AUTO);
 
             log.info("[INFO] Kích hoạt Auto-Bid cho User [" + setting.getBidderId() + "], giá đặt tự động: " + nextBidPrice);
 

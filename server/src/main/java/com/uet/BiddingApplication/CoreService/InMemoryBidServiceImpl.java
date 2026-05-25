@@ -90,20 +90,29 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
         AuctionSession session = searchCacheManager.getSession(sessionId);
         if (session == null) return;
 
-        long delaySeconds = ChronoUnit.SECONDS.between(LocalDateTime.now(), session.getEndTime());
+        // [SỬA LỖI Ở ĐÂY]: Đổi SECONDS thành MILLIS để có độ chính xác tuyệt đối
+        long delayMillis = ChronoUnit.MILLIS.between(LocalDateTime.now(), session.getEndTime());
+
         ScheduledFuture<?> oldTask = scheduledTasks.get(sessionId);
         if (oldTask != null && !oldTask.isDone()) {
             oldTask.cancel(false);
         }
-        if (delaySeconds <= 0) {
+
+        // Chỉ kết thúc ngay nếu độ trễ thực sự chạm đáy <= 0 mili-giây
+        if (delayMillis <= 0) {
             handleAuctionEnd(sessionId);
             return;
         }
 
-        // Tạo Task đếm ngược và lưu trữ "điều khiển" (Future) vào Map
+        // [SỬA LỖI Ở ĐÂY]: Lên lịch với TimeUnit.MILLISECONDS
         ScheduledFuture<?> futureTask = scheduler.schedule(() -> {
-            handleAuctionEnd(sessionId);
-        }, delaySeconds, TimeUnit.SECONDS);
+            try {
+                log.info("[TIMER] Luồng đếm ngược kích hoạt đóng phiên: " + sessionId);
+                handleAuctionEnd(sessionId);
+            } catch (Throwable t) {
+                log.error("[CRITICAL ERROR] Lỗi nghiêm trọng khi đang đóng phiên trong luồng ẩn: " + sessionId, t);
+            }
+        }, delayMillis, TimeUnit.MILLISECONDS);
 
         scheduledTasks.put(sessionId, futureTask);
     }
