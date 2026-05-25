@@ -226,7 +226,7 @@ public class SellerItemsFormController implements Initializable, ViewControllerL
                     imageExtension = matcher.group(1).toLowerCase();
                 }
 
-            } catch (IOException e){log.error("Cannot convert image file into byte[]");}
+            } catch (IOException e){log.error("Cannot convert image file into byte[]", e);}
         }
     }
 

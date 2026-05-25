@@ -107,7 +107,7 @@ public class LoginController implements Initializable {
                 Scene currentScene = primaryStage.getScene();
                 currentScene.setRoot(registerRoot);
             });
-        } catch (Exception e) {log.error("[LoginController] Cannot load RegisterView");}
+        } catch (Exception e) {log.error("[LoginController] Cannot load RegisterView",e);}
 
 
     }
@@ -122,7 +122,7 @@ public class LoginController implements Initializable {
                 currentScene.setRoot(mainRoot);
             });
 
-        } catch (Exception e) {log.error("[LoginController] Cannot load Main");}
+        } catch (Exception e) {log.error("[LoginController] Cannot load Main",e);}
 
 
     }

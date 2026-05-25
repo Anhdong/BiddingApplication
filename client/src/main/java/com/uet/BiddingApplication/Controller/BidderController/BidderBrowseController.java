@@ -17,7 +17,6 @@ import com.uet.BiddingApplication.Session.ServerConnection;
 import com.uet.BiddingApplication.Util.AppExecutor;
 import com.uet.BiddingApplication.Util.NotificationUtil;
 import com.uet.BiddingApplication.Util.RegisteredSessionUtil;
-import com.uet.BiddingApplication.Utils.PacketTypeRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

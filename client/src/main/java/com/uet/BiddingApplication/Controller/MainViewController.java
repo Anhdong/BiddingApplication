@@ -1,7 +1,7 @@
 package com.uet.BiddingApplication.Controller;
 
-import com.uet.BiddingApplication.Enum.ViewPath;
 import com.uet.BiddingApplication.Enum.RoleType;
+import com.uet.BiddingApplication.Enum.ViewPath;
 import com.uet.BiddingApplication.Interface.ViewControllerLifecycle;
 import com.uet.BiddingApplication.Session.ClientSession;
 import javafx.application.Platform;
