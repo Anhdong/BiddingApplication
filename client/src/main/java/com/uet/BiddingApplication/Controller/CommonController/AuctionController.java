@@ -131,20 +131,21 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
             lblTimer.setText("Auction End!");
         }
 
-        // Khởi tạo series
-        bidHistorySeries = new XYChart.Series<>();
-        lcHistory.getData().clear();
-        lcHistory.getData().add(bidHistorySeries);
-
         minBid = dto.getBidStep();
         if (dto.getCurrentPrice() != null) currentBid = dto.getCurrentPrice();
-
         //TODO set autoBid button on join
+
         Platform.runLater(()->{
             if(dto.getCurrentPrice() != null) lblCurrentBid.setText(dto.getCurrentPrice().toString());
             if(dto.getHighestBidderName() != null) lblBidder.setText(dto.getHighestBidderName());
             lblName.setText(dto.getItemName());
             txtDesc.setText(dto.getDescription());
+
+            // Khởi tạo series
+            bidHistorySeries = new XYChart.Series<>();
+            lcHistory.getData().clear();
+            lcHistory.getData().add(bidHistorySeries);
+
             if (dto.getImageURL() != null) imgItem.setImage(new Image(dto.getImageURL()));
         });
 
