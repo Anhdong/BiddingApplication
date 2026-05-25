@@ -65,7 +65,7 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
 
     private XYChart.Series<String, Number> bidHistorySeries;
     private BigDecimal currentBid = new BigDecimal(0);
-    private BigDecimal bidStep;
+    private BigDecimal minBid;
 
 
     //--STATE--
@@ -113,7 +113,7 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
         ResponseDispatcher.getInstance().unsubscribe(ActionType.JOIN_SESSION, joinSessionCallback);
         ResponseDispatcher.getInstance().unsubscribe(ActionType.REALTIME_PRICE_UPDATE, priceUpdateCallback);
         ResponseDispatcher.getInstance().unsubscribe(ActionType.REALTIME_SESSION_END, sessionEndCallback);
-        ResponseDispatcher.getInstance().subscribe(ActionType.AUTO_BID_CANCEL, autoBidCancelCallback);
+        ResponseDispatcher.getInstance().unsubscribe(ActionType.AUTO_BID_CANCEL, autoBidCancelCallback);
 
         //Request leave room
         requestLeaveSession();
@@ -131,15 +131,18 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
             lblTimer.setText("Auction End!");
         }
 
-        bidStep = dto.getBidStep();
+        // Khởi tạo series
+        bidHistorySeries = new XYChart.Series<>();
+        lcHistory.getData().clear();
+        lcHistory.getData().add(bidHistorySeries);
+
+        minBid = dto.getBidStep();
         if (dto.getCurrentPrice() != null) currentBid = dto.getCurrentPrice();
 
         //TODO set autoBid button on join
         Platform.runLater(()->{
-            try{
-            lblCurrentBid.setText(dto.getCurrentPrice().toString());}
-            catch(NullPointerException e){log.error("[Auction]{}", e.getMessage());}
-            lblBidder.setText(dto.getHighestBidderName());
+            if(dto.getCurrentPrice() != null) lblCurrentBid.setText(dto.getCurrentPrice().toString());
+            if(dto.getHighestBidderName() != null) lblBidder.setText(dto.getHighestBidderName());
             lblName.setText(dto.getItemName());
             txtDesc.setText(dto.getDescription());
             if (dto.getImageURL() != null) imgItem.setImage(new Image(dto.getImageURL()));
@@ -337,7 +340,7 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
             SessionResultDTO info = (SessionResultDTO) response.getPayload();
             NotificationUtil.showInfo("The auction has ended!");
             RoleType role=  ClientSession.getInstance().getCurrentUser().getRole();
-            
+
             //Navigate user back to page
             if(role == RoleType.BIDDER) MainViewController.getInstance().loadView(ViewPath.BIDDER_WATCHLIST);
             else if (role == RoleType.SELLER) MainViewController.getInstance().loadView(ViewPath.SELLER_ITEMS);
@@ -360,18 +363,51 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
     //--BUTTON ACTION--
     @FXML
     public void handleManualBid(){
-        if(txtBidAmount.getText().isEmpty()) NotificationUtil.showError("Bid amount cannot be empty.");
-        if(new BigDecimal(txtBidAmount.getText()).compareTo(currentBid) <= 0) NotificationUtil.showError("Bid amount cannot smaller than current bid");
+        if(txtBidAmount.getText().isEmpty()) {
+            NotificationUtil.showError("Bid amount cannot be empty.");
+            return;
+        }
+        try {
+            BigDecimal manualBid = new BigDecimal(txtBidAmount.getText());
+            if(manualBid.compareTo(currentBid) <= 0) {
+                NotificationUtil.showError("Bid amount cannot be smaller or equal than current bid");
+                return;
+            }
 
-        requestPlaceManualBid();
+            requestPlaceManualBid();
+        } catch (NumberFormatException e) {
+            NotificationUtil.showError("Bid amount is invalid!");
+        }
+
     }
 
     @FXML
     public void handleAutoBid(){
-        if (btnAutoBid.isSelected()) {
-            requestRegisterAutoBid();
-        } else {
+        // Nếu user bấm để TẮT Auto-Bid, thì ta KHÔNG CẦN validate ô nhập chữ, cứ cho họ tắt bình thường!
+        if (!btnAutoBid.isSelected()) {
             requestCancelAutoBid();
+            return;
+        }
+
+        // Xuống đến đây tức là user đang bấm BẬT (isSelected == true)
+        if(txtMaxBid.getText().isEmpty() || txtBidStep.getText().isEmpty()) {
+            NotificationUtil.showError("Bid increment or Max Bid cannot be empty");
+            btnAutoBid.setSelected(false);
+            return;
+        }
+
+        try {
+            BigDecimal step = new BigDecimal(txtBidStep.getText());
+            if(step.compareTo(minBid) < 0) {
+                NotificationUtil.showError("Bid step amount cannot be smaller than session minimum bid");
+                btnAutoBid.setSelected(false);
+                return;
+            }
+            requestRegisterAutoBid();
+
+        } catch (NumberFormatException e) {
+            NotificationUtil.showError("Number only");
+            btnAutoBid.setSelected(false);
         }
     }
 }
