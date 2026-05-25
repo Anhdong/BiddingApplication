@@ -1,5 +1,6 @@
 package com.uet.BiddingApplication.Service;
 
+import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.util.List;
 
@@ -250,12 +251,13 @@ public class BidderService {
 
         // 6. Trả về đúng DTO mà Client mong đợi theo Registry (Fix: getSessionId -> getId)
         long endTime=session.getEndTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        BigDecimal currentPrice = session.getCurrentPrice()!=null?session.getCurrentPrice():session.getStartPrice();
         return new AuctionRoomSyncDTO(
                 session.getId(),
                 item.getName(),
                 imageURL,
                 item.getDescription(),
-                session.getCurrentPrice(),
+                currentPrice,
                 session.getBidStep(),
                 autoBidSetting,
                 endTime-System.currentTimeMillis(),

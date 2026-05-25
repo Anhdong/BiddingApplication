@@ -84,9 +84,8 @@ public class AutoBidManager {
             if (removed) {
                 // [LOGIC DATABASE 2]: Xóa khỏi DB (Bất đồng bộ để phản hồi Client nhanh nhất)
                 CompletableFuture.runAsync(() -> {
-                    AutoBidSettingDAO.getInstance().deleteAutoBid(sessionId, bidderId);
+                    AutoBidSettingDAO.getInstance().deleteAutoBid(bidderId,sessionId);
                 });
-
                 log.info("[INFO] User [" + bidderId + "] đã hủy Auto-bid tại phiên [" + sessionId + "]");
             }
 

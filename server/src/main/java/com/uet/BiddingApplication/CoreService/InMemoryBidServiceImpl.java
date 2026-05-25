@@ -112,8 +112,20 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 BidTask task = queue.take();
-                processSingleBid(task);
-            } catch (InterruptedException e) {
+                try {
+                    processSingleBid(task);
+                }catch (BusinessException e) {
+                    // [BỔ SUNG MỚI]: Bắt lỗi nghiệp vụ và gửi riêng cho user bị lỗi
+                    ResponsePacket<Void> errorPacket = new ResponsePacket<>(
+                            ActionType.PLACE_MANUAL_BID,
+                            400,
+                            e.getMessage(), // Hiển thị nguyên văn lỗi (Ví dụ: "Bạn đang là người dẫn đầu...")
+                            null
+                    );
+                    realtimeBroadcastService.sendPrivateMessage(task.bidderId, errorPacket);
+                }
+            }
+            catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 log.info("Worker " + workerId + " bị ngắt.");
             } catch (Exception e) {
@@ -130,6 +142,15 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
 
         // Phiên không tồn tại hoặc đã bị khóa (Ended)
         if (session == null || session.getStatus() != SessionStatus.RUNNING) return;
+        // Chặn Seller tự đặt giá cho hàng của mình (Đã có)
+        if (task.bidderId.equals(session.getSellerId())) {
+            throw new BusinessException("Không thể tự đặt giá cho sản phẩm của chính mình.");
+        }
+
+        // [BỔ SUNG MỚI]: Chặn tự đôn giá (Self-bidding)
+        if (task.bidderId.equals(session.getWinnerId())) {
+            throw new BusinessException("Bạn đang là người dẫn đầu, không thể tự nâng giá.");
+        }
 
         if (validateBid(req.getBidAmount(), session)) {
             // 1. Cập nhật Cache trên RAM
@@ -158,10 +179,8 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
 
                 RealtimeUpdateDTO updateData = new RealtimeUpdateDTO();
                 updateData.setLastBid(newHistory);
-                if(isUpdateTime) {
-                    long newEndTime=session.getEndTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-                    updateData.setRemainingMillis(newEndTime-System.currentTimeMillis());
-                }
+                long newEndTime=session.getEndTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+                updateData.setRemainingMillis(newEndTime-System.currentTimeMillis());
 
                 ResponsePacket<RealtimeUpdateDTO> packet = new ResponsePacket<>(
                         ActionType.REALTIME_PRICE_UPDATE, 200, "Có giá mới", updateData
