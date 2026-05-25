@@ -1,5 +1,7 @@
 package com.uet.BiddingApplication.DTO.Response;
 
+import com.uet.BiddingApplication.Model.AutoBidSetting;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -10,11 +12,13 @@ public class AuctionRoomSyncDTO {
     private String description;
     private BigDecimal currentPrice;
     private BigDecimal bidStep;
+    private AutoBidSetting autoBidSetting;
     private long remainingMillis; // Để chạy đồng hồ đếm ngược
     private List<BidHistoryDTO> history; // Để vẽ ngay lập tức cái table lúc mới vào
     private String highestBidderName; // Tên người đang giữ giá cao nhất hiện tại
 
-    public AuctionRoomSyncDTO(String sessionId,String sessionName,String imageURL,String description ,BigDecimal currentPrice,BigDecimal bidStep, long remainingMillis,
+    public AuctionRoomSyncDTO(String sessionId,String sessionName,String imageURL,String description ,BigDecimal currentPrice,BigDecimal bidStep,
+                              AutoBidSetting autoBidSetting,long remainingMillis,
                               List<BidHistoryDTO> history, String highestBidderName) {
         this.sessionId = sessionId;
         this.itemName = sessionName;
@@ -22,6 +26,7 @@ public class AuctionRoomSyncDTO {
         this.description = description;
         this.currentPrice = currentPrice;
         this.bidStep = bidStep;
+        this.autoBidSetting = autoBidSetting;
         this.remainingMillis=remainingMillis;
         this.history = history;
         this.highestBidderName = highestBidderName;
@@ -44,6 +49,14 @@ public class AuctionRoomSyncDTO {
     }
 
     public AuctionRoomSyncDTO() {
+    }
+
+    public AutoBidSetting getAutoBidSetting() {
+        return autoBidSetting;
+    }
+
+    public void setAutoBidSetting(AutoBidSetting autoBidSetting) {
+        this.autoBidSetting = autoBidSetting;
     }
 
     public BigDecimal getBidStep() {

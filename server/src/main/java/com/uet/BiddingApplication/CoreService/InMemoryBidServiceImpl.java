@@ -254,6 +254,8 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
 
             // 5. Giải tán phòng (Unsubscribe tất cả)
             realtimeBroadcastService.closeRoom(sessionId);
+            //6. Dọn autoBid
+            AutoBidManager.getInstance().clearSessionQueue(sessionId);
             log.info("Đã đóng phiên "+sessionId);
         } else {
             // Nếu Database lỗi (deadlock, rớt mạng chớp nhoáng), ta không để phiên bị "treo" chết trên RAM.
@@ -290,6 +292,7 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
         if (dbUpdated) {
             // 3. Xóa khỏi RAM
             searchCacheManager.removeSession(sessionId);
+            AutoBidManager.getInstance().clearSessionQueue(sessionId);
 
             // 4. Phát thanh giải tán phòng với lý do cụ thể
             SessionTargetDTO sessionTargetDTO = new SessionTargetDTO();

@@ -3,10 +3,7 @@ package com.uet.BiddingApplication.Service;
 import java.time.ZoneId;
 import java.util.List;
 
-import com.uet.BiddingApplication.DAO.Impl.AuctionSessionDAO;
-import com.uet.BiddingApplication.DAO.Impl.BidDAO;
-import com.uet.BiddingApplication.DAO.Impl.ItemDAO;
-import com.uet.BiddingApplication.DAO.Impl.SessionRegistrationDAO;
+import com.uet.BiddingApplication.DAO.Impl.*;
 import com.uet.BiddingApplication.DTO.Request.SessionRegisterRequestDTO;
 import com.uet.BiddingApplication.DTO.Request.SessionTargetRequestDTO;
 import com.uet.BiddingApplication.DTO.Response.AuctionCardDTO;
@@ -16,6 +13,7 @@ import com.uet.BiddingApplication.DTO.Response.BidderHistoryResponseDTO;
 import com.uet.BiddingApplication.Enum.SessionStatus;
 import com.uet.BiddingApplication.Exception.BusinessException;
 import com.uet.BiddingApplication.Model.AuctionSession;
+import com.uet.BiddingApplication.Model.AutoBidSetting;
 import com.uet.BiddingApplication.Model.Item;
 import com.uet.BiddingApplication.Model.SessionRegistration;
 import com.uet.BiddingApplication.Utils.Mapper.AuctionSessionMapper;
@@ -244,6 +242,8 @@ public class BidderService {
         if (sessionHistory != null && !sessionHistory.isEmpty()) {
             highestBidderName = sessionHistory.getFirst().getBidderName();
         }
+        // 4.4 Lấy AutoBid của bidder
+        AutoBidSetting autoBidSetting= AutoBidSettingDAO.getInstance().getAutoBid(bidderId,sessionId);
 
         // 5. Mở luồng Realtime
         RealtimeBroadcastService.getInstance().subscribe(sessionId, bidderId);
@@ -257,6 +257,7 @@ public class BidderService {
                 item.getDescription(),
                 session.getCurrentPrice(),
                 session.getBidStep(),
+                autoBidSetting,
                 endTime-System.currentTimeMillis(),
                 sessionHistory,
                 highestBidderName
