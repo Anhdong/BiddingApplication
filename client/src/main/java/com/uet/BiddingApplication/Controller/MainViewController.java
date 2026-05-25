@@ -122,4 +122,17 @@ public class MainViewController implements Initializable {
             log.error("[MainViewController] Không thể thiết lập giao diện nội dung: {}", target.getPath());
         }
     }
+
+    public void clearCacheOnLogout(){
+        if (currentController instanceof ViewControllerLifecycle lifecycleController) {
+            lifecycleController.onHide();
+        }
+
+        currentController = null;
+
+        viewCache.clear();
+        controllerCache.clear();
+
+        log.info("[MainViewController] Đã dọn sạch bộ nhớ Cache Giao diện!");
+    }
 }

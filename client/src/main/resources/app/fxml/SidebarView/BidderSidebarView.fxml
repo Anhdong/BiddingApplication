@@ -8,11 +8,12 @@
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="200.0" prefHeight="800.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.uet.BiddingApplication.Controller.SidebarController.BidderSidebarController">
+<VBox alignment="TOP_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="200.0" prefHeight="800.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.uet.BiddingApplication.Controller.SidebarController.BidderSidebarController">
    <children>
       <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="32.0">
          <children>
@@ -75,5 +76,14 @@
             <FontIcon iconLiteral="mdi2h-history" styleClass="medium-icon" />
          </graphic>
       </ToggleButton>
+      <Region prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+      <FontIcon fx:id="btnSetting" iconLiteral="mdi2c-cog" onMouseClicked="#showSettingsMenu" styleClass="large-icon">
+         <VBox.margin>
+            <Insets bottom="16.0" right="16.0" />
+         </VBox.margin>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </FontIcon>
    </children>
 </VBox>
