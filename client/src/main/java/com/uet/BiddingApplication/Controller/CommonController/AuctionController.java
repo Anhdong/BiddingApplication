@@ -1,21 +1,32 @@
 package com.uet.BiddingApplication.Controller.CommonController;
 
+import com.uet.BiddingApplication.Controller.MainViewController;
 import com.uet.BiddingApplication.DTO.Packet.RequestPacket;
 import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
+import com.uet.BiddingApplication.DTO.Request.AutoBidRegisterDTO;
+import com.uet.BiddingApplication.DTO.Request.BidRequestDTO;
 import com.uet.BiddingApplication.DTO.Request.SessionTargetRequestDTO;
-import com.uet.BiddingApplication.DTO.Response.AuctionCardDTO;
 import com.uet.BiddingApplication.DTO.Response.AuctionRoomSyncDTO;
 import com.uet.BiddingApplication.DTO.Response.BidHistoryDTO;
+import com.uet.BiddingApplication.DTO.Response.RealtimeUpdateDTO;
+import com.uet.BiddingApplication.DTO.Response.SessionResultDTO;
 import com.uet.BiddingApplication.Enum.ActionType;
+import com.uet.BiddingApplication.Enum.BidType;
 import com.uet.BiddingApplication.Enum.RoleType;
+import com.uet.BiddingApplication.Enum.ViewPath;
 import com.uet.BiddingApplication.Interface.ViewControllerLifecycle;
 import com.uet.BiddingApplication.Session.ClientSession;
 import com.uet.BiddingApplication.Session.ResponseDispatcher;
 import com.uet.BiddingApplication.Session.ServerConnection;
+import com.uet.BiddingApplication.Util.NotificationUtil;
 import com.uet.BiddingApplication.Util.UIUtil;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -24,13 +35,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.net.URL;
-import java.time.LocalDateTime;
-import java.util.List;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
@@ -42,17 +53,20 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
     @FXML ImageView imgItem;
     @FXML Label lblName, lblTimer, lblCurrentBid, lblBidder;
     @FXML Text txtDesc;
-    @FXML LineChart lcHistory;
-    @FXML TextField txtMinBid, txtMaxBid, txtBidAmount;
+    @FXML LineChart<String,Number> lcHistory;
+    @FXML TextField txtBidStep, txtMaxBid, txtBidAmount;
     @FXML ToggleButton btnAutoBid;
     @FXML Button btnManualBid;
     @FXML VBox vbxAutoBid, vbxManualBid;
 
     //--FIELDS--
-    private long remainingTime;
-    private LocalDateTime endTime;
-    private BigDecimal minBid = null;
-    private List<BidHistoryDTO> history;
+    private long endTimeMillis;
+    private Timeline countdownTimeline;
+
+    private XYChart.Series<String, Number> bidHistorySeries;
+    private BigDecimal currentBid = new BigDecimal(0);
+    private BigDecimal bidStep;
+
 
     //--STATE--
     private String currentSessionId = null;
@@ -61,10 +75,13 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
 
     //--CALLBACKS--
     private final Consumer<ResponsePacket<?>> joinSessionCallback = this::handleJoinSessionResponse;
-
+    private final Consumer<ResponsePacket<?>> priceUpdateCallback = this::handlePriceUpdateResponse;
+    private final Consumer<ResponsePacket<?>> sessionEndCallback = this::handleSessionEndResponse;
+    private final Consumer<ResponsePacket<?>> autoBidCancelCallback = this::handleAutoBidCancelResponse;
     //--INIT--
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        //Check RoleType to hide bid elements
         if(ClientSession.getInstance().getCurrentUser().getRole() != RoleType.BIDDER){
             log.info("[Auction] Prepare auction room for seller");
             vbxAutoBid.setManaged(false);
@@ -80,7 +97,9 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
     @Override
     public void onShow() {
         ResponseDispatcher.getInstance().subscribe(ActionType.JOIN_SESSION, joinSessionCallback);
-
+        ResponseDispatcher.getInstance().subscribe(ActionType.REALTIME_PRICE_UPDATE, priceUpdateCallback);
+        ResponseDispatcher.getInstance().subscribe(ActionType.REALTIME_SESSION_END, sessionEndCallback);
+        ResponseDispatcher.getInstance().subscribe(ActionType.AUTO_BID_CANCEL, autoBidCancelCallback);
         //Request join room
         requestJoinSession();
         requestSubscribeRealtime();
@@ -88,7 +107,13 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
 
     @Override
     public void onHide() {
+        //Turn of TimeLine CountDown
+        if (countdownTimeline != null) countdownTimeline.stop();
+
         ResponseDispatcher.getInstance().unsubscribe(ActionType.JOIN_SESSION, joinSessionCallback);
+        ResponseDispatcher.getInstance().unsubscribe(ActionType.REALTIME_PRICE_UPDATE, priceUpdateCallback);
+        ResponseDispatcher.getInstance().unsubscribe(ActionType.REALTIME_SESSION_END, sessionEndCallback);
+        ResponseDispatcher.getInstance().subscribe(ActionType.AUTO_BID_CANCEL, autoBidCancelCallback);
 
         //Request leave room
         requestLeaveSession();
@@ -97,18 +122,103 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
 
     //--MAIN METHODS--
     private void setData(AuctionRoomSyncDTO dto){
-        remainingTime = dto.getRemainingMillis();
+        log.info("[Auction] Thiết lập giao diện phòng đấu giá");
 
-        minBid = dto.getBidStep();
+        //Coundown Timer
+        if (dto.getRemainingMillis() > 0) {
+            startCountdownTimer(dto.getRemainingMillis());
+        } else {
+            lblTimer.setText("Auction End!");
+        }
 
-        lblCurrentBid.setText(dto.getCurrentPrice().toString());
-        lblBidder.setText(dto.getHighestBidderName());
+        bidStep = dto.getBidStep();
+        if (dto.getCurrentPrice() != null) currentBid = dto.getCurrentPrice();
 
-        history = dto.getHistory();
+        //TODO set autoBid button on join
+        Platform.runLater(()->{
+            try{
+            lblCurrentBid.setText(dto.getCurrentPrice().toString());}
+            catch(NullPointerException e){log.error("[Auction]{}", e.getMessage());}
+            lblBidder.setText(dto.getHighestBidderName());
+            lblName.setText(dto.getItemName());
+            txtDesc.setText(dto.getDescription());
+            if (dto.getImageURL() != null) imgItem.setImage(new Image(dto.getImageURL()));
+        });
 
-        //set lbl name and desc;
-        if(dto.getImageURL()!= null) imgItem.setImage(new Image(dto.getImageURL()));
+        for (BidHistoryDTO newBid : dto.getHistory()) handleNewBidHistory(newBid);
     }
+
+    private void startCountdownTimer(long remainingMillis) {
+        // 1. Dừng timer cũ nếu có (phòng trường hợp bấm linh tinh)
+        if (countdownTimeline != null) {
+            countdownTimeline.stop();
+        }
+
+        // 2. Tính ra chính xác thời điểm kết thúc (tuyệt đối)
+        endTimeMillis = System.currentTimeMillis() + remainingMillis;
+
+        // 3. Tạo một Timeline chạy lặp lại mỗi 1 giây (1000 ms)
+        countdownTimeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+            // Lấy thời gian hiện tại
+            long currentTime = System.currentTimeMillis();
+            long timeLeft = endTimeMillis - currentTime;
+
+            // Nếu hết giờ
+            if (timeLeft <= 0) {
+                lblTimer.setText("00:00:00");
+                // Dừng đồng hồ
+                countdownTimeline.stop();
+                // Có thể xử lý thêm: Khóa nút Đặt giá, hiển thị chữ "Đã kết thúc" v.v.
+                return;
+            }
+
+            long seconds = timeLeft / 1000;
+
+            // Công thức tính Ngày, Giờ, Phút, Giây
+            long d = seconds / 86400;
+            long h = (seconds % 86400) / 3600;
+            long m = (seconds % 3600) / 60;
+            long s = seconds % 60;
+            // Cập nhật giao diện
+            if (d > 0) {
+                lblTimer.setText(String.format("%d days - %02d:%02d:%02d", d, h, m, s));
+            } else {
+                lblTimer.setText(String.format("%02d:%02d:%02d", h, m, s));
+            }
+        }));
+
+        // Cho phép Timeline chạy lặp vô hạn (cho đến khi ta gọi .stop() ở trên)
+        countdownTimeline.setCycleCount(Timeline.INDEFINITE);
+
+        // Bắt đầu chạy
+        countdownTimeline.play();
+    }
+
+    private void handleNewBidHistory(BidHistoryDTO newBid) {
+        Platform.runLater(() -> {
+
+            currentBid = newBid.getBidAmount();
+            lblCurrentBid.setText(currentBid.toString());
+            lblBidder.setText(newBid.getBidderName());
+
+            // 1. Format thời gian thành chuỗi (ví dụ: "14:30:15") làm nhãn trục X
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+            String timeStr = newBid.getTime().format(formatter);
+            Number price = currentBid;
+
+            // Create new data point
+            XYChart.Data<String, Number> newDataPoint = new XYChart.Data<>(timeStr, price);
+
+            if (bidHistorySeries != null) {
+                bidHistorySeries.getData().add(newDataPoint);
+
+                if (bidHistorySeries.getData().size() > 10) {
+                    bidHistorySeries.getData().removeFirst();
+                }
+            }
+        });
+    }
+
 
     //--NETWORK REQUEST--
     //ROOM ACTION
@@ -161,19 +271,107 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
         ServerConnection.getInstance().sendRequest(request);
     }
 
+    //Bid Action
+    private void requestPlaceManualBid(){
+        log.info("[Auction] Gửi yêu cầu đấu giá với mức giá: {}",txtBidAmount.getText());
+        RequestPacket<BidRequestDTO> request = new RequestPacket<>();
+
+        request.setToken(ClientSession.getInstance().getCurrentToken());
+        request.setUserId(ClientSession.getInstance().getCurrentUser().getId());
+        request.setAction(ActionType.PLACE_MANUAL_BID);
+        request.setPayload(new BidRequestDTO(currentSessionId,new BigDecimal(txtBidAmount.getText()), BidType.MANUAL));
+
+        ServerConnection.getInstance().sendRequest(request);
+    }
+    private void requestRegisterAutoBid(){
+        log.info("[Auction] Gửi yêu cầu đăng ký Auto Bid");
+        RequestPacket<AutoBidRegisterDTO> request = new RequestPacket<>();
+
+        request.setToken(ClientSession.getInstance().getCurrentToken());
+        request.setUserId(ClientSession.getInstance().getCurrentUser().getId());
+        request.setAction(ActionType.REGISTER_AUTO_BID);
+        request.setPayload(new AutoBidRegisterDTO(
+                currentSessionId, new BigDecimal(txtMaxBid.getText()), new BigDecimal(txtBidStep.getText())));
+
+        ServerConnection.getInstance().sendRequest(request);
+    }
+    private void requestCancelAutoBid(){
+        log.info("[Auction] Gửi yêu cầu hủy đăng ký Auto Bid");
+        RequestPacket<SessionTargetRequestDTO> request = new RequestPacket<>();
+
+        request.setToken(ClientSession.getInstance().getCurrentToken());
+        request.setUserId(ClientSession.getInstance().getCurrentUser().getId());
+        request.setAction(ActionType.CANCEL_AUTO_BID);
+        request.setPayload(new SessionTargetRequestDTO(currentSessionId));
+
+        ServerConnection.getInstance().sendRequest(request);
+    }
+
 
     //--HANDLE RESPONSE--
     private void handleJoinSessionResponse(ResponsePacket<?> response) {
         if (response.getStatusCode() == 200) {
-            // Ép kiểu payload về DTO
             AuctionRoomSyncDTO info = (AuctionRoomSyncDTO) response.getPayload();
-
-            //Gọi set dữ liệu lên màn hình
             setData(info);
-
             log.info("[Auction] Đã load thành công.");
         } else {
-            log.error("[Aution Lỗi từ server: {}", response.getMessage());
+            log.error("[Aution] Lỗi từ server: {}", response.getMessage());
+        }
+    }
+
+    private void handlePriceUpdateResponse(ResponsePacket<?> response) {
+        if (response.getStatusCode() == 200) {
+            RealtimeUpdateDTO dto = (RealtimeUpdateDTO) response.getPayload();
+
+            handleNewBidHistory(dto.getLastBid());
+            startCountdownTimer(dto.getRemainingMillis());
+
+            log.info("[Auction] Cập nhật giá thành công.");
+        } else {
+            log.error("[Aution] Cập nhật giá thất bại: {}", response.getMessage());
+        }
+    }
+
+    private void handleSessionEndResponse(ResponsePacket<?> response) {
+        if (response.getStatusCode() == 200) {
+            SessionResultDTO info = (SessionResultDTO) response.getPayload();
+            NotificationUtil.showInfo("The auction has ended!");
+            RoleType role=  ClientSession.getInstance().getCurrentUser().getRole();
+            
+            //Navigate user back to page
+            if(role == RoleType.BIDDER) MainViewController.getInstance().loadView(ViewPath.BIDDER_WATCHLIST);
+            else if (role == RoleType.SELLER) MainViewController.getInstance().loadView(ViewPath.SELLER_ITEMS);
+
+            log.info("[Auction] Phiên đấu giá kết thúc thành công");
+        } else {
+            log.error("[Aution] Phiên đấu giá kết thúc không thành công: {}", response.getMessage());
+        }
+    }
+
+    private void handleAutoBidCancelResponse(ResponsePacket<?> response) {
+        if (response.getStatusCode() == 200) {
+            Platform.runLater(() -> btnAutoBid.setSelected(false));
+            log.info("[Auction] Hủy đăng kí Auto Bid do vượt quá Max Bid");
+        } else {
+            log.error("[Aution] Không thể hủy đăng kí Auto Bid {}", response.getMessage());
+        }
+    }
+
+    //--BUTTON ACTION--
+    @FXML
+    public void handleManualBid(){
+        if(txtBidAmount.getText().isEmpty()) NotificationUtil.showError("Bid amount cannot be empty.");
+        if(new BigDecimal(txtBidAmount.getText()).compareTo(currentBid) <= 0) NotificationUtil.showError("Bid amount cannot smaller than current bid");
+
+        requestPlaceManualBid();
+    }
+
+    @FXML
+    public void handleAutoBid(){
+        if (btnAutoBid.isSelected()) {
+            requestRegisterAutoBid();
+        } else {
+            requestCancelAutoBid();
         }
     }
 }

@@ -104,7 +104,7 @@
                               <String fx:value="success" />
                            </styleClass>
                         </Label>
-                        <Label fx:id="lblBidder" text="Bidder Name">
+                        <Label fx:id="lblBidder" text="None">
                            <styleClass>
                               <String fx:value="text-muted" />
                               <String fx:value="text-bold" />
@@ -138,7 +138,7 @@
                               <String fx:value="text-bold" />
                            </styleClass>
                         </Label>
-                        <TextField fx:id="txtMinBid" maxWidth="1.7976931348623157E308" prefHeight="40.0" prefWidth="350.0" promptText="Bid Increment">
+                        <TextField fx:id="txtBidStep" maxWidth="1.7976931348623157E308" prefHeight="40.0" prefWidth="350.0" promptText="Bid Increment">
                            <VBox.margin>
                               <Insets />
                            </VBox.margin>
@@ -153,7 +153,7 @@
                               <String fx:value="rounded" />
                            </styleClass>
                         </TextField>
-                        <ToggleButton fx:id="btnAutoBid" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="40.0" text="Disabled">
+                        <ToggleButton fx:id="btnAutoBid" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleAutoBid" prefHeight="40.0" text="Disabled">
                            <styleClass>
                               <String fx:value="text-bold" />
                               <String fx:value="rounded" />
@@ -191,7 +191,7 @@
                               <String fx:value="rounded" />
                            </styleClass>
                         </TextField>
-                        <Button fx:id="btnManualBid" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="40.0" text="BID">
+                        <Button fx:id="btnManualBid" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleManualBid" prefHeight="40.0" text="BID">
                            <styleClass>
                               <String fx:value="title-3" />
                               <String fx:value="accent" />

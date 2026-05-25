@@ -76,7 +76,7 @@ public class BidderBrowseController extends BaseBrowseController {
         } //TODO: add logic to set up auction room khi STATUS == RUNNING
 
         // Button Action (Chỉ hiện nút Đăng ký khi trạng thái OPEN hoặc RUNNING)
-        if (status == SessionStatus.OPEN || status == SessionStatus.RUNNING) {
+        if (status == SessionStatus.OPEN) {
             controller.setButtonVisible(true);
             controller.setBtnAction("Add", event -> requestPreRegister(sessionId));
         } else {

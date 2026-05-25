@@ -1,6 +1,7 @@
 package com.uet.BiddingApplication.Controller.SellerController;
 
 import com.uet.BiddingApplication.Controller.BaseController.BaseBrowseController;
+import com.uet.BiddingApplication.Controller.CommonController.AuctionController;
 import com.uet.BiddingApplication.Controller.CommonController.ItemCardController;
 import com.uet.BiddingApplication.Controller.CommonController.ItemDetailController;
 import com.uet.BiddingApplication.Controller.MainViewController;
@@ -56,7 +57,10 @@ public class SellerItemsController extends BaseBrowseController {
         if (Objects.requireNonNull(status) == SessionStatus.OPEN) {
             controller.setCardAction(event -> MainViewController.getInstance().loadView(ViewPath.ITEM_DETAIL,
                     (ItemDetailController c) -> c.setCurrentSessionID(sessionId)));
-        } //TODO: add logic to set up auction room khi STATUS == RUNNING
+        } else if(status == SessionStatus.RUNNING) {
+            controller.setCardAction(event -> MainViewController.getInstance().loadView(ViewPath.AUCTION,
+                    (AuctionController c) -> c.setCurrentSessionId(sessionId)));
+        }
 
 
         // Button Action (Chỉ hiện nút chỉnh sửa khi OPEN)

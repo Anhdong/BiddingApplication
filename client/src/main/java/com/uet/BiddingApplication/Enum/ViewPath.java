@@ -16,7 +16,7 @@ public enum ViewPath {
     //COMMON
     ITEM_CARD("/app/fxml/CommonView/ItemCardView.fxml",false),
     ITEM_DETAIL("/app/fxml/CommonView/ItemDetailView.fxml",false),
-    AUCTION("/app/fxml/CommonView/AuctionRoomView.fxml", false), // KHÔNG CACHE: Phải load mới 100% mỗi khi vào 1 phòng đấu giá khác nhau
+    AUCTION("/app/fxml/CommonView/AuctionView.fxml", false), // KHÔNG CACHE: Phải load mới 100% mỗi khi vào 1 phòng đấu giá khác nhau
 
 
     // BIDDER
