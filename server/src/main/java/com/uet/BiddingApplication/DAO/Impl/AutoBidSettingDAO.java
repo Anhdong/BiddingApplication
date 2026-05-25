@@ -99,19 +99,7 @@ public class AutoBidSettingDAO implements IAutoBidSettingDAO {
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    AutoBidSetting autoBid = new AutoBidSetting();
-                    autoBid.setId(rs.getString("id"));
-                    autoBid.setSessionId(rs.getString("session_id"));
-                    autoBid.setBidderId(rs.getString("bidder_id"));
-                    autoBid.setMaxBid(rs.getBigDecimal("max_bid"));
-                    autoBid.setIncrement(rs.getBigDecimal("increment"));
-
-                    Timestamp createdAtTs = rs.getTimestamp("created_at");
-                    if (createdAtTs != null) {
-                        autoBid.setCreatedAt(createdAtTs.toLocalDateTime());
-                    }
-
-                    return autoBid;
+                    return mapRowToAutoBid(rs);
                 }
             }
         } catch (SQLException e) {
@@ -148,21 +136,7 @@ public class AutoBidSettingDAO implements IAutoBidSettingDAO {
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                AutoBidSetting autoBid = new AutoBidSetting();
-
-                // Mapping dữ liệu chuẩn xác
-                autoBid.setId(rs.getString("id"));
-                autoBid.setSessionId(rs.getString("session_id"));
-                autoBid.setBidderId(rs.getString("bidder_id"));
-                autoBid.setMaxBid(rs.getBigDecimal("max_bid"));
-                autoBid.setIncrement(rs.getBigDecimal("increment"));
-
-                Timestamp createdAtTs = rs.getTimestamp("created_at");
-                if (createdAtTs != null) {
-                    autoBid.setCreatedAt(createdAtTs.toLocalDateTime());
-                }
-
-                list.add(autoBid);
+                list.add(mapRowToAutoBid(rs));
             }
         } catch (SQLException e) {
             // Log lỗi chuẩn SLF4J đi kèm Stack Trace
@@ -190,5 +164,22 @@ public class AutoBidSettingDAO implements IAutoBidSettingDAO {
             log.error("[AutoBidSettingDAO] Lỗi deleteAllByBidderId: ", e);
             return false;
         }
+    }
+    // Helper method dùng nội bộ trong DAO để map dữ liệu, ném SQLException ra cho hàm gọi xử lý
+    private AutoBidSetting mapRowToAutoBid(ResultSet rs) throws SQLException {
+        AutoBidSetting autoBid = new AutoBidSetting();
+
+        autoBid.setId(rs.getString("id"));
+        autoBid.setSessionId(rs.getString("session_id"));
+        autoBid.setBidderId(rs.getString("bidder_id"));
+        autoBid.setMaxBid(rs.getBigDecimal("max_bid"));
+        autoBid.setIncrement(rs.getBigDecimal("increment"));
+
+        Timestamp createdAtTs = rs.getTimestamp("created_at");
+        if (createdAtTs != null) {
+            autoBid.setCreatedAt(createdAtTs.toLocalDateTime());
+        }
+
+        return autoBid;
     }
 }
