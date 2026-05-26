@@ -4,6 +4,7 @@ import com.uet.BiddingApplication.Controller.MainViewController;
 import com.uet.BiddingApplication.DTO.Packet.RequestPacket;
 import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
 import com.uet.BiddingApplication.DTO.Request.AuthRequestDTO;
+import com.uet.BiddingApplication.DTO.Response.AuctionCardDTO;
 import com.uet.BiddingApplication.DTO.Response.AuthResponseDTO;
 import com.uet.BiddingApplication.Enum.ActionType;
 import com.uet.BiddingApplication.Enum.ViewPath;
@@ -28,6 +29,7 @@ import javafx.scene.input.MouseEvent;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
@@ -42,10 +44,18 @@ public class BaseSidebarController implements Initializable {
     @FXML protected FontIcon btnSetting;
     @FXML protected ContextMenu settingsMenu;
 
+    //--CALLBACK--
+    private final Consumer<ResponsePacket<?>> forceLogoutCallback = this::handleForceLogoutResponse;
+    private final Consumer<ResponsePacket<?>> logoutCallback = this::handleLogoutResponse;
 
     //--INIT--
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        //Subscribe force logout
+        ResponseDispatcher.getInstance().subscribe(ActionType.FORCE_LOGOUT,forceLogoutCallback);
+        ResponseDispatcher.getInstance().subscribe(ActionType.LOGOUT,logoutCallback);
+
         // Cannot click off selected button & reload if reclick
         sidebarGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal == null) {
@@ -70,6 +80,35 @@ public class BaseSidebarController implements Initializable {
         });
     }
 
+    //--HANDLE RESPONSE--
+    private void handleLogoutResponse(ResponsePacket<?> response) {
+        if (response.getStatusCode() == 200) {
+            ResponseDispatcher.getInstance().unsubscribe(ActionType.LOGOUT,logoutCallback);
+
+            NotificationUtil.showInfo(response.getMessage());
+            log.info("[BaseSidebar] {}", response.getMessage());
+
+            handleLogout();
+        } else {
+            log.error("[BaseSidebar] Không thể logout tài khoản.");
+        }
+    }
+
+    private void handleForceLogoutResponse(ResponsePacket<?> response) {
+        if (response.getStatusCode() == 403) {
+            ResponseDispatcher.getInstance().unsubscribe(ActionType.FORCE_LOGOUT,forceLogoutCallback);
+
+            NotificationUtil.showInfo(response.getMessage());
+            log.info("[BaseSidebar] {}", response.getMessage());
+
+            handleLogout();
+
+            ServerConnection.getInstance().startAutoReconnect();
+        } else {
+            log.error("[BaseSidebar] Không thể force logout tài khoản.");
+        }
+    }
+
     //--MAIN METHODS--
     private void setupSettingsMenu(){
         //Create menu
@@ -83,7 +122,8 @@ public class BaseSidebarController implements Initializable {
 
         //Add Action on items
         itemLogout.setOnAction(event -> {
-            handleLogout();
+            log.info("[BaseSidebar] Gửi yêu cầu đăng xuất");
+            requestLogout();
         });
 
         //Add items
@@ -93,10 +133,6 @@ public class BaseSidebarController implements Initializable {
     protected void handleLogout(){
         //OnHide current controller
         MainViewController.getInstance().clearCacheOnLogout();
-
-        //Send Request
-        log.info("[BaseSidebar] Gửi yêu cầu đăng xuất");
-        requestLogout();
 
         //Switch to Login
         try {
