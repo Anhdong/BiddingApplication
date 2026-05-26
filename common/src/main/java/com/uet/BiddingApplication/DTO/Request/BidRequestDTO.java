@@ -6,13 +6,23 @@ import java.math.BigDecimal;
 
 public class BidRequestDTO  {
     private String sessionId;
+    private String bidderName;
     private BigDecimal bidAmount;
     private BidType bidType;
 
-    public BidRequestDTO(String sessionId, BigDecimal bidAmount, BidType bidType) {
+    public BidRequestDTO(String sessionId,String bidderName,BigDecimal bidAmount, BidType bidType) {
         this.sessionId = sessionId;
+        this.bidderName = bidderName;
         this.bidAmount = bidAmount;
         this.bidType = bidType;
+    }
+
+    public String getBidderName() {
+        return bidderName;
+    }
+
+    public void setBidderName(String bidderName) {
+        this.bidderName = bidderName;
     }
 
     public BidRequestDTO() {

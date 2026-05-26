@@ -108,7 +108,7 @@ public class SearchCacheManagerTest {
         // Assert
         AuctionSession updatedSession = cacheManager.getSession("session-1");
         assertEquals(new BigDecimal("500"), updatedSession.getCurrentPrice(), "Giá mới phải được cập nhật");
-        assertEquals("winner-99", updatedSession.getWinnerId(), "Người thắng mới phải được cập nhật");
+        assertEquals("winner-99", updatedSession.getWinnerName(), "Người thắng mới phải được cập nhật");
     }
 
     @Test
