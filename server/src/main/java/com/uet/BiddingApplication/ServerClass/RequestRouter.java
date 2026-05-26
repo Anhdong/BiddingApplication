@@ -68,6 +68,10 @@ public class RequestRouter {
                     client.setUserId(authData.getUserProfile().getId());
 
                     log.info("[Router] Đã định danh luồng kết nối với UserID: " + authData.getUserProfile().getId());
+                }else if (currentAction == ActionType.RECONNECT_SESSION && response.getStatusCode() == 200) {
+                    // Xử lý gói RECONNECT siêu nhẹ
+                    client.setUserId(request.getUserId());
+                    log.info("[Router] Đã định danh lại (RECONNECT) với UserID: " + request.getUserId());
                 }
                 client.sendPacket(response);
             }

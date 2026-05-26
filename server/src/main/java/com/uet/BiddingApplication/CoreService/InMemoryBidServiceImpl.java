@@ -222,9 +222,9 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
 
     public boolean checkAndHandleAntiSniping(AuctionSession session) {
         LocalDateTime now = LocalDateTime.now();
-        long secondsLeft = ChronoUnit.SECONDS.between(now, session.getEndTime());
+        long secondsLeft = ChronoUnit.MILLIS.between(now, session.getEndTime());
 
-        if (secondsLeft < 30) {
+        if (secondsLeft < 30000) {
             // [VÁ LỖI]: Hủy Task đếm ngược cũ trước khi tạo Task mới
             ScheduledFuture<?> oldTask = scheduledTasks.get(session.getId());
             if (oldTask != null && !oldTask.isDone()) {
