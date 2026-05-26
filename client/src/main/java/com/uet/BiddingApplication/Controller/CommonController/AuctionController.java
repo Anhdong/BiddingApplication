@@ -138,17 +138,18 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
     private void setData(AuctionRoomSyncDTO dto){
         log.info("[Auction] Thiết lập giao diện phòng đấu giá");
 
-        //Coundown Timer
-        if (dto.getRemainingMillis() > 0) {
-            startCountdownTimer(dto.getRemainingMillis());
-        } else {
-            lblTimer.setText("Auction End!");
-        }
-
         minBid = dto.getBidStep();
         if (dto.getCurrentPrice() != null) currentBid = dto.getCurrentPrice();
 
         Platform.runLater(()->{
+
+            //Coundown Timer
+            if (dto.getRemainingMillis() > 0) {
+                startCountdownTimer(dto.getRemainingMillis());
+            } else {
+                lblTimer.setText("Auction End!");
+            }
+
             if(dto.getCurrentPrice() != null) lblCurrentBid.setText("$"+dto.getCurrentPrice().toString());
             if(dto.getHighestBidderName() != null) lblBidder.setText(dto.getHighestBidderName());
             lblName.setText(dto.getItemName());
