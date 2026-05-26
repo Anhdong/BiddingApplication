@@ -130,15 +130,15 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
         return null;
     }
     @Override
-    public boolean updatePriceAndWinner(String sessionId, BigDecimal newPrice, String winnerId) {
+    public boolean updatePriceAndWinner(String sessionId, BigDecimal newPrice, String winnerName) {
         // Lưu ý: WinnerId có thể null nếu cập nhật giá khởi điểm, nhưng thường hàm này gọi khi có Bid mới.
-        String sql = "UPDATE auction_sessions SET current_price = ?, winner_id = ?::uuid WHERE id = ?::uuid";
+        String sql = "UPDATE auction_sessions SET current_price = ?, winner_name = ? WHERE id = ?::uuid";
         try (Connection conn = DatabaseConnectionPool.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setBigDecimal(1, newPrice);
-            if (winnerId != null) {
-                ps.setString(2, winnerId);
+            if (winnerName != null) {
+                ps.setString(2, winnerName);
             } else {
                 ps.setNull(2, java.sql.Types.VARCHAR); // Set NULL một cách an toàn
             }
@@ -197,44 +197,66 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
     // ====================================================================================
     @Override
     public List<SellerHistoryResponseDTO> getSellerHistory(String sellerId) {
-       List<SellerHistoryResponseDTO> list = new ArrayList<>();
-       String sql = "WITH FilteredSessions AS (\n" +
-               "    -- Lọc dữ liệu thu gọn trước\n" +
-               "    SELECT id, item_id, winner_id, start_price, current_price, start_time, end_time, status, created_at\n" +
-               "    FROM auction_sessions\n" +
-               "    WHERE seller_id = ?::uuid AND status IN ('FINISHED', 'CANCELED')\n" +
-               ")\n" +
-               "-- Sau đó mới mang đi JOIN\n" +
-               "SELECT \n" +
-               "    a.id,i.name, a.start_price, a.current_price, \n" +
-               "    a.start_time, a.end_time, u.username, a.status\n" +
-               "FROM FilteredSessions a\n" +
-               "JOIN items i ON i.id = a.item_id\n" +
-               "LEFT JOIN users u ON u.id = a.winner_id\n" +
-               "ORDER BY a.created_at DESC;";
-       try(Connection conn=DatabaseConnectionPool.getConnection();
-           PreparedStatement ps=conn.prepareStatement(sql)) {
-           ps.setString(1, sellerId);
-           try(ResultSet rs=ps.executeQuery()) {
-               while (rs.next()) {
-                   SellerHistoryResponseDTO dto=new SellerHistoryResponseDTO();
-                   dto.setSessionId(rs.getString("id"));
-                   dto.setStatus(SessionStatus.valueOf(rs.getString("status")));
-                   dto.setStartTime(rs.getTimestamp("start_time").toLocalDateTime());
-                   dto.setEndTime(rs.getTimestamp("end_time").toLocalDateTime());
-                   dto.setStartPrice(rs.getBigDecimal("start_price"));
-                   dto.setFinalPrice(rs.getBigDecimal("current_price"));
-                   dto.setItemName(rs.getString("name"));
-                   dto.setWinnerName(rs.getString("username"));
+        List<SellerHistoryResponseDTO> list = new ArrayList<>();
 
-                   list.add(dto);
-               }
-           }
-       }
-       catch (SQLException e){
-           log.error("[AuctionSessionDAO] Lỗi getSellerHistory");
-           log.error("Đã xảy ra lỗi Exception:", e);
-       }
+        // Cập nhật SQL: Bỏ LEFT JOIN users, lấy trực tiếp winner_name từ FilteredSessions
+        String sql = "WITH FilteredSessions AS (\n" +
+                "    -- Lọc dữ liệu thu gọn trước\n" +
+                "    SELECT id, item_id, winner_name, start_price, current_price, start_time, end_time, status, created_at\n" +
+                "    FROM auction_sessions\n" +
+                "    WHERE seller_id = ?::uuid AND status IN ('FINISHED', 'CANCELED')\n" +
+                ")\n" +
+                "-- Sau đó mới mang đi JOIN với items\n" +
+                "SELECT \n" +
+                "    a.id, i.name, a.start_price, a.current_price, \n" +
+                "    a.start_time, a.end_time, a.winner_name, a.status\n" +
+                "FROM FilteredSessions a\n" +
+                "JOIN items i ON i.id = a.item_id\n" +
+                "ORDER BY a.created_at DESC";
+
+        try (Connection conn = DatabaseConnectionPool.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, sellerId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    SellerHistoryResponseDTO dto = new SellerHistoryResponseDTO();
+
+                    dto.setSessionId(rs.getString("id"));
+
+                    // Chuyển String sang Enum an toàn
+                    String statusStr = rs.getString("status");
+                    if (statusStr != null) {
+                        dto.setStatus(SessionStatus.valueOf(statusStr));
+                    }
+
+                    // Xử lý Null an toàn cho các trường Timestamp trước khi toLocalDateTime()
+                    java.sql.Timestamp startTimeTs = rs.getTimestamp("start_time");
+                    if (startTimeTs != null) {
+                        dto.setStartTime(startTimeTs.toLocalDateTime());
+                    }
+
+                    java.sql.Timestamp endTimeTs = rs.getTimestamp("end_time");
+                    if (endTimeTs != null) {
+                        dto.setEndTime(endTimeTs.toLocalDateTime());
+                    }
+
+                    dto.setStartPrice(rs.getBigDecimal("start_price"));
+                    dto.setFinalPrice(rs.getBigDecimal("current_price"));
+                    dto.setItemName(rs.getString("name"));
+
+                    // Map trực tiếp winner_name đã lấy từ bảng auction_sessions
+                    dto.setWinnerName(rs.getString("winner_name"));
+
+                    list.add(dto);
+                }
+            }
+        } catch (SQLException e) {
+            // SLF4J format chuẩn xác: chỉ cần 1 dòng log truyền kèm Exception 'e'
+            log.error("[AuctionSessionDAO] Lỗi getSellerHistory: ", e);
+        }
+
         return list;
     }
     @Override
@@ -294,7 +316,7 @@ public class AuctionSessionDAO implements IAuctionSessionDAO {
         session.setId(rs.getString("id"));
         session.setItemId(rs.getString("item_id"));
         session.setSellerId(rs.getString("seller_id"));
-        session.setWinnerId(rs.getString("winner_id"));
+        session.setWinnerName(rs.getString("winner_name"));
 
         // Thời gian (Timestamp -> LocalDateTime)
         session.setStartTime(rs.getTimestamp("start_time").toLocalDateTime());

@@ -6,17 +6,27 @@ import java.util.Comparator;
 
 public class AutoBidSetting extends Entity implements Comparable<AutoBidSetting>{
     private String bidderId;
+    private String bidderName;
     private String sessionId;
     private BigDecimal maxBid;
     private BigDecimal increment;
 
-    public AutoBidSetting(String id, LocalDateTime createdAt, String bidderId, String sessionId,
+    public AutoBidSetting(String id, LocalDateTime createdAt, String bidderId, String bidderName,String sessionId,
                           BigDecimal maxBid, BigDecimal increment) {
         super(id, createdAt);
         this.bidderId = bidderId;
+        this.bidderName = bidderName;
         this.sessionId = sessionId;
         this.maxBid = maxBid;
         this.increment = increment;
+    }
+
+    public String getBidderName() {
+        return bidderName;
+    }
+
+    public void setBidderName(String bidderName) {
+        this.bidderName = bidderName;
     }
 
     public String getBidderId() {

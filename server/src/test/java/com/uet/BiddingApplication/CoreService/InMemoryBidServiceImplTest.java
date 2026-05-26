@@ -86,6 +86,7 @@ public class InMemoryBidServiceImplTest {
         // 1. Chuẩn bị dữ liệu
         String sessionId = UUID.randomUUID().toString();
         String bidderId = UUID.randomUUID().toString();
+        String bidderName = "Nguyen Van A";
         BigDecimal bidAmount = new BigDecimal("2000.00");
 
         AuctionSession session = new AuctionSession();
@@ -102,6 +103,7 @@ public class InMemoryBidServiceImplTest {
         when(mockBidDAO.placeBidAtomicTransaction(
                 eq(sessionId),
                 eq(bidderId),
+                eq(bidderName),
                 any(BigDecimal.class),
                 any(BidType.class)
         )).thenReturn(true);
@@ -110,6 +112,7 @@ public class InMemoryBidServiceImplTest {
         BidRequestDTO request = new BidRequestDTO();
         request.setSessionId(sessionId);
         request.setBidAmount(bidAmount);
+        request.setBidderName(bidderName);
         request.setBidType(BidType.MANUAL);
 
         bidService.enqueueBid(request, bidderId);
@@ -119,6 +122,7 @@ public class InMemoryBidServiceImplTest {
         verify(mockBidDAO, timeout(10000).atLeastOnce()).placeBidAtomicTransaction(
                 eq(sessionId),
                 eq(bidderId),
+                eq(bidderName),
                 any(BigDecimal.class), // Dùng any để tránh lỗi so sánh BigDecimal scale
                 eq(BidType.MANUAL)
         );
