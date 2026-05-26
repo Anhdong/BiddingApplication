@@ -8,13 +8,23 @@ public class AutoBidRegisterDTO {
     }
 
     private String sessionId;
+    private String bidderName;
     private BigDecimal maxBid;
     private BigDecimal increment;
 
-    public AutoBidRegisterDTO(String sessionId, BigDecimal maxBid, BigDecimal increment) {
+    public AutoBidRegisterDTO(String sessionId,String bidderName, BigDecimal maxBid, BigDecimal increment) {
         this.sessionId = sessionId;
+        this.bidderName = bidderName;
         this.maxBid = maxBid;
         this.increment = increment;
+    }
+
+    public String getBidderName() {
+        return bidderName;
+    }
+
+    public void setBidderName(String bidderName) {
+        this.bidderName = bidderName;
     }
 
     public String getSessionId() {

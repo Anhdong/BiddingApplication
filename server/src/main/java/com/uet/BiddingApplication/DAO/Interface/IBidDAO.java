@@ -12,5 +12,5 @@ public interface IBidDAO {
     boolean insertBid(BidTransaction bid);
     List<BidHistoryDTO> getRecentBids(String sessionId);
     List<BidderHistoryResponseDTO> getBidderHistory(String bidderId);
-    boolean placeBidAtomicTransaction(String sessionId, String bidderId, BigDecimal bidAmount, BidType bidType);
+    boolean placeBidAtomicTransaction(String sessionId, String bidderId, String bidderName,BigDecimal bidAmount, BidType bidType);
 }

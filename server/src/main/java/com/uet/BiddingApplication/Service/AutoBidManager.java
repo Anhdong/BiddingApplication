@@ -8,7 +8,6 @@ import com.uet.BiddingApplication.Enum.ActionType;
 import com.uet.BiddingApplication.Enum.BidType;
 import com.uet.BiddingApplication.Model.AuctionSession;
 import com.uet.BiddingApplication.Model.AutoBidSetting;
-// Giả định import DAO bạn vừa tạo
 import com.uet.BiddingApplication.DAO.Impl.AutoBidSettingDAO;
 
 import java.math.BigDecimal;
@@ -151,6 +150,7 @@ public class AutoBidManager {
 
             // --- ĐIỀU KIỆN 4: Đủ điều kiện đấu giá ---
             BidRequestDTO autoRequest = new BidRequestDTO();
+            autoRequest.setBidderName(setting.getBidderName());
             autoRequest.setSessionId(sessionId);
             autoRequest.setBidAmount(nextBidPrice);
             autoRequest.setBidType(BidType.AUTO);

@@ -14,6 +14,7 @@ public class AutoBidMapper {
         entity.setId(UUID.randomUUID().toString());
         entity.setCreatedAt(LocalDateTime.now());
         entity.setBidderId(bidderId);
+        entity.setBidderName(dto.getBidderName());
         entity.setIncrement(dto.getIncrement());
         entity.setMaxBid(dto.getMaxBid());
         entity.setSessionId(dto.getSessionId());

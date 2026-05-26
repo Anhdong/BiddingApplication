@@ -305,7 +305,7 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
         request.setToken(ClientSession.getInstance().getCurrentToken());
         request.setUserId(ClientSession.getInstance().getCurrentUser().getId());
         request.setAction(ActionType.PLACE_MANUAL_BID);
-        request.setPayload(new BidRequestDTO(currentSessionId,new BigDecimal(txtBidAmount.getText()), BidType.MANUAL));
+        request.setPayload(new BidRequestDTO(currentSessionId,ClientSession.getInstance().getCurrentUser().getUsername(),new BigDecimal(txtBidAmount.getText()), BidType.MANUAL));
 
         ServerConnection.getInstance().sendRequest(request);
     }
@@ -317,7 +317,7 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
         request.setUserId(ClientSession.getInstance().getCurrentUser().getId());
         request.setAction(ActionType.REGISTER_AUTO_BID);
         request.setPayload(new AutoBidRegisterDTO(
-                currentSessionId, new BigDecimal(txtMaxBid.getText()), new BigDecimal(txtBidStep.getText())));
+                currentSessionId,ClientSession.getInstance().getCurrentUser().getUsername(), new BigDecimal(txtMaxBid.getText()), new BigDecimal(txtBidStep.getText())));
 
         ServerConnection.getInstance().sendRequest(request);
     }
