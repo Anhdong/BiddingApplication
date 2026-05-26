@@ -158,6 +158,11 @@ public class AutoBidManager {
             log.info("[INFO] Kích hoạt Auto-Bid cho User [" + setting.getBidderId() + "], giá đặt tự động: " + nextBidPrice);
 
             InMemoryBidServiceImpl.getInstance().enqueueBid(autoRequest, setting.getBidderId());
+            // 1. Nhấc người này ra khỏi vị trí đầu hàng hiện tại
+            iterator.remove();
+
+            // 2. Xếp người này xuống cuối hàng đợi
+            queue.add(setting);
 
             break;
         }
