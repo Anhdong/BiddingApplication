@@ -377,6 +377,7 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
     private void handleAutoBidCancelResponse(ResponsePacket<?> response) {
         if (response.getStatusCode() == 200) {
             Platform.runLater(() -> btnAutoBid.setSelected(true));
+            NotificationUtil.showInfo(response.getMessage());
             log.info("[Auction] Hủy đăng kí Auto Bid do vượt quá Max Bid");
         } else {
             log.error("[Aution] Không thể hủy đăng kí Auto Bid {}", response.getMessage());
