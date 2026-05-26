@@ -3,12 +3,8 @@ package com.uet.BiddingApplication.Controller.BaseController;
 import com.uet.BiddingApplication.Controller.MainViewController;
 import com.uet.BiddingApplication.DTO.Packet.RequestPacket;
 import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
-import com.uet.BiddingApplication.DTO.Request.AuthRequestDTO;
-import com.uet.BiddingApplication.DTO.Response.AuctionCardDTO;
-import com.uet.BiddingApplication.DTO.Response.AuthResponseDTO;
 import com.uet.BiddingApplication.Enum.ActionType;
 import com.uet.BiddingApplication.Enum.ViewPath;
-import com.uet.BiddingApplication.Main;
 import com.uet.BiddingApplication.Session.ClientSession;
 import com.uet.BiddingApplication.Session.ResponseDispatcher;
 import com.uet.BiddingApplication.Session.ServerConnection;
@@ -29,7 +25,6 @@ import javafx.scene.input.MouseEvent;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.net.URL;
-import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
@@ -115,19 +110,29 @@ public class BaseSidebarController implements Initializable {
         settingsMenu = new ContextMenu();
 
         // Create menu items
-        //MenuItem itemProfile = new MenuItem("Hồ sơ cá nhân");
+        MenuItem itemUpdateProfile = new MenuItem("Update Profile");
+        MenuItem itemChangePassword = new MenuItem("Change Password");
         MenuItem itemLogout = new MenuItem("Log out");
 
         SeparatorMenuItem separator = new SeparatorMenuItem();
 
         //Add Action on items
+        itemUpdateProfile.setOnAction(event -> {
+            log.info("[BaseSidebar] Chuyển sang trang cập nhật thông tin");
+            MainViewController.getInstance().loadView(ViewPath.UPDATE_PROFILE);
+        });
+        itemChangePassword.setOnAction(event -> {
+            log.info("[BaseSidebar] Chuyển sang trang đổi mật khẩu");
+            MainViewController.getInstance().loadView(ViewPath.CHANGE_PASSWORD);
+        });
         itemLogout.setOnAction(event -> {
             log.info("[BaseSidebar] Gửi yêu cầu đăng xuất");
             requestLogout();
         });
 
         //Add items
-        settingsMenu.getItems().addAll(separator, itemLogout);
+
+        settingsMenu.getItems().addAll(itemUpdateProfile,itemChangePassword,separator, itemLogout);
     }
 
     protected void handleLogout(){
