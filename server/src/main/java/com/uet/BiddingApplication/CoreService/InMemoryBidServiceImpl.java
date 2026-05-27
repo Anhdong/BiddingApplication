@@ -157,15 +157,15 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
         }
 
         // [BỔ SUNG MỚI]: Chặn tự đôn giá (Self-bidding)
-        if (task.bidderId.equals(session.getWinnerId())) {
+        if (task.bidderId.equals(session.getWinnerName())) {
             throw new BusinessException("Bạn đang là người dẫn đầu, không thể tự nâng giá.");
         }
 
         if (validateBid(req.getBidAmount(), session)) {
             // 1. Cập nhật Cache trên RAM
             BigDecimal oldPrice = session.getCurrentPrice();
-            String oldWinner = session.getWinnerId();
-            searchCacheManager.updatePriceInCache(sessionId, req.getBidAmount(), task.bidderId());
+            String oldWinner = session.getWinnerName();
+            searchCacheManager.updatePriceInCache(sessionId, req.getBidAmount(), req.getBidderName());
 
             // 2. Chống Sniping
             boolean isUpdateTime=checkAndHandleAntiSniping(session);
@@ -174,6 +174,7 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
             boolean dbSuccess = bidDAO.placeBidAtomicTransaction(
                     sessionId,
                     task.bidderId(),
+                    req.getBidderName(),
                     req.getBidAmount(),
                     req.getBidType()
             );
@@ -182,7 +183,7 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
                 // 3. Đóng gói DTO Phát thanh Realtime
                 BidHistoryDTO newHistory = new BidHistoryDTO();
                 newHistory.setBidAmount(req.getBidAmount());
-                newHistory.setBidderName("User_" + task.bidderId().substring(0, 5)); // Che giấu tên thật
+                newHistory.setBidderName(req.getBidderName());
                 newHistory.setTime(LocalDateTime.now());
                 newHistory.setSessionId(sessionId);
 
@@ -257,11 +258,11 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
 
         // 2. Lưu đồng bộ xuống Database để chốt sổ (Giao tiếp với DAO)
         boolean dbUpdated = auctionSessionDAO.updatePriceAndWinner(
-                sessionId, session.getCurrentPrice(),session.getWinnerId());
+                sessionId, session.getCurrentPrice(),session.getWinnerName());
 
         if (dbUpdated&&statusUpdated) {
-            String winner = (session.getWinnerId() != null)
-                    ? session.getWinnerId().substring(0, 5)
+            String winner = (session.getWinnerName() != null)
+                    ? session.getWinnerName().substring(0, 5)
                     : "NO_WINNER";
             SessionResultDTO result = new SessionResultDTO(
                     sessionId,
@@ -271,7 +272,7 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
             );
             // 3. Xóa dữ liệu phiên khỏi RAM để giải phóng bộ nhớ
             searchCacheManager.removeSession(sessionId);
-            if(session.getWinnerId()!=null) searchCacheManager.removeItem(session.getItemId());
+            if(session.getWinnerName()!=null) searchCacheManager.removeItem(session.getItemId());
             scheduledTasks.remove(sessionId);
 
             // 4. Phát thanh tín hiệu KẾT THÚC cho phòng đấu giá

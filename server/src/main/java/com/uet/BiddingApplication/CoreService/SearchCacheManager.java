@@ -128,11 +128,11 @@ public class SearchCacheManager implements ISearchCacheManager{
     @Override
     public void removeItem(String itemId) {itemCache.remove(itemId);}
     @Override
-    public void updatePriceInCache(String sessionId, BigDecimal newPrice, String highestBidderId) {
+    public void updatePriceInCache(String sessionId, BigDecimal newPrice, String highestBidderName) {
         AuctionSession session = activeSessionsCache.get(sessionId);
         if (session != null) {
             session.setCurrentPrice(newPrice);
-            session.setWinnerId(highestBidderId);
+            session.setWinnerName(highestBidderName);
         }
     }
 

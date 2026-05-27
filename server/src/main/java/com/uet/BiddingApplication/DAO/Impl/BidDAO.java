@@ -15,7 +15,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.time.chrono.ChronoLocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -71,7 +70,7 @@ public class BidDAO implements IBidDAO {
         List<BidHistoryDTO> history = new ArrayList<>();
 
         // JOIN với bảng users để lấy username cho DTO thay vì chỉ trả về bidder_id
-        String sql = "SELECT u.id AS bidder, b.bid_amount, b.created_at, b.session_id " +
+        String sql = "SELECT u.id AS bidder,u.username, b.bid_amount, b.created_at, b.session_id " +
                 "FROM bid_transactions b " +
                 "INNER JOIN users u ON b.bidder_id = u.id " +
                 "WHERE b.session_id = ?::uuid " +
@@ -86,8 +85,8 @@ public class BidDAO implements IBidDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     BidHistoryDTO dto = new BidHistoryDTO();
-                    String winnerId = rs.getString("bidder")!=null?rs.getString("bidder").substring(0,5):null;
-                    dto.setBidderName(winnerId);
+                    String bidderName = rs.getString("username")!=null?rs.getString("username"):null;
+                    dto.setBidderName(bidderName);
                     dto.setBidAmount(rs.getBigDecimal("bid_amount"));
 
                     Timestamp timeTs = rs.getTimestamp("created_at");
@@ -115,7 +114,7 @@ public class BidDAO implements IBidDAO {
         String sql = "SELECT " +
                 "   s.id AS session_id, " +
                 "   i.name AS item_name, " +
-                "   s.winner_id, " +
+                "   s.winner_name, " +
                 "   MAX(b.bid_amount) AS my_highest_bid, " +
                 "   s.current_price AS final_price, " +
                 "   s.status, " +
@@ -124,7 +123,7 @@ public class BidDAO implements IBidDAO {
                 "INNER JOIN auction_sessions s ON b.session_id = s.id " +
                 "INNER JOIN items i ON s.item_id = i.id " +
                 "WHERE b.bidder_id = ?::uuid " +
-                "GROUP BY s.id, i.name, s.winner_id, s.current_price, s.status " +
+                "GROUP BY s.id, i.name, s.winner_name, s.current_price, s.status " +
                 "ORDER BY latest_bid_time DESC";
 
         try (Connection conn = DatabaseConnectionPool.getConnection();
@@ -138,8 +137,8 @@ public class BidDAO implements IBidDAO {
 
                     dto.setSessionId(rs.getString("session_id"));
                     dto.setItemName(rs.getString("item_name"));
-                    String winnerId = rs.getString("winner_id")!=null?rs.getString("winner_id").substring(0,5):null;
-                    dto.setWinnerId(winnerId);
+                    String winnerName = rs.getString("winner_name")!=null?rs.getString("winner_name"):null;
+                    dto.setWinnerId(winnerName);
                     dto.setMyHighestBid(rs.getBigDecimal("my_highest_bid"));
                     dto.setFinalPrice(rs.getBigDecimal("final_price"));
 
@@ -163,9 +162,9 @@ public class BidDAO implements IBidDAO {
         return history;
     }
     @Override
-    public boolean placeBidAtomicTransaction(String sessionId, String bidderId, BigDecimal bidAmount, BidType bidType) {
+    public boolean placeBidAtomicTransaction(String sessionId,String bidderId, String bidderName, BigDecimal bidAmount, BidType bidType) {
         String insertBidSql = "INSERT INTO bid_transactions (id, created_at, bidder_id, session_id, bid_amount, bid_type) VALUES (?::uuid, ?, ?::uuid, ?::uuid, ?, ?)";
-        String updateSessionSql = "UPDATE auction_sessions SET current_price = ?, winner_id = ?::uuid WHERE id = ?::uuid";
+        String updateSessionSql = "UPDATE auction_sessions SET current_price = ?, winner_name = ? WHERE id = ?::uuid";
 
         // Sử dụng try-with-resources cho Connection để đảm bảo connection luôn được trả về pool
         try (Connection conn = DatabaseConnectionPool.getConnection()) {
@@ -189,7 +188,7 @@ public class BidDAO implements IBidDAO {
                 // 3. Thực thi lệnh Update lên auction_sessions
                 try (PreparedStatement ps = conn.prepareStatement(updateSessionSql)) {
                     ps.setBigDecimal(1, bidAmount);
-                    ps.setString(2, bidderId);
+                    ps.setString(2, bidderName);
                     ps.setString(3, sessionId);
 
                     ps.executeUpdate();

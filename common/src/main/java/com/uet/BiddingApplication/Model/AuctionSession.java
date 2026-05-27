@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public class AuctionSession extends Entity{
     private String itemId;
     private String sellerId;
-    private volatile String winnerId;
+    private volatile String winnerName;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private SessionStatus status;
@@ -17,13 +17,13 @@ public class AuctionSession extends Entity{
     private BigDecimal bidStep;
 
     public AuctionSession(String id, LocalDateTime createdAt, String itemId, String sellerId,
-                          String winnerId, LocalDateTime startTime, LocalDateTime endTime,
+                          String winnerName, LocalDateTime startTime, LocalDateTime endTime,
                           SessionStatus status, BigDecimal startPrice, BigDecimal currentPrice,
                           BigDecimal bidStep) {
         super(id, createdAt);
         this.itemId = itemId;
         this.sellerId = sellerId;
-        this.winnerId = winnerId;
+        this.winnerName = winnerName;
         this.startTime = startTime;
         this.endTime = endTime;
         this.status = status;
@@ -51,12 +51,12 @@ public class AuctionSession extends Entity{
         this.sellerId = sellerId;
     }
 
-    public String getWinnerId() {
-        return winnerId;
+    public String getWinnerName() {
+        return winnerName;
     }
 
-    public void setWinnerId(String winnerId) {
-        this.winnerId = winnerId;
+    public void setWinnerName(String winnerName) {
+        this.winnerName = winnerName;
     }
 
     public LocalDateTime getStartTime() {

@@ -37,8 +37,8 @@ public class AutoBidSettingDAO implements IAutoBidSettingDAO {
     @Override
     public boolean upsertAutoBid(AutoBidSetting autoBid) {
         // Cú pháp PostgreSQL Upsert: Nếu trùng cặp (session_id, bidder_id) thì tiến hành UPDATE giá trị mới
-        String sql = "INSERT INTO auto_bid_settings (id, session_id, bidder_id, max_bid, increment, created_at) " +
-                "VALUES (?::uuid, ?::uuid, ?::uuid, ?, ?, ?) " +
+        String sql = "INSERT INTO auto_bid_settings (id, session_id, bidder_id, max_bid, increment, created_at,bidder_name) " +
+                "VALUES (?::uuid, ?::uuid, ?::uuid, ?, ?, ?,?) " +
                 "ON CONFLICT (session_id, bidder_id) " +
                 "DO UPDATE SET " +
                 "   max_bid = EXCLUDED.max_bid, " +
@@ -58,6 +58,7 @@ public class AutoBidSettingDAO implements IAutoBidSettingDAO {
             ps.setBigDecimal(4, autoBid.getMaxBid());
             ps.setBigDecimal(5, autoBid.getIncrement());
             ps.setTimestamp(6, createdAt);
+            ps.setString(7, autoBid.getBidderName());
 
             // executeUpdate sẽ trả về số lượng dòng bị tác động (Insert = 1, Update = 1 hoặc 2 tùy hệ quản trị, nhưng > 0 là thành công)
             return ps.executeUpdate() > 0;
@@ -88,7 +89,7 @@ public class AutoBidSettingDAO implements IAutoBidSettingDAO {
 
     @Override
     public AutoBidSetting getAutoBid(String bidderId, String sessionId) {
-        String sql = "SELECT id, session_id, bidder_id, max_bid, increment, created_at " +
+        String sql = "SELECT id, session_id, bidder_id, max_bid, increment, created_at,bidder_name " +
                 "FROM auto_bid_settings WHERE bidder_id = ?::uuid AND session_id = ?::uuid";
 
         try (Connection conn = DatabaseConnectionPool.getConnection();
@@ -128,7 +129,7 @@ public class AutoBidSettingDAO implements IAutoBidSettingDAO {
     public List<AutoBidSetting> getAllAutoBids() {
         List<AutoBidSetting> list = new ArrayList<>();
         // Truy vấn toàn bộ cấu hình hiện có trong hệ thống
-        String sql = "SELECT id, session_id, bidder_id, max_bid, increment, created_at FROM auto_bid_settings";
+        String sql = "SELECT id, session_id, bidder_id, max_bid, increment, created_at,bidder_name FROM auto_bid_settings";
 
         // Sử dụng try-with-resources đóng gom nhóm cả Connection, PreparedStatement và ResultSet
         try (Connection conn = DatabaseConnectionPool.getConnection();
@@ -174,6 +175,7 @@ public class AutoBidSettingDAO implements IAutoBidSettingDAO {
         autoBid.setBidderId(rs.getString("bidder_id"));
         autoBid.setMaxBid(rs.getBigDecimal("max_bid"));
         autoBid.setIncrement(rs.getBigDecimal("increment"));
+        autoBid.setBidderName(rs.getString("bidder_name"));
 
         Timestamp createdAtTs = rs.getTimestamp("created_at");
         if (createdAtTs != null) {
