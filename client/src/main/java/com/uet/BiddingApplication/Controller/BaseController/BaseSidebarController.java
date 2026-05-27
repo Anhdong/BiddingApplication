@@ -10,6 +10,7 @@ import com.uet.BiddingApplication.Session.ResponseDispatcher;
 import com.uet.BiddingApplication.Session.ServerConnection;
 import com.uet.BiddingApplication.Util.AppExecutor;
 import com.uet.BiddingApplication.Util.NotificationUtil;
+import com.uet.BiddingApplication.Util.ThemeManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -110,6 +111,7 @@ public class BaseSidebarController implements Initializable {
         settingsMenu = new ContextMenu();
 
         // Create menu items
+        MenuItem itemLightDark = new MenuItem("Light/Dark Mode");
         MenuItem itemUpdateProfile = new MenuItem("Update Profile");
         MenuItem itemChangePassword = new MenuItem("Change Password");
         MenuItem itemLogout = new MenuItem("Log out");
@@ -117,6 +119,14 @@ public class BaseSidebarController implements Initializable {
         SeparatorMenuItem separator = new SeparatorMenuItem();
 
         //Add Action on items
+        itemLightDark.setOnAction(event -> {
+            log.info("[BaseSidebar]  Chuyển màu theme");
+            if(ThemeManager.getCurrentTheme() == ThemeManager.Theme.DARK) {
+                ThemeManager.setTheme(ThemeManager.Theme.LIGHT);
+            } else if(ThemeManager.getCurrentTheme() == ThemeManager.Theme.LIGHT) {
+                ThemeManager.setTheme(ThemeManager.Theme.DARK);
+            }
+        });
         itemUpdateProfile.setOnAction(event -> {
             log.info("[BaseSidebar] Chuyển sang trang cập nhật thông tin");
             MainViewController.getInstance().loadView(ViewPath.UPDATE_PROFILE);
@@ -132,7 +142,7 @@ public class BaseSidebarController implements Initializable {
 
         //Add items
 
-        settingsMenu.getItems().addAll(itemUpdateProfile,itemChangePassword,separator, itemLogout);
+        settingsMenu.getItems().addAll(itemLightDark,itemUpdateProfile,itemChangePassword,separator, itemLogout);
     }
 
     protected void handleLogout(){
