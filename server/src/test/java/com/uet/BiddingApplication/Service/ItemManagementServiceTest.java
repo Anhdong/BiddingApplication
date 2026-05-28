@@ -113,6 +113,7 @@ public class ItemManagementServiceTest {
         String sellerId = "seller-1";
         ItemCreateDTO request = new ItemCreateDTO();
         request.setImageBytes(new byte[]{1});
+        request.setBidStep(new BigDecimal("10"));
 
         // Giả lập hệ thống lưu trữ quăng lỗi
         when(mockStorageService.uploadImage(any(), any())).thenThrow(new RuntimeException("Cloud Error"));

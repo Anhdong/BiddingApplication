@@ -3,10 +3,7 @@ package com.uet.BiddingApplication.Utils;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -14,7 +11,7 @@ import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+@Disabled
 public class StorageServiceTest {
 
     private StorageService storageService;

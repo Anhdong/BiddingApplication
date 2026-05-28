@@ -85,6 +85,7 @@ public class SessionRegistrationDAOTest {
         session.setEndTime(LocalDateTime.now().plusDays(2));
         session.setStatus(SessionStatus.OPEN);
         session.setCreatedAt(LocalDateTime.now());
+        session.setBidStep(new BigDecimal(2));
         sessionDAO.insertSession(session);
     }
 

@@ -13,7 +13,6 @@ import java.util.function.BiConsumer;
 
 public class ItemMapper {
 
-    // Sử dụng Map để cấu hình Strategy cho từng loại Class con thay cho if-else (instanceof)
     private static final Map<Class<? extends Item>, BiConsumer<Item, String>> attributeMappers = new HashMap<>();
 
     static {
@@ -44,7 +43,6 @@ public class ItemMapper {
         entity.setImageURL(imageUrl);
         entity.setCategory(dto.getCategory());
 
-        // Tái sử dụng hàm map thuộc tính đặc thù
         mapSpecificAttribute(entity, dto.getAttribute());
 
         return entity;
@@ -60,7 +58,6 @@ public class ItemMapper {
         entity.setCategory(dto.getCategory());
         entity.setId(dto.getItemId());
 
-        // Tái sử dụng hàm map thuộc tính đặc thù
         mapSpecificAttribute(entity, dto.getAttribute());
 
         return entity;
@@ -71,14 +68,12 @@ public class ItemMapper {
      */
     private static void mapSpecificAttribute(Item entity, String rawAttribute) {
         if (rawAttribute == null || rawAttribute.trim().isEmpty()) {
-            return; // Bỏ qua nếu client không gửi dữ liệu đặc thù
+            return;
         }
 
-        // Tra cứu chiến lược xử lý tương ứng với Class của entity hiện tại
         BiConsumer<Item, String> mapper = attributeMappers.get(entity.getClass());
         if (mapper != null) {
             mapper.accept(entity, rawAttribute.trim());
         }
-        // Lớp Others không được đăng ký trong Map nên sẽ tự động bị bỏ qua an toàn.
     }
 }

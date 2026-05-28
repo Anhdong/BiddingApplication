@@ -1,0 +1,80 @@
+name: Java CI/CD - Multi-OS Testing & Packaging
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # ==========================================
+  # JOB 1: CONTINUOUS INTEGRATION (TEST MATRIX)
+  # ==========================================
+  ci-build-and-test:
+    name: Test on ${{ matrix.os }}
+    # Kích hoạt tính năng Ma trận để chạy song song 3 môi trường
+    strategy:
+      fail-fast: false # Nếu 1 OS lỗi, vẫn cho các OS khác chạy nốt để lấy log
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: maven # Cache dependencies độc lập cho từng OS
+
+      # Chạy Unit Test. Đã bỏ Xvfb vì không có test UI.
+      - name: Compile and Run Unit Tests
+        run: mvn clean test --batch-mode
+
+
+  # ==========================================
+  # JOB 2: CONTINUOUS DELIVERY (PACKAGE & UPLOAD)
+  # ==========================================
+  cd-package-and-release:
+    name: Build Fat JARs and Upload
+    # ĐIỀU KIỆN 1: Bắt buộc Job CI phía trên phải xanh (pass) trên cả 3 OS
+    needs: ci-build-and-test
+    # ĐIỀU KIỆN 2: Chỉ chạy đóng gói khi merge/push vào nhánh main, không chạy khi tạo PR
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # Chỉ cần chạy trên Ubuntu để tiết kiệm tài nguyên (JAR là cross-platform)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: maven
+
+      # Đóng gói Multi-module (bỏ qua test vì đã test ở Job 1)
+      - name: Build Fat JARs
+        run: mvn clean package -DskipTests --batch-mode
+
+      # Trích xuất Server JAR (Đã sửa đường dẫn chuẩn)
+      - name: Upload Server Artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-executable-jar
+          path: "**/server/target/server-executable.jar" # Dùng toán tử ** để tự tìm thư mục bất kể cấu trúc sâu hay nông
+
+      # Trích xuất Client JAR (Đã sửa đường dẫn chuẩn)
+      - name: Upload Client Artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-executable-jar
+          path: "**/client/target/client-executable.jar" # Dùng toán tử ** để tự tìm thư mục
