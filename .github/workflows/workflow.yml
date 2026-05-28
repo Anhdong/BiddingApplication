@@ -63,18 +63,18 @@ jobs:
       - name: Build Fat JARs
         run: mvn clean package -DskipTests --batch-mode
 
-      # Trích xuất Server JAR
+      # Trích xuất Server JAR (Đã sửa đường dẫn chuẩn)
       - name: Upload Server Artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
           name: server-executable-jar
-          path: server/target/*-shaded.jar
-          retention-days: 7
+          path: "**/server/target/server-executable.jar" # Dùng toán tử ** để tự tìm thư mục bất kể cấu trúc sâu hay nông
 
-      # Trích xuất Client JAR
+      # Trích xuất Client JAR (Đã sửa đường dẫn chuẩn)
       - name: Upload Client Artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
           name: client-executable-jar
-          path: client/target/*-shaded.jar
-          retention-days: 7
+          path: "**/client/target/client-executable.jar" # Dùng toán tử ** để tự tìm thư mục
