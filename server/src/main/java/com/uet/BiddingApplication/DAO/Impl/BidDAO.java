@@ -138,7 +138,7 @@ public class BidDAO implements IBidDAO {
                     dto.setSessionId(rs.getString("session_id"));
                     dto.setItemName(rs.getString("item_name"));
                     String winnerName = rs.getString("winner_name")!=null?rs.getString("winner_name"):null;
-                    dto.setWinnerId(winnerName);
+                    dto.setWinnerName(winnerName);
                     dto.setMyHighestBid(rs.getBigDecimal("my_highest_bid"));
                     dto.setFinalPrice(rs.getBigDecimal("final_price"));
 
