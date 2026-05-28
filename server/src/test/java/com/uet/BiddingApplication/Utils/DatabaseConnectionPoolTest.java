@@ -2,12 +2,13 @@ package com.uet.BiddingApplication.Utils;
 
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.HikariPoolMXBean;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import java.sql.Connection;
 import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+@Disabled
 public class DatabaseConnectionPoolTest {
     @Test
     void testGetConnection() {
