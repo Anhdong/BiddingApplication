@@ -64,6 +64,7 @@ public class BidDAOTest {
         session.setStartPrice(new BigDecimal("1000")); session.setStatus(SessionStatus.OPEN);
         session.setStartTime(LocalDateTime.now());
         session.setEndTime(session.getStartTime());
+        session.setBidStep(new BigDecimal(2));
         session.setSellerId(seller.getId());
         AuctionSessionDAO.getInstance().insertSession(session);
     }
