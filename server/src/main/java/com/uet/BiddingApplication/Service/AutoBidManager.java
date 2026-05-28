@@ -50,8 +50,6 @@ public class AutoBidManager {
             return;
         }
 
-        // [LOGIC DATABASE 1]: Lưu xuống DB trước.
-        // Sử dụng hàm DAO (Upsert hoặc Delete rồi Insert) để đảm bảo ràng buộc UNIQUE dưới Database.
         boolean dbSuccess = AutoBidSettingDAO.getInstance().upsertAutoBid(setting);
         if (!dbSuccess) {
             log.error("[LỖI] Không thể lưu Auto-bid xuống Database cho User [" + setting.getBidderId() + "]. Hủy thao tác trên RAM.");
@@ -63,7 +61,6 @@ public class AutoBidManager {
                 k -> new ConcurrentLinkedQueue<>()
         );
 
-        // Chống Spam/Trùng lặp trên RAM
         queue.removeIf(existing -> existing.getBidderId().equals(setting.getBidderId()));
 
         queue.add(setting);
@@ -78,18 +75,15 @@ public class AutoBidManager {
 
         ConcurrentLinkedQueue<AutoBidSetting> queue = autoBidQueues.get(sessionId);
         if (queue != null) {
-            // Cập nhật trên RAM
             boolean removed = queue.removeIf(setting -> setting.getBidderId().equals(bidderId));
 
             if (removed) {
-                // [LOGIC DATABASE 2]: Xóa khỏi DB (Bất đồng bộ để phản hồi Client nhanh nhất)
                 CompletableFuture.runAsync(() -> {
                     AutoBidSettingDAO.getInstance().deleteAutoBid(bidderId,sessionId);
                 });
                 log.info("[INFO] User [" + bidderId + "] đã hủy Auto-bid tại phiên [" + sessionId + "]");
             }
 
-            // Dọn phòng trống trên RAM
             if (queue.isEmpty()) {
                 autoBidQueues.remove(sessionId);
             }
@@ -114,26 +108,20 @@ public class AutoBidManager {
         while (iterator.hasNext()) {
             AutoBidSetting setting = iterator.next();
 
-            // --- ĐIỀU KIỆN 1: Đang là người dẫn đầu ---
             if (setting.getBidderId().equals(highestBidderId)) {
                 continue;
             }
 
-            // --- ĐIỀU KIỆN 2: Tính toán bước giá hợp lệ ---
             BigDecimal validIncrement = setting.getIncrement().max(session.getBidStep());
             BigDecimal nextBidPrice = currentPrice.add(validIncrement);
 
-            // --- ĐIỀU KIỆN 3: Chạm ngưỡng Max Bid (Hết tiền) ---
             if (setting.getMaxBid().compareTo(nextBidPrice) < 0) {
-                // a) Xóa vĩnh viễn user này khỏi hàng đợi Auto-bid RAM
                 iterator.remove();
 
-                // b) [LOGIC DATABASE 3]: Xóa vĩnh viễn khỏi DB (Bắt buộc dùng luồng riêng để không kẹt luồng AutoBid)
                 CompletableFuture.runAsync(() -> {
                     AutoBidSettingDAO.getInstance().deleteAutoBid(setting.getBidderId(),sessionId);
                 });
 
-                // c) Đóng gói Packet thông báo
                 ResponsePacket<Void> cancelPacket = new ResponsePacket<>(
                         ActionType.AUTO_BID_CANCEL,
                         200,
@@ -141,14 +129,12 @@ public class AutoBidManager {
                         null
                 );
 
-                // d) Gửi thông báo riêng rẽ
                 RealtimeBroadcastService.getInstance().sendPrivateMessage(setting.getBidderId(), cancelPacket);
                 log.info("[INFO] Đã gỡ Auto-Bid của User [" + setting.getBidderId() + "] do chạm ngưỡng maxBid.");
 
                 continue;
             }
 
-            // --- ĐIỀU KIỆN 4: Đủ điều kiện đấu giá ---
             BidRequestDTO autoRequest = new BidRequestDTO();
             autoRequest.setBidderName(setting.getBidderName());
             autoRequest.setSessionId(sessionId);
@@ -158,10 +144,8 @@ public class AutoBidManager {
             log.info("[INFO] Kích hoạt Auto-Bid cho User [" + setting.getBidderId() + "], giá đặt tự động: " + nextBidPrice);
 
             InMemoryBidServiceImpl.getInstance().enqueueBid(autoRequest, setting.getBidderId());
-            // 1. Nhấc người này ra khỏi vị trí đầu hàng hiện tại
             iterator.remove();
 
-            // 2. Xếp người này xuống cuối hàng đợi
             queue.add(setting);
 
             break;
@@ -190,18 +174,14 @@ public class AutoBidManager {
 
         int removedCount = 0;
 
-        // Duyệt qua tất cả các hàng đợi Auto-bid của tất cả các phiên đang chạy
-        // Dùng entrySet() thay vì keySet() để duyệt nhanh hơn (O(n) thay vì O(n log n))
         for (java.util.Map.Entry<String, ConcurrentLinkedQueue<AutoBidSetting>> entry : autoBidQueues.entrySet()) {
             String sessionId = entry.getKey();
             ConcurrentLinkedQueue<AutoBidSetting> queue = entry.getValue();
 
-            // Lọc và xóa ngay lập tức user bị ban khỏi hàng đợi của phiên này
             boolean removed = queue.removeIf(setting -> setting.getBidderId().equals(bannedUserId));
 
             if (removed) {
                 removedCount++;
-                // Tối ưu RAM: Xóa luôn cái key của phòng nếu phòng đó không còn ai dùng Auto-bid nữa
                 if (queue.isEmpty()) {
                     autoBidQueues.remove(sessionId);
                 }

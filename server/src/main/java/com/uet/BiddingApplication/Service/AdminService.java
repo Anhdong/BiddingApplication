@@ -18,6 +18,16 @@ import com.uet.BiddingApplication.Model.Admin;
 import com.uet.BiddingApplication.Model.User;
 import com.uet.BiddingApplication.Model.AuctionSession;
 import com.uet.BiddingApplication.ServerClass.AuctionServer;
+import com.uet.BiddingApplication.DAO.Impl.ItemDAO;
+import com.uet.BiddingApplication.DTO.Response.UserProfileDTO;
+import com.uet.BiddingApplication.DTO.Response.AuctionCardDTO;
+import com.uet.BiddingApplication.Model.Item;
+import com.uet.BiddingApplication.Utils.Mapper.UserMapper;
+import com.uet.BiddingApplication.Utils.Mapper.AuctionViewMapper;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.stream.Collectors;
+import java.util.ArrayList;
 
 /**
  * Lớp nghiệp vụ dành riêng cho chức năng của Quản trị viên (Admin).
@@ -29,7 +39,6 @@ public class AdminService {
     private static volatile AdminService instance = null;
 
     private AdminService(){
-        // TODO: Khởi tạo instance của UserDAO và AuctionSessionDAO.
     }
 
     public static AdminService getInstance(){
@@ -43,28 +52,57 @@ public class AdminService {
         return instance;
     }
 
-    // Tách riêng logic sinh mã để đảm bảo Single Responsibility (SRP)
     private String generateOTP() {
         SecureRandom random = new SecureRandom();
         return String.format("%06d", random.nextInt(1000000));
     }
 
     /**
-     * Lấy toàn bộ danh sách người dùng.
+     * Lấy toàn bộ danh sách người dùng dưới dạng DTO.
      */
-    public List<User> getAllUsers(){
-        // TODO 1 (Dependencies): Lấy instance của UserDAO.
-        // TODO 2 (Output): Trả về danh sách User từ hàm getAllUsers().
-        return UserDAO.getInstance().getAllUsers();
+    public List<UserProfileDTO> getAllUsers(){
+        List<User> users = UserDAO.getInstance().getAllUsers();
+        if (users == null) {
+            return java.util.Collections.emptyList();
+        }
+        return users.stream()
+                .map(UserMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     /**
-     * Lấy toàn bộ danh sách phiên đấu giá.
+     * Lấy toàn bộ danh sách phiên đấu giá dưới dạng DTO.
      */
-    public List<AuctionSession> getAllSessions(){
-        // TODO 1 (Dependencies): Lấy instance của AuctionSessionDAO.
-        // TODO 2 (Output): Trả về danh sách phiên.
-        return AuctionSessionDAO.getInstance().getAllSessions(true);
+    public List<AuctionCardDTO> getAllSessions(){
+        List<AuctionSession> sessions = AuctionSessionDAO.getInstance().getAllSessions(true);
+        if (sessions == null || sessions.isEmpty()) {
+            return java.util.Collections.emptyList();
+        }
+
+        List<String> itemIds = sessions.stream()
+                .map(AuctionSession::getItemId)
+                .filter(java.util.Objects::nonNull)
+                .distinct()
+                .collect(Collectors.toList());
+
+        List<Item> items = ItemDAO.getInstance().getItemsByIds(itemIds);
+        Map<String, Item> itemMap = new HashMap<>();
+        if (items != null) {
+            for (Item item : items) {
+                if (item != null && item.getId() != null) {
+                    itemMap.put(item.getId(), item);
+                }
+            }
+        }
+
+        List<AuctionSession> validSessions = new ArrayList<>();
+        for (AuctionSession session : sessions) {
+            if (session != null && itemMap.containsKey(session.getItemId())) {
+                validSessions.add(session);
+            }
+        }
+
+        return AuctionViewMapper.toCardDTOList(validSessions, itemMap);
     }
 
 
@@ -73,47 +111,37 @@ public class AdminService {
      * Trả về true nếu thành công, ném BusinessException nếu thất bại để Router xử lý.
      */
     public boolean banUser(AdminActionRequestDTO request, String adminId) {
-        // 1. Fail-Fast: Kiểm tra dữ liệu Request đầu vào
         if (request == null || request.getTargetId() == null || request.getOtpCode() == null) {
             throw new BusinessException("Dữ liệu yêu cầu không hợp lệ.");
         }
 
-        // 2. Fail-Fast: Xác thực quyền Admin và lấy OTP độc nhất từ đối tượng Admin
         User currentUser = UserDAO.getInstance().findById(adminId);
         if (!(currentUser instanceof Admin admin)) {
             throw new BusinessException("Bạn không có quyền thực hiện hành động này.");
         }
 
-        // So khớp với mã OTP độc nhất đã được gán sẵn cho Admin này
         if (!admin.getOtpSecretKey().equals(request.getOtpCode())) {
             throw new BusinessException("Mã OTP xác thực không chính xác.");
         }
 
-        // 3. Fail-Fast & Bảo vệ nghiệp vụ: Kiểm tra người dùng mục tiêu
         User targetUser = UserDAO.getInstance().findById(request.getTargetId());
         if (targetUser == null) {
             throw new BusinessException("Người dùng cần khóa không tồn tại.");
         }
 
-        // Nguyên tắc an toàn: Quản trị viên không được phép khóa Quản trị viên khác
         if (targetUser.getRole() == RoleType.ADMIN) {
             throw new BusinessException("Không thể khóa tài khoản của Quản trị viên khác.");
         }
 
-        // 4. Thực hiện nghiệp vụ (Bước 1): Cập nhật trạng thái trong Database [cite: 1121]
-        // Chuyển isActive thành false trước khi ngắt kết nối
         boolean isUpdated = UserDAO.getInstance().updateStatus(request.getTargetId(), false);
         if (!isUpdated) {
             throw new BusinessException("Lỗi hệ thống: Không thể cập nhật trạng thái người dùng.");
         }
-        //4.1  Xóa các cài đặt hiện có của bidder trong các phiên đấu giá
         AutoBidManager.getInstance().removeAutoBidsForBannedUser(request.getTargetId());
 
-        // 5. Thực hiện nghiệp vụ (Bước 2): Ngắt kết nối Socket (Side-effect) [cite: 970]
-        // Sau khi lưu DB thành công mới "đá" người dùng ra khỏi mạng
         AuctionServer.getInstance().kickUser(request.getTargetId());
 
-        return true; // Trả về true để xác nhận mọi bước đã hoàn tất thành công
+        return true;
     }
 
     /**
@@ -121,14 +149,12 @@ public class AdminService {
      * Trả về true nếu thành công, ném BusinessException nếu thất bại để Router xử lý.
      */
     public boolean cancelSession(AdminActionRequestDTO request, String adminId) {
-        // 1. Fail-Fast: Kiểm tra dữ liệu Request đầu vào
         if (request == null || request.getTargetId() == null || request.getOtpCode() == null) {
             throw new BusinessException("Dữ liệu yêu cầu hủy phiên không hợp lệ.");
         }
 
         String sessionId = request.getTargetId();
 
-        // 2. Fail-Fast: Xác thực quyền Admin và mã OTP độc nhất
         User currentUser = UserDAO.getInstance().findById(adminId);
         if (!(currentUser instanceof Admin admin)) {
             throw new BusinessException("Bạn không có quyền thực hiện hành động quản trị này.");
@@ -138,39 +164,32 @@ public class AdminService {
             throw new BusinessException("Mã OTP xác thực không chính xác.");
         }
 
-        // 3. Fail-Fast & Bảo vệ toàn vẹn nghiệp vụ: Kiểm tra trạng thái phiên đấu giá
         AuctionSession targetSession = AuctionSessionDAO.getInstance().getSessionById(sessionId);
         if (targetSession == null) {
             throw new BusinessException("Phiên đấu giá mục tiêu không tồn tại.");
         }
 
-        // Nguyên tắc an toàn: Không thể hủy một phiên đã kết thúc hợp lệ, đã thanh toán, hoặc đã bị hủy từ trước
-        // (Giả định Enum SessionStatus bao gồm: OPEN, RUNNING, FINISHED, PAID, CANCELED)
         if (targetSession.getStatus() == SessionStatus.FINISHED ||
                 targetSession.getStatus() == SessionStatus.CANCELED) {
             throw new BusinessException("Không thể hủy phiên đấu giá vì phiên này đã kết thúc hoặc đã bị hủy trước đó.");
         }
 
-        // 4. Thực hiện nghiệp vụ (Bước 1): Cập nhật trạng thái Database TRƯỚC
         boolean isUpdated = AuctionSessionDAO.getInstance().updateStatus(sessionId, SessionStatus.CANCELED);
         if (!isUpdated) {
             throw new BusinessException("Lỗi hệ thống: Không thể cập nhật trạng thái hủy phiên vào cơ sở dữ liệu.");
         }
 
-        // 5. Thực hiện nghiệp vụ (Bước 2): Tách biệt Network & Cache (Side-effects)
-        // a. Xóa phiên khỏi RAM để không ai có thể tìm thấy trên trang chủ nữa
         SearchCacheManager.getInstance().removeSession(sessionId);
         SessionStartScheduler.getInstance().cancelSchedule(sessionId);
 
-        // b. Phát thanh thông báo đóng phòng khẩn cấp cho tất cả Bidder đang xem phiên này
         ResponsePacket<String> cancelNotification = new ResponsePacket<>(
-                ActionType.REALTIME_SESSION_END, // Hoặc một ActionType cụ thể cho việc Hủy phiên
+                ActionType.REALTIME_SESSION_END,
                 200,
                 "Phiên đấu giá đã bị Quản trị viên hủy bỏ khẩn cấp. Lý do: " + request.getActionReason(),
                 sessionId
         );
         RealtimeBroadcastService.getInstance().broadcast(sessionId, cancelNotification);
 
-        return true; // Hoàn tất an toàn
+        return true;
     }
 }
