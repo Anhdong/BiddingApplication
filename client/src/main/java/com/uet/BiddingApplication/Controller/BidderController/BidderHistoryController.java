@@ -38,8 +38,7 @@ public class BidderHistoryController implements Initializable, ViewControllerLif
     @FXML TableColumn<BidderHistoryResponseDTO,BigDecimal> finalPriceCol;
     @FXML TableColumn<BidderHistoryResponseDTO,String> winnerCol;
     @FXML TableColumn<BidderHistoryResponseDTO, SessionStatus> statusCol;
-    @FXML TableColumn<BidderHistoryResponseDTO, LocalDateTime> startTimeCol;
-    @FXML TableColumn<BidderHistoryResponseDTO, LocalDateTime> endTimeCol;
+    @FXML TableColumn<BidderHistoryResponseDTO, LocalDateTime> timeCol;
 
     // Tạo ObservableList để quản lý dữ liệu
     private ObservableList<BidderHistoryResponseDTO> dataList = FXCollections.observableArrayList();
@@ -57,8 +56,7 @@ public class BidderHistoryController implements Initializable, ViewControllerLif
         finalPriceCol.setCellValueFactory(new PropertyValueFactory<>("finalPrice"));
         winnerCol.setCellValueFactory(new PropertyValueFactory<>("winnerName"));
         statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
-        startTimeCol.setCellValueFactory(new PropertyValueFactory<>("startTime"));
-        endTimeCol.setCellValueFactory(new PropertyValueFactory<>("endTime"));
+        timeCol.setCellValueFactory(new PropertyValueFactory<>("time"));
 
         // Liên kết danh sách dữ liệu với bảng
         table.setItems(dataList);

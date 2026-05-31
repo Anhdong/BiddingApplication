@@ -2,35 +2,21 @@ package com.uet.BiddingApplication.Controller.CommonController;
 
 import com.uet.BiddingApplication.DTO.Packet.RequestPacket;
 import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
-import com.uet.BiddingApplication.DTO.Request.PasswordChangeRequestDTO;
 import com.uet.BiddingApplication.DTO.Request.ProfileUpdateRequestDTO;
-import com.uet.BiddingApplication.DTO.Request.RegisterRequestDTO;
+import com.uet.BiddingApplication.DTO.Response.UserProfileDTO;
 import com.uet.BiddingApplication.Enum.ActionType;
-import com.uet.BiddingApplication.Enum.RoleType;
-import com.uet.BiddingApplication.Enum.ViewPath;
 import com.uet.BiddingApplication.Interface.ViewControllerLifecycle;
 import com.uet.BiddingApplication.Session.ClientSession;
 import com.uet.BiddingApplication.Session.ResponseDispatcher;
 import com.uet.BiddingApplication.Session.ServerConnection;
-import com.uet.BiddingApplication.Util.AppExecutor;
 import com.uet.BiddingApplication.Util.NotificationUtil;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
 
 import java.net.URL;
-import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
-
-import static com.uet.BiddingApplication.BiddingApplication.primaryStage;
 
 public class UpdateProfileController implements Initializable ,ViewControllerLifecycle {
     //--LOG--
@@ -93,6 +79,14 @@ public class UpdateProfileController implements Initializable ,ViewControllerLif
 
     private void handleUpdateProfileResponse(ResponsePacket<?> response){
         if (response.getStatusCode() == 200) {
+            if(response.getPayload() == null) return;
+            UserProfileDTO dto = (UserProfileDTO) response.getPayload();
+
+            //Update Current Session info
+            ClientSession.getInstance().getCurrentUser().setUsername(dto.getUsername());
+            ClientSession.getInstance().getCurrentUser().setPhone(dto.getPhone());
+            log.info("[UpdateProfile] Update current user session info successfully");
+
             NotificationUtil.showInfo("Success","Update profile successfully!");
             log.info("[UpdateProfile] Update profile successfully");
         } else {

@@ -32,7 +32,9 @@ public enum ViewPath {
     SELLER_ITEM_FORM("/app/fxml/SellerView/SellerItemFormView.fxml", false),  // CACHE: Để người dùng gõ dở thông tin lỡ ấn sang tab khác không bị mất form
 
     // ADMIN
-    ADMIN_DASHBOARD("",true);
+    ADMIN_DASHBOARD("",true),
+    ADMIN_SESSIONS("",true),
+    ADMIN_USERS("",true);
 
     private final String path;
     private final boolean cacheable; // Thêm thuộc tính đánh dấu Cache
