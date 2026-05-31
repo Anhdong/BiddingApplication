@@ -18,21 +18,28 @@ import java.util.function.Supplier;
 
 public class UserMapper {
 
+    // 1. Map xử lý lấy thuộc tính đặc thù để chuyển thành DTO (toDto)
     private static final Map<Class<? extends User>, Function<User, String>> dtoSpecialAttrMappers = new HashMap<>();
 
+    // 2. Map xử lý khởi tạo đối tượng dựa trên RoleType (Tránh if-else khởi tạo)
     private static final Map<RoleType, Supplier<User>> entityFactories = new EnumMap<>(RoleType.class);
 
+    // 3. Map xử lý nạp thuộc tính đặc thù từ String vào Entity (toEntity / updateEntity)
     private static final Map<Class<? extends User>, BiConsumer<User, String>> entitySpecialAttrMappers = new HashMap<>();
 
     static {
+        // --- Cấu hình cho toDto ---
         dtoSpecialAttrMappers.put(Bidder.class, user -> ((Bidder) user).getShippingAddress());
         dtoSpecialAttrMappers.put(Seller.class, user -> ((Seller) user).getBankAccount());
+        // VÁ LỖ HỔNG BẢO MẬT: Không bao giờ trả về OtpSecretKey cho Client
         dtoSpecialAttrMappers.put(Admin.class, user -> null);
 
+        // --- Cấu hình Factory tạo Entity ---
         entityFactories.put(RoleType.BIDDER, Bidder::new);
         entityFactories.put(RoleType.SELLER, Seller::new);
         entityFactories.put(RoleType.ADMIN, Admin::new);
 
+        // --- Cấu hình nạp dữ liệu đặc thù vào Entity ---
         entitySpecialAttrMappers.put(Bidder.class, (user, attr) -> ((Bidder) user).setShippingAddress(attr));
         entitySpecialAttrMappers.put(Seller.class, (user, attr) -> ((Seller) user).setBankAccount(attr));
         entitySpecialAttrMappers.put(Admin.class, (user, attr) -> ((Admin) user).setSecretKey(attr));
@@ -51,6 +58,7 @@ public class UserMapper {
         dto.setPhone(entity.getPhone());
         dto.setRole(entity.getRole());
 
+        // Gắn thuộc tính đặc thù dựa trên Class mà không cần instanceof
         Function<User, String> attrMapper = dtoSpecialAttrMappers.get(entity.getClass());
         if (attrMapper != null) {
             dto.setSpecialAttribute(attrMapper.apply(entity));
