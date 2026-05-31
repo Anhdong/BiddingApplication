@@ -4,6 +4,7 @@ import com.uet.BiddingApplication.DAO.Impl.AuctionSessionDAO;
 import com.uet.BiddingApplication.DAO.Impl.BidDAO;
 import com.uet.BiddingApplication.DAO.Impl.SessionRegistrationDAO;
 import com.uet.BiddingApplication.DTO.Request.SessionRegisterRequestDTO;
+import com.uet.BiddingApplication.DTO.Request.SessionTargetRequestDTO;
 import com.uet.BiddingApplication.DTO.Response.AuctionCardDTO;
 import com.uet.BiddingApplication.DTO.Response.BidderHistoryResponseDTO;
 import com.uet.BiddingApplication.Enum.SessionStatus;
@@ -31,6 +32,7 @@ public class BidderServiceTest {
     @Mock private SessionRegistrationDAO mockRegDAO;
     @Mock private BidDAO mockBidDAO;
     @Mock private AuctionSessionDAO mockSessionDAO;
+    @Mock private RealtimeBroadcastService mockBroadcastService;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -38,6 +40,7 @@ public class BidderServiceTest {
         injectSingleton(SessionRegistrationDAO.class, mockRegDAO);
         injectSingleton(BidDAO.class, mockBidDAO);
         injectSingleton(AuctionSessionDAO.class, mockSessionDAO);
+        injectSingleton(RealtimeBroadcastService.class, mockBroadcastService);
     }
 
     @AfterEach
@@ -45,6 +48,7 @@ public class BidderServiceTest {
         injectSingleton(SessionRegistrationDAO.class, null);
         injectSingleton(BidDAO.class, null);
         injectSingleton(AuctionSessionDAO.class, null);
+        injectSingleton(RealtimeBroadcastService.class, null);
     }
 
     private void injectSingleton(Class<?> clazz, Object mockInstance) throws Exception {
@@ -176,5 +180,67 @@ public class BidderServiceTest {
                 () -> bidderService.registerSession(request, bidderId));
 
         assertTrue(exception.getMessage().contains("Lỗi hệ thống"));
+    }
+
+    // ==========================================
+    // TEST CASES: cancelSessionRegistration
+    // ==========================================
+
+    @Test
+    @DisplayName("cancelSessionRegistration: Thành công hủy đăng ký phiên đấu giá")
+    void testCancelSessionRegistration_Success() {
+        String bidderId = "bidder-1";
+        String sessionId = "session-1";
+        SessionRegisterRequestDTO request = new SessionRegisterRequestDTO(sessionId);
+
+        AuctionSession mockSession = new AuctionSession();
+        mockSession.setId(sessionId);
+        mockSession.setStatus(SessionStatus.OPEN);
+
+        when(mockSessionDAO.getSessionById(sessionId)).thenReturn(mockSession);
+        when(mockRegDAO.checkRegistration(bidderId, sessionId)).thenReturn(true);
+        when(mockRegDAO.deleteRegistration(bidderId, sessionId)).thenReturn(true);
+
+        boolean result = bidderService.cancelSessionRegistration(request, bidderId);
+
+        assertTrue(result, "Hủy đăng ký phải trả về true khi thành công");
+        verify(mockRegDAO, times(1)).deleteRegistration(bidderId, sessionId);
+    }
+
+    @Test
+    @DisplayName("cancelSessionRegistration: Thất bại do chưa đăng ký")
+    void testCancelSessionRegistration_Fail_NotRegistered() {
+        String bidderId = "bidder-1";
+        String sessionId = "session-1";
+        SessionRegisterRequestDTO request = new SessionRegisterRequestDTO(sessionId);
+
+        AuctionSession mockSession = new AuctionSession();
+        mockSession.setId(sessionId);
+        mockSession.setStatus(SessionStatus.OPEN);
+
+        when(mockSessionDAO.getSessionById(sessionId)).thenReturn(mockSession);
+        when(mockRegDAO.checkRegistration(bidderId, sessionId)).thenReturn(false);
+
+        BusinessException exception = assertThrows(BusinessException.class,
+                () -> bidderService.cancelSessionRegistration(request, bidderId));
+
+        assertTrue(exception.getMessage().contains("hủy đăng ký"));
+        verify(mockRegDAO, never()).deleteRegistration(anyString(), anyString());
+    }
+
+    // ==========================================
+    // TEST CASES: leaveSession
+    // ==========================================
+
+    @Test
+    @DisplayName("leaveSession: Thành công rời khỏi phòng đấu giá")
+    void testLeaveSession_Success() {
+        String bidderId = "bidder-1";
+        String sessionId = "session-1";
+        SessionTargetRequestDTO request = new SessionTargetRequestDTO(sessionId);
+
+        assertDoesNotThrow(() -> bidderService.leaveSession(request, bidderId));
+
+        verify(mockBroadcastService, times(1)).unsubscribe(sessionId, bidderId);
     }
 }

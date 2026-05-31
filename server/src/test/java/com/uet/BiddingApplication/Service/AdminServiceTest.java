@@ -1,16 +1,17 @@
 package com.uet.BiddingApplication.Service;
 
 import com.uet.BiddingApplication.CoreService.SearchCacheManager;
+import com.uet.BiddingApplication.CoreService.SessionStartScheduler;
 import com.uet.BiddingApplication.DAO.Impl.AuctionSessionDAO;
+import com.uet.BiddingApplication.DAO.Impl.ItemDAO;
 import com.uet.BiddingApplication.DAO.Impl.UserDAO;
 import com.uet.BiddingApplication.DTO.Request.AdminActionRequestDTO;
+import com.uet.BiddingApplication.DTO.Response.AuctionCardDTO;
+import com.uet.BiddingApplication.DTO.Response.UserProfileDTO;
 import com.uet.BiddingApplication.Enum.RoleType;
 import com.uet.BiddingApplication.Enum.SessionStatus;
 import com.uet.BiddingApplication.Exception.BusinessException;
-import com.uet.BiddingApplication.Model.Admin;
-import com.uet.BiddingApplication.Model.AuctionSession;
-import com.uet.BiddingApplication.Model.Bidder;
-import com.uet.BiddingApplication.Model.User;
+import com.uet.BiddingApplication.Model.*;
 import com.uet.BiddingApplication.ServerClass.AuctionServer;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,10 +19,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-@Disabled
+
 @ExtendWith(MockitoExtension.class)
 public class AdminServiceTest {
 
@@ -33,6 +37,9 @@ public class AdminServiceTest {
     @Mock private AuctionServer mockAuctionServer;
     @Mock private SearchCacheManager mockCacheManager;
     @Mock private RealtimeBroadcastService mockBroadcastService;
+    @Mock private ItemDAO mockItemDAO;
+    @Mock private AutoBidManager mockAutoBidManager;
+    @Mock private SessionStartScheduler mockScheduler;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -44,6 +51,9 @@ public class AdminServiceTest {
         injectSingleton(AuctionServer.class, mockAuctionServer);
         injectSingleton(SearchCacheManager.class, mockCacheManager);
         injectSingleton(RealtimeBroadcastService.class, mockBroadcastService);
+        injectSingleton(ItemDAO.class, mockItemDAO);
+        injectSingleton(AutoBidManager.class, mockAutoBidManager);
+        injectSingleton(SessionStartScheduler.class, mockScheduler);
     }
 
     @AfterEach
@@ -54,6 +64,9 @@ public class AdminServiceTest {
         injectSingleton(AuctionServer.class, null);
         injectSingleton(SearchCacheManager.class, null);
         injectSingleton(RealtimeBroadcastService.class, null);
+        injectSingleton(ItemDAO.class, null);
+        injectSingleton(AutoBidManager.class, null);
+        injectSingleton(SessionStartScheduler.class, null);
     }
 
     // --- Helper Method ---
@@ -61,6 +74,85 @@ public class AdminServiceTest {
         Field field = clazz.getDeclaredField("instance");
         field.setAccessible(true);
         field.set(null, mockInstance);
+    }
+
+    // ==========================================
+    // TEST CASES CHO TÍNH NĂNG GET ALL USERS
+    // ==========================================
+
+    @Test
+    @DisplayName("getAllUsers: Thành công trả về danh sách UserProfileDTO")
+    void testGetAllUsers_Success() {
+        User user1 = new Bidder();
+        user1.setId("user-1");
+        user1.setUsername("bidder1");
+        user1.setEmail("bidder1@test.com");
+        user1.setRole(RoleType.BIDDER);
+
+        User user2 = new Seller();
+        user2.setId("user-2");
+        user2.setUsername("seller1");
+        user2.setEmail("seller1@test.com");
+        user2.setRole(RoleType.SELLER);
+
+        when(mockUserDAO.getAllUsers()).thenReturn(Arrays.asList(user1, user2));
+
+        List<UserProfileDTO> result = adminService.getAllUsers();
+
+        assertEquals(2, result.size(), "Phải trả về đúng số lượng UserProfileDTO");
+        assertEquals("bidder1", result.get(0).getUsername());
+        assertEquals("seller1", result.get(1).getUsername());
+        verify(mockUserDAO, times(1)).getAllUsers();
+    }
+
+    @Test
+    @DisplayName("getAllUsers: Trả về danh sách rỗng khi không có user")
+    void testGetAllUsers_Empty() {
+        when(mockUserDAO.getAllUsers()).thenReturn(null);
+
+        List<UserProfileDTO> result = adminService.getAllUsers();
+
+        assertNotNull(result, "Không được trả về null");
+        assertTrue(result.isEmpty(), "Danh sách phải rỗng khi DAO trả về null");
+    }
+
+    // ==========================================
+    // TEST CASES CHO TÍNH NĂNG GET ALL SESSIONS
+    // ==========================================
+
+    @Test
+    @DisplayName("getAllSessions: Thành công trả về danh sách AuctionCardDTO với item mapping")
+    void testGetAllSessions_Success() {
+        String itemId = "item-1";
+        AuctionSession session = new AuctionSession();
+        session.setId("session-1");
+        session.setItemId(itemId);
+        session.setStatus(SessionStatus.OPEN);
+
+        Item mockItem = new Electronics();
+        mockItem.setId(itemId);
+        mockItem.setName("Laptop Test");
+
+        when(mockSessionDAO.getAllSessions(true)).thenReturn(Collections.singletonList(session));
+        when(mockItemDAO.getItemsByIds(anyList())).thenReturn(Collections.singletonList(mockItem));
+
+        List<AuctionCardDTO> result = adminService.getAllSessions();
+
+        assertFalse(result.isEmpty(), "Danh sách phải có ít nhất 1 phần tử");
+        assertEquals(1, result.size());
+        verify(mockSessionDAO, times(1)).getAllSessions(true);
+        verify(mockItemDAO, times(1)).getItemsByIds(anyList());
+    }
+
+    @Test
+    @DisplayName("getAllSessions: Trả về danh sách rỗng khi không có session")
+    void testGetAllSessions_Empty() {
+        when(mockSessionDAO.getAllSessions(true)).thenReturn(null);
+
+        List<AuctionCardDTO> result = adminService.getAllSessions();
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
     // ==========================================
@@ -100,6 +192,7 @@ public class AdminServiceTest {
         assertTrue(result, "Hàm phải trả về true khi Ban thành công");
         verify(mockUserDAO, times(1)).updateStatus(targetId, false);
         verify(mockAuctionServer, times(1)).kickUser(targetId); // Đảm bảo Socket bị ngắt
+        verify(mockAutoBidManager, times(1)).removeAutoBidsForBannedUser(targetId); // Đảm bảo Auto-bid bị dọn dẹp
     }
 
     @Test
@@ -155,6 +248,7 @@ public class AdminServiceTest {
         // 3. Assert
         assertTrue(result);
         verify(mockCacheManager, times(1)).removeSession(sessionId); // Kiểm tra dọn dẹp RAM
+        verify(mockScheduler, times(1)).cancelSchedule(sessionId); // Kiểm tra hủy lịch trình
         verify(mockBroadcastService, times(1)).broadcast(eq(sessionId), any()); // Kiểm tra phát thanh
     }
 

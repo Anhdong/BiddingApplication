@@ -2,6 +2,7 @@ package com.uet.BiddingApplication.Service;
 
 import com.uet.BiddingApplication.CoreService.InMemoryBidServiceImpl;
 import com.uet.BiddingApplication.CoreService.SearchCacheManager;
+import com.uet.BiddingApplication.DAO.Impl.AutoBidSettingDAO;
 import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
 import com.uet.BiddingApplication.DTO.Request.BidRequestDTO;
 import com.uet.BiddingApplication.Model.AuctionSession;
@@ -20,7 +21,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@Disabled
 @ExtendWith(MockitoExtension.class)
 public class AutoBidManagerTest {
 
@@ -30,6 +30,7 @@ public class AutoBidManagerTest {
     @Mock private SearchCacheManager mockCacheManager;
     @Mock private RealtimeBroadcastService mockBroadcastService;
     @Mock private InMemoryBidServiceImpl mockBidService;
+    @Mock private AutoBidSettingDAO mockAutoBidSettingDAO;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -39,6 +40,7 @@ public class AutoBidManagerTest {
         injectSingleton(SearchCacheManager.class, mockCacheManager);
         injectSingleton(RealtimeBroadcastService.class, mockBroadcastService);
         injectSingleton(InMemoryBidServiceImpl.class, mockBidService);
+        injectSingleton(AutoBidSettingDAO.class, mockAutoBidSettingDAO);
 
         // 3. Xóa sạch dữ liệu hàng đợi RAM trước mỗi test case để tránh Flaky Tests
         clearAutoBidQueues();
@@ -49,6 +51,7 @@ public class AutoBidManagerTest {
         injectSingleton(SearchCacheManager.class, null);
         injectSingleton(RealtimeBroadcastService.class, null);
         injectSingleton(InMemoryBidServiceImpl.class, null);
+        injectSingleton(AutoBidSettingDAO.class, null);
         clearAutoBidQueues();
     }
 
@@ -88,6 +91,9 @@ public class AutoBidManagerTest {
         String sessionId = "session-1";
         String bidderId = "bidder-1";
 
+        // Cấu hình DAO Mock trả về true khi lưu xuống DB
+        when(mockAutoBidSettingDAO.upsertAutoBid(any(AutoBidSetting.class))).thenReturn(true);
+
         AutoBidSetting setting1 = new AutoBidSetting();
         setting1.setSessionId(sessionId);
         setting1.setBidderId(bidderId);
@@ -112,6 +118,9 @@ public class AutoBidManagerTest {
     void testCancelAutoBid_Success() throws Exception {
         String sessionId = "session-1";
 
+        // Cấu hình DAO Mock
+        when(mockAutoBidSettingDAO.upsertAutoBid(any(AutoBidSetting.class))).thenReturn(true);
+
         AutoBidSetting setting = new AutoBidSetting();
         setting.setSessionId(sessionId);
         setting.setBidderId("bidder-1");
@@ -133,6 +142,9 @@ public class AutoBidManagerTest {
     void testTriggerAutoBid_SkipHighestBidder() throws Exception {
         String sessionId = "session-1";
         String bidderId = "bidder-1";
+
+        // Cấu hình DAO Mock
+        when(mockAutoBidSettingDAO.upsertAutoBid(any(AutoBidSetting.class))).thenReturn(true);
 
         AutoBidSetting setting = new AutoBidSetting();
         setting.setSessionId(sessionId);
@@ -158,6 +170,9 @@ public class AutoBidManagerTest {
     void testTriggerAutoBid_RemoveWhenMaxBidExceeded() throws Exception {
         String sessionId = "session-1";
         String bidderId = "bidder-1";
+
+        // Cấu hình DAO Mock
+        when(mockAutoBidSettingDAO.upsertAutoBid(any(AutoBidSetting.class))).thenReturn(true);
 
         AutoBidSetting setting = new AutoBidSetting();
         setting.setSessionId(sessionId);
@@ -188,6 +203,9 @@ public class AutoBidManagerTest {
     @DisplayName("triggerAutoBid: Gửi lệnh hợp lệ và Lập tức nhường luồng (Break)")
     void testTriggerAutoBid_SuccessAndBreak() throws Exception {
         String sessionId = "session-1";
+
+        // Cấu hình DAO Mock
+        when(mockAutoBidSettingDAO.upsertAutoBid(any(AutoBidSetting.class))).thenReturn(true);
 
         // Tạo 2 user cùng đăng ký Auto-bid
         AutoBidSetting setting1 = new AutoBidSetting();
