@@ -35,7 +35,7 @@ public class UserMapper {
 
         entitySpecialAttrMappers.put(Bidder.class, (user, attr) -> ((Bidder) user).setShippingAddress(attr));
         entitySpecialAttrMappers.put(Seller.class, (user, attr) -> ((Seller) user).setBankAccount(attr));
-        entitySpecialAttrMappers.put(Admin.class, (user, attr) -> ((Admin) user).setOtpSecretKey(attr));
+        entitySpecialAttrMappers.put(Admin.class, (user, attr) -> ((Admin) user).setSecretKey(attr));
     }
 
     /**

@@ -1,7 +1,6 @@
 package com.uet.BiddingApplication.Service;
 
 import java.security.SecureRandom;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import com.uet.BiddingApplication.CoreService.SearchCacheManager;
@@ -120,7 +119,7 @@ public class AdminService {
             throw new BusinessException("Bạn không có quyền thực hiện hành động này.");
         }
 
-        if (!admin.getOtpSecretKey().equals(request.getOtpCode())) {
+        if (!admin.getSecretKey().equals(request.getOtpCode())) {
             throw new BusinessException("Mã OTP xác thực không chính xác.");
         }
 
@@ -160,7 +159,7 @@ public class AdminService {
             throw new BusinessException("Bạn không có quyền thực hiện hành động quản trị này.");
         }
 
-        if (!admin.getOtpSecretKey().equals(request.getOtpCode())) {
+        if (!admin.getSecretKey().equals(request.getOtpCode())) {
             throw new BusinessException("Mã OTP xác thực không chính xác.");
         }
 

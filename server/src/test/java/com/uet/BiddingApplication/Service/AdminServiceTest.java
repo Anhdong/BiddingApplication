@@ -78,7 +78,7 @@ public class AdminServiceTest {
         Admin mockAdmin = new Admin();
         mockAdmin.setId(adminId);
         mockAdmin.setRole(RoleType.ADMIN);
-        mockAdmin.setOtpSecretKey(validOTP);
+        mockAdmin.setSecretKey(validOTP);
 
         User mockTarget = new Bidder();
         mockTarget.setId(targetId);
@@ -106,7 +106,7 @@ public class AdminServiceTest {
     @DisplayName("Ban User: Thất bại và bắn lỗi khi nhập sai OTP")
     void testBanUser_Fail_WrongOTP() {
         Admin mockAdmin = new Admin();
-        mockAdmin.setOtpSecretKey("123456"); // OTP đúng
+        mockAdmin.setSecretKey("123456"); // OTP đúng
 
         when(mockUserDAO.findById("admin-1")).thenReturn(mockAdmin);
 
@@ -134,7 +134,7 @@ public class AdminServiceTest {
         String validOTP = "654321";
 
         Admin mockAdmin = new Admin();
-        mockAdmin.setOtpSecretKey(validOTP);
+        mockAdmin.setSecretKey(validOTP);
 
         AuctionSession mockSession = new AuctionSession();
         mockSession.setId(sessionId);
@@ -162,7 +162,7 @@ public class AdminServiceTest {
     @DisplayName("Cancel Session: Thất bại khi cố hủy phiên đã FINISHED")
     void testCancelSession_Fail_AlreadyFinished() {
         Admin mockAdmin = new Admin();
-        mockAdmin.setOtpSecretKey("111111");
+        mockAdmin.setSecretKey("111111");
 
         AuctionSession mockSession = new AuctionSession();
         mockSession.setStatus(SessionStatus.FINISHED); // Phiên đã kết thúc

@@ -152,7 +152,7 @@ public class AuthService {
      * Cập nhật thông tin hồ sơ cá nhân.
      * @return true nếu cập nhật cơ sở dữ liệu thành công.
      */
-    public boolean updateProfile(ProfileUpdateRequestDTO request, String userId) {
+    public UserProfileDTO updateProfile(ProfileUpdateRequestDTO request, String userId) {
         User user = this.userDAO.findById(userId);
         if (user == null) {
             throw new BusinessException("Không tìm thấy thông tin người dùng.");
@@ -163,7 +163,7 @@ public class AuthService {
         if (!this.userDAO.updateProfile(user)){
             throw new BusinessException("Lỗi DAO không update được tài khoản");
         }
-        return true;
+        return UserMapper.toDto(user);
     }
     public void reconnect(String userId,String oldToken) {
         if (oldToken == null || oldToken.trim().isEmpty()) {

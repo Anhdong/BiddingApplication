@@ -5,22 +5,22 @@ import com.uet.BiddingApplication.Enum.RoleType;
 import java.time.LocalDateTime;
 
 public class Admin extends User{
-    private String otpSecretKey;
+    private String SecretKey;
 
     public Admin(String id, LocalDateTime createdAt, String username, String email, String phone,
-                 String passwordHash, RoleType role, String otpSecretKey) {
+                 String passwordHash, RoleType role, String SecretKey) {
         super(id, createdAt, username, email, phone, passwordHash, role);
-        this.otpSecretKey = otpSecretKey;
+        this.SecretKey = SecretKey;
     }
 
     public Admin() {
     }
 
-    public String getOtpSecretKey() {
-        return otpSecretKey;
+    public String getSecretKey() {
+        return SecretKey;
     }
 
-    public void setOtpSecretKey(String otpSecretKey) {
-        this.otpSecretKey = otpSecretKey;
+    public void setSecretKey(String secretKey) {
+        this.SecretKey = secretKey;
     }
 }
