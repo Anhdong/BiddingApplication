@@ -60,6 +60,19 @@ public class MainViewController implements Initializable {
             loadView(ViewPath.getDefaultView(role));
         } catch (Exception e) {
             log.error("[MainViewController] Thiết lập default View không thành công: {}", e.getMessage());
+            // Truy vết sâu vào Nguyên nhân gốc (Cực kỳ quan trọng)
+            Throwable rootCause = e.getCause();
+            if (rootCause != null) {
+                log.error("--- NGUYÊN NHÂN GỐC RỄ (ROOT CAUSE) ---");
+                log.error("Type: {}", rootCause.getClass().getName());
+                log.error("Message: {}", rootCause.getMessage());
+
+                // In thẳng ra Console để trace được dòng code gây lỗi trong Controller
+                rootCause.printStackTrace();
+            } else {
+                // Nếu không có root cause, in stacktrace của lỗi hiện tại
+                e.printStackTrace();
+            }
         }
         log.info("[MainViewController] Thiết lập default View thành công");
     }
@@ -120,6 +133,7 @@ public class MainViewController implements Initializable {
 
         } catch (IOException e) {
             log.error("[MainViewController] Không thể thiết lập giao diện nội dung: {}", target.getPath());
+            e.printStackTrace();
         }
     }
 
