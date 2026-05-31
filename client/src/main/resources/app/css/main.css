@@ -15,6 +15,12 @@
     -fx-translate-y: -0.5; /* Nhấc nhẹ card lên một chút */
 }
 
+/*button pop effect*/
+.button:armed, .toggle-button:armed {
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
 /*Rewrite Atlantafx flat class*/
 .flat {
     -fx-background-radius: 6px; /* Clean, slightly rounded corners */
