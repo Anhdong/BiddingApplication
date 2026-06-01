@@ -52,7 +52,7 @@ public class BidderHistoryController implements Initializable, ViewControllerLif
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         nameCol.setCellValueFactory(new PropertyValueFactory<>("itemName"));
-        myBidCol.setCellValueFactory(new PropertyValueFactory<>("startPrice"));
+        myBidCol.setCellValueFactory(new PropertyValueFactory<>("myHighestBid"));
         finalPriceCol.setCellValueFactory(new PropertyValueFactory<>("finalPrice"));
         winnerCol.setCellValueFactory(new PropertyValueFactory<>("winnerName"));
         statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
