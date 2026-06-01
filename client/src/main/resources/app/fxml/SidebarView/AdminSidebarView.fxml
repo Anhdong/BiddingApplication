@@ -37,7 +37,7 @@
             <Insets bottom="10.0" />
          </VBox.margin>
       </Separator>
-      <ToggleButton fx:id="btnSessions" maxHeight="80.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleSessions" prefHeight="80.0" text="Sessions">
+      <ToggleButton fx:id="btnSessions" maxHeight="80.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleSessions" prefHeight="80.0" selected="true" text="Sessions">
          <styleClass>
             <String fx:value="flat" />
             <String fx:value="title-3" />

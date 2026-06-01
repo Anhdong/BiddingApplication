@@ -24,7 +24,7 @@
                   </TilePane>
                </content>
             </ScrollPane>
-            <Button fx:id="btnAdd" mnemonicParsing="false" onAction="#switchToAddItem" text="ADD" StackPane.alignment="BOTTOM_RIGHT">
+            <Button fx:id="btnAdd" alignment="CENTER" mnemonicParsing="false" onAction="#switchToAddItem" text="ADD" StackPane.alignment="BOTTOM_RIGHT">
                <graphic>
                   <FontIcon iconLiteral="mdi2p-plus" styleClass="large-icon" />
                </graphic>
