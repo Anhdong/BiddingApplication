@@ -37,7 +37,7 @@ public class UserDAO implements IUserDAO {
         switch (role) {
             case ADMIN:
                 Admin admin = new Admin();
-                admin.setOtpSecretKey(rs.getString("otp_secret_key"));
+                admin.setSecretKey(rs.getString("secret_key"));
                 user = admin;
                 break;
             case SELLER:
@@ -134,7 +134,7 @@ public class UserDAO implements IUserDAO {
     // =========================================================================
 
     public boolean insertUser(User user) {
-        String sql = "INSERT INTO users (id, username, email, phone, password_hash, role, is_active, created_at, otp_secret_key, bank_account, shipping_address) " +
+        String sql = "INSERT INTO users (id, username, email, phone, password_hash, role, is_active, created_at, secret_key, bank_account, shipping_address) " +
                 "VALUES (?::uuid, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnectionPool.getConnection();
@@ -154,7 +154,7 @@ public class UserDAO implements IUserDAO {
             String otpSecret = null, bankAccount = null, shippingAddress = null;
 
             if (user instanceof Admin) {
-                otpSecret = ((Admin) user).getOtpSecretKey();
+                otpSecret = ((Admin) user).getSecretKey();
             } else if (user instanceof Seller) {
                 bankAccount = ((Seller) user).getBankAccount();
             } else if (user instanceof Bidder) {

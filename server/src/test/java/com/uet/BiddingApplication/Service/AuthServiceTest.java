@@ -2,11 +2,16 @@ package com.uet.BiddingApplication.Service;
 
 import com.uet.BiddingApplication.DAO.Impl.UserDAO;
 import com.uet.BiddingApplication.DTO.Request.AuthRequestDTO;
+import com.uet.BiddingApplication.DTO.Request.PasswordChangeRequestDTO;
+import com.uet.BiddingApplication.DTO.Request.ProfileUpdateRequestDTO;
 import com.uet.BiddingApplication.DTO.Request.RegisterRequestDTO;
 import com.uet.BiddingApplication.DTO.Response.AuthResponseDTO;
+import com.uet.BiddingApplication.DTO.Response.UserProfileDTO;
+import com.uet.BiddingApplication.Enum.RoleType;
 import com.uet.BiddingApplication.Exception.BusinessException;
 import com.uet.BiddingApplication.Model.Bidder;
 import com.uet.BiddingApplication.Model.User;
+import com.uet.BiddingApplication.ServerClass.AuctionServer;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mindrot.jbcrypt.BCrypt;
@@ -27,6 +32,9 @@ public class AuthServiceTest {
     @Mock
     private UserDAO mockUserDAO;
 
+    @Mock
+    private AuctionServer mockAuctionServer;
+
     @BeforeEach
     void setUp() throws Exception {
         authService = AuthService.getInstance();
@@ -34,9 +42,18 @@ public class AuthServiceTest {
         // Tiêm mockUserDAO vào AuthService
         injectPrivateField(authService, "userDAO", mockUserDAO);
 
+        // Tiêm mockAuctionServer vào Singleton
+        injectSingleton(AuctionServer.class, mockAuctionServer);
+
         // Dọn dẹp cache RAM trước mỗi test case để đảm bảo tính độc lập
         ConcurrentHashMap<?, ?> cache = (ConcurrentHashMap<?, ?>) getPrivateField(authService, "userCache");
         cache.clear();
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        // Trả lại trạng thái sạch cho AuctionServer Singleton
+        injectSingleton(AuctionServer.class, null);
     }
 
     // --- Helper Methods ---
@@ -52,7 +69,15 @@ public class AuthServiceTest {
         return field.get(target);
     }
 
-    // --- Test Cases: Login ---
+    private void injectSingleton(Class<?> clazz, Object mockInstance) throws Exception {
+        Field field = clazz.getDeclaredField("instance");
+        field.setAccessible(true);
+        field.set(null, mockInstance);
+    }
+
+    // ==========================================
+    // TEST CASES: Login
+    // ==========================================
 
     @Test
     @DisplayName("Login: Thành công khi user tồn tại và đúng mật khẩu")
@@ -120,7 +145,9 @@ public class AuthServiceTest {
         assertEquals("Tài khoản của bạn đã bị Admin khóa.", exception.getMessage());
     }
 
-    // --- Test Cases: Register ---
+    // ==========================================
+    // TEST CASES: Register
+    // ==========================================
 
     @Test
     @DisplayName("Register: Thất bại khi Email đã tồn tại")
@@ -138,7 +165,31 @@ public class AuthServiceTest {
         assertEquals("Email này đã được đăng ký.", exception.getMessage());
     }
 
-    // --- Test Cases: Logout ---
+    @Test
+    @DisplayName("Register: Thành công đăng ký tài khoản Bidder mới")
+    void testRegister_Success() {
+        // Arrange
+        RegisterRequestDTO request = new RegisterRequestDTO();
+        request.setEmail("new@test.com");
+        request.setUsername("newuser");
+        request.setPassword("pass123");
+        request.setRole(RoleType.BIDDER);
+
+        when(mockUserDAO.findByEmail("new@test.com")).thenReturn(null);
+        when(mockUserDAO.findByUsername("newuser")).thenReturn(null);
+        when(mockUserDAO.insertUser(any(User.class))).thenReturn(true);
+
+        // Act
+        boolean result = authService.register(request);
+
+        // Assert
+        assertTrue(result, "Đăng ký phải trả về true khi thành công");
+        verify(mockUserDAO, times(1)).insertUser(any(User.class));
+    }
+
+    // ==========================================
+    // TEST CASES: Logout
+    // ==========================================
 
     @Test
     @DisplayName("Logout: Trả về true và xóa token khỏi RAM thành công")
@@ -153,5 +204,87 @@ public class AuthServiceTest {
         // Assert
         assertTrue(result, "Đăng xuất phải trả về true");
         assertNull(authService.validateToken("valid-token"), "Token phải bị xóa hoàn toàn khỏi cache RAM");
+    }
+
+    // ==========================================
+    // TEST CASES: changePassword
+    // ==========================================
+
+    @Test
+    @DisplayName("changePassword: Thành công đổi mật khẩu khi mật khẩu cũ đúng")
+    void testChangePassword_Success() {
+        // Arrange
+        String userId = "user-1";
+        String oldPassword = "oldpass";
+        String newPassword = "newpass";
+
+        User mockUser = new Bidder();
+        mockUser.setId(userId);
+        mockUser.setPasswordHash(BCrypt.hashpw(oldPassword, BCrypt.gensalt()));
+
+        when(mockUserDAO.findById(userId)).thenReturn(mockUser);
+        when(mockUserDAO.changePassword(eq(userId), anyString())).thenReturn(true);
+
+        PasswordChangeRequestDTO request = new PasswordChangeRequestDTO(oldPassword, newPassword);
+
+        // Act
+        boolean result = authService.changePassword(request, userId);
+
+        // Assert
+        assertTrue(result, "Đổi mật khẩu phải trả về true khi thành công");
+        verify(mockUserDAO, times(1)).changePassword(eq(userId), anyString());
+    }
+
+    @Test
+    @DisplayName("changePassword: Thất bại khi mật khẩu cũ không đúng")
+    void testChangePassword_Fail_WrongOldPassword() {
+        // Arrange
+        String userId = "user-1";
+
+        User mockUser = new Bidder();
+        mockUser.setId(userId);
+        mockUser.setPasswordHash(BCrypt.hashpw("correct_old", BCrypt.gensalt()));
+
+        when(mockUserDAO.findById(userId)).thenReturn(mockUser);
+
+        PasswordChangeRequestDTO request = new PasswordChangeRequestDTO("wrong_old", "new_pass");
+
+        // Act & Assert
+        BusinessException exception = assertThrows(BusinessException.class,
+                () -> authService.changePassword(request, userId));
+
+        assertEquals("Mật khẩu cũ không chính xác.", exception.getMessage());
+        verify(mockUserDAO, never()).changePassword(anyString(), anyString());
+    }
+
+    // ==========================================
+    // TEST CASES: updateProfile
+    // ==========================================
+
+    @Test
+    @DisplayName("updateProfile: Thành công trả về UserProfileDTO sau khi cập nhật")
+    void testUpdateProfile_Success() {
+        // Arrange
+        String userId = "user-1";
+
+        Bidder mockUser = new Bidder();
+        mockUser.setId(userId);
+        mockUser.setUsername("oldname");
+        mockUser.setEmail("test@test.com");
+        mockUser.setPhone("0123456789");
+        mockUser.setRole(RoleType.BIDDER);
+        mockUser.setShippingAddress("Hà Nội");
+
+        when(mockUserDAO.findById(userId)).thenReturn(mockUser);
+        when(mockUserDAO.updateProfile(any(User.class))).thenReturn(true);
+
+        ProfileUpdateRequestDTO request = new ProfileUpdateRequestDTO("newname", "0987654321", "HCM");
+
+        // Act
+        UserProfileDTO result = authService.updateProfile(request, userId);
+
+        // Assert
+        assertNotNull(result, "Phải trả về UserProfileDTO thay vì null");
+        verify(mockUserDAO, times(1)).updateProfile(any(User.class));
     }
 }

@@ -23,20 +23,29 @@ import org.mindrot.jbcrypt.BCrypt;
 public class AuthService {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AuthService.class);
 
+    // 1. Khởi tạo Singleton
     private static volatile AuthService instance;
 
+    // 2. Thuộc tính nội bộ
+    // Gọi DAO từ Tech Lead để giao tiếp DB
     private UserDAO userDAO;
 
+    // Lưu trữ RAM: Key là token, Value là userId
     private ConcurrentHashMap<String, String> userCache;
 
+    // Constructor private để ngăn khởi tạo từ bên ngoài
     private AuthService() {
-        this.userDAO = UserDAO.getInstance();
+        this.userDAO = UserDAO.getInstance(); // Giả định Tech Lead dùng Singleton cho DAO
         this.userCache = new ConcurrentHashMap<>();
     }
 
+    // Lấy instance duy nhất của AuthService
     public static AuthService getInstance() {
+        // Kiểm tra lần 1: Bỏ qua khóa nếu đối tượng đã được tạo
         if (instance == null) {
+            // Chỉ khóa class tại thời điểm khởi tạo lần đầu tiên
             synchronized (AuthService.class) {
+                // Kiểm tra lần 2: Tránh trường hợp 2 luồng cùng lọt qua lần kiểm tra 1
                 if (instance == null) {
                     instance = new AuthService();
                 }
@@ -46,10 +55,14 @@ public class AuthService {
     }
 
 
+    // =======================================================================
+    // CÁC PHƯƠNG THỨC XỬ LÝ NGHIỆP VỤ (BUSINESS LOGIC)
+    // =======================================================================
     /**
      * Xử lý đăng nhập, tạo token và kiểm tra đăng nhập trùng lặp.
      */
     public AuthResponseDTO login(AuthRequestDTO request) {
+        // 1. Kiểm tra thông tin người dùng từ DAO
         User user = this.userDAO.findByUsername(request.getUsername());
 
         if (user == null || !checkPassword(request.getPassword(), user.getPasswordHash())) {
@@ -60,25 +73,32 @@ public class AuthService {
             throw new BusinessException("Tài khoản của bạn đã bị Admin khóa.");
         }
 
+        // 2. Logic xử lý đăng nhập đa thiết bị (Đá luồng cũ ra ngoài)
         String userId = String.valueOf(user.getId());
 
+        // Đây là tính năng rất hay để chống 1 tài khoản đăng nhập ở 2 máy.
         ClientConnectionHandler oldHandler = AuctionServer.getInstance().getClientHandler(userId);
         if (oldHandler != null) {
             oldHandler.kickOut("Tài khoản đã bị đăng nhập ở nơi khác !");
         }
 
+        // 3. Tạo Token và lưu vào Cache RAM
         String token = UUID.randomUUID().toString();
+        // 2. Cấp lại định danh cho Socket mới (Đây là mục đích duy nhất của hàm này)
         userCache.put(token, userId);
         userDAO.updateSessionToken(userId, token);
 
+        // 4. FIX BUG: Trả về AuthResponseDTO chứa cả Token và Profile [cite: 679]
         UserProfileDTO userProfile = UserMapper.toDto(user);
         return new AuthResponseDTO(token, userProfile);
+    // Không cần return gì cả!
     }
 
     /**
      * Xử lý đăng ký tài khoản mới.
      */
     public boolean register(RegisterRequestDTO request) {
+        // 1. Sử dụng biến instance (this.userDAO) thay vì gọi tĩnh
         if (this.userDAO.findByEmail(request.getEmail()) != null) {
             throw new BusinessException("Email này đã được đăng ký.");
         }
@@ -86,10 +106,12 @@ public class AuthService {
             throw new BusinessException("Tên đăng nhập (Username) đã tồn tại.");
         }
 
+        // 2. Băm mật khẩu và map dữ liệu
         String hashedPassWord = hashPassword(request.getPassword());
         User newUser = UserMapper.toEntity(request);
         newUser.setPasswordHash(hashedPassWord);
 
+        // 3. Ghi xuống DB (DB nên có ràng buộc UNIQUE cho email/username)
         if (!this.userDAO.insertUser(newUser)){
             throw new BusinessException("Lỗi DAO không đăng ký được");
         }
@@ -100,6 +122,7 @@ public class AuthService {
      * Kiểm tra tính hợp lệ của token và trả về userId tương ứng.
      */
     public String validateToken(String token) {
+        // Rất đơn giản: Lấy userId từ HashMap. Nếu token sai/hết hạn, nó tự trả về null.
         if (token == null) return null;
         return userCache.get(token);
     }
@@ -113,12 +136,16 @@ public class AuthService {
             return false;
         }
 
+        // 1. Lấy userId ra TRƯỚC KHI xóa token để có ID dọn dẹp Realtime
         String userId = userCache.get(token);
 
         if (userId != null) {
+            // 2. Hủy thẻ từ (Token) khỏi RAM
             userCache.remove(token);
             userDAO.updateSessionToken(userId, null);
 
+            // 3. Dọn dẹp: Rút người dùng khỏi tất cả các phòng đấu giá đang theo dõi
+            // Nhớ import com.uet.BiddingApplication.Service.RealtimeBroadcastService;
             RealtimeBroadcastService.getInstance().unsubscribeFromAll(userId);
 
             return true;
@@ -132,15 +159,18 @@ public class AuthService {
      * @return true nếu cập nhật cơ sở dữ liệu thành công.
      */
     public boolean changePassword(PasswordChangeRequestDTO request, String userId) {
+        // 1. Tìm thông tin user hiện tại (Sử dụng biến instance this.userDAO cho clean)
         User user = this.userDAO.findById(userId);
         if (user == null) {
             throw new BusinessException("Không tìm thấy thông tin người dùng.");
         }
 
+        // 2. Validate nghiệp vụ: Mật khẩu cũ phải khớp
         if (!checkPassword(request.getOldPassword(), user.getPasswordHash())) {
             throw new BusinessException("Mật khẩu cũ không chính xác.");
         }
 
+        // 3. Băm mật khẩu mới, gọi DAO và trả thẳng kết quả boolean cho Router
         String hashedNewPassword = hashPassword(request.getNewPassword());
         if (!this.userDAO.changePassword(userId, hashedNewPassword)){
             throw new BusinessException("Lỗi DAO không thay đổi được mật khẩu");
@@ -152,24 +182,27 @@ public class AuthService {
      * Cập nhật thông tin hồ sơ cá nhân.
      * @return true nếu cập nhật cơ sở dữ liệu thành công.
      */
-    public boolean updateProfile(ProfileUpdateRequestDTO request, String userId) {
+    public UserProfileDTO updateProfile(ProfileUpdateRequestDTO request, String userId) {
         User user = this.userDAO.findById(userId);
         if (user == null) {
             throw new BusinessException("Không tìm thấy thông tin người dùng.");
         }
 
+        // 2. Đổ dữ liệu mới từ request (DTO) vào thực thể (Entity)
         UserMapper.updateEntity(request, user);
 
+        // 3. Ghi xuống Database và trả thẳng kết quả boolean cho Router
         if (!this.userDAO.updateProfile(user)){
             throw new BusinessException("Lỗi DAO không update được tài khoản");
         }
-        return true;
+        return UserMapper.toDto(user);
     }
     public void reconnect(String userId,String oldToken) {
         if (oldToken == null || oldToken.trim().isEmpty()) {
             throw new BusinessException("Token không được để trống.");
         }
 
+        // 1. Query Database để đối chiếu Token
         String token=userDAO.getTokenById(userId);
         if (!token.equals(oldToken)) {
             throw new BusinessException("Phiên đăng nhập không hợp lệ hoặc đã hết hạn.");
@@ -178,7 +211,9 @@ public class AuthService {
         userCache.put(token, userId);
     }
 
+    // --- Các phương thức bổ trợ nội bộ (Helper methods) ---
     private boolean checkPassword(String plain, String hashed) {
+        // Sử dụng jBCrypt hoặc thư viện tương ứng
         return BCrypt.checkpw(plain, hashed);
     }
 

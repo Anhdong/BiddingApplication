@@ -20,7 +20,6 @@ import com.uet.BiddingApplication.Service.ItemManagementService;
 import com.uet.BiddingApplication.Service.SellerService;
 import com.uet.BiddingApplication.Service.RealtimeBroadcastService;
 import com.uet.BiddingApplication.Service.AutoBidManager;
-import com.uet.BiddingApplication.Service.AuctionService;
 import com.uet.BiddingApplication.Utils.Mapper.AutoBidMapper;
 import com.uet.BiddingApplication.Exception.BusinessException;
 
@@ -73,8 +72,8 @@ public class RouteRegistry {
 
         registry.put(ActionType.UPDATE_PROFILE, req -> {
             ProfileUpdateRequestDTO dto = (ProfileUpdateRequestDTO) req.getPayload();
-            AuthService.getInstance().updateProfile(dto, req.getUserId());
-            return new ResponsePacket<>(ActionType.UPDATE_PROFILE, 200, "Cập nhật thông tin thành công", null);
+            UserProfileDTO result = AuthService.getInstance().updateProfile(dto, req.getUserId());
+            return new ResponsePacket<>(ActionType.UPDATE_PROFILE, 200, "Cập nhật thông tin thành công", result);
         });
 
         registry.put(ActionType.RECONNECT_SESSION,req ->{
@@ -96,10 +95,10 @@ public class RouteRegistry {
             return new ResponsePacket<>(ActionType.GET_ALL_SESSIONS, 200, "Lấy danh sách phiên đấu giá thành công", result);
         });
 
-        registry.put(ActionType.BAN_USER_WITH_OTP, req -> {
+        registry.put(ActionType.BAN_USER, req -> {
             AdminActionRequestDTO dto = (AdminActionRequestDTO) req.getPayload();
             AdminService.getInstance().banUser(dto, req.getUserId());
-            return new ResponsePacket<>(ActionType.BAN_USER_WITH_OTP, 200, "Đã khóa tài khoản thành công", null);
+            return new ResponsePacket<>(ActionType.BAN_USER, 200, "Đã khóa tài khoản thành công", null);
         });
 
         registry.put(ActionType.CANCEL_SESSION_WITH_OTP, req -> {

@@ -22,14 +22,22 @@ import com.uet.BiddingApplication.Utils.Mapper.AuctionSessionMapper;
 public class BidderService {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(BidderService.class);
 
+    // Khởi tạo Singleton
     private static volatile BidderService instance = null;
 
+    // Constructor private để ngăn khởi tạo từ bên ngoài
     private BidderService(){
+    // Tài liệu đặc tả không yêu cầu thuộc tính cho class này.
+    // Bạn sẽ gọi trực tiếp các Singleton DAO bên trong các phương thức.
     }
 
+    // Lấy instance duy nhất của BidderService
     public static BidderService getInstance() {
+        // Kiểm tra lần 1: Bỏ qua khóa nếu đối tượng đã được tạo
         if (instance == null) {
+            // Chỉ khóa class tại thời điểm khởi tạo lần đầu tiên
             synchronized (BidderService.class) {
+                // Kiểm tra lần 2: Tránh trường hợp 2 luồng cùng lọt qua lần kiểm tra 1
                 if (instance == null) {
                     instance = new BidderService();
                 }
@@ -42,10 +50,12 @@ public class BidderService {
      * Trả về danh sách các phiên mà Bidder này đã đăng ký tham gia trước.
      */
     public List<AuctionCardDTO> getRegisteredSessions(String bidderId) {
+        // 1. Kiểm tra tính hợp lệ của đầu vào (Defensive Programming)
         if (bidderId == null || bidderId.trim().isEmpty()) {
             throw new BusinessException("Mã người dùng (Bidder ID) không được để trống.");
         }
 
+        // 2. Gọi DAO lấy trực tiếp danh sách DTO đã được JOIN sẵn từ Database
         return SessionRegistrationDAO.getInstance().getRegisteredSessions(bidderId);
     }
 
@@ -53,10 +63,14 @@ public class BidderService {
      * Trả về lịch sử tất cả các lần tham gia trả giá của Bidder.
      */
     public List<BidderHistoryResponseDTO> getBidderHistory(String bidderId) {
+        // 1. Kiểm tra tính hợp lệ của đầu vào (Defensive Programming)
         if (bidderId == null || bidderId.trim().isEmpty()) {
             throw new BusinessException("Mã người dùng (Bidder ID) không được để trống.");
         }
 
+        // 2. Trích xuất dữ liệu
+        // DAO đã xử lý toàn bộ logic gom nhóm (GROUP BY) và mapping sang DTO,
+        // Service chỉ việc lấy kết quả và trả về cho RequestRouter.
         return BidDAO.getInstance().getBidderHistory(bidderId);
     }
 
@@ -67,6 +81,7 @@ public class BidderService {
      * @return true nếu đăng ký thành công
      */
     public boolean registerSession(SessionRegisterRequestDTO request, String bidderId) {
+        // 1. Kiểm tra tính hợp lệ của đầu vào (Fail-fast)
         if (bidderId == null || bidderId.trim().isEmpty()) {
             throw new BusinessException("Mã người dùng (Bidder ID) không hợp lệ.");
         }
@@ -74,29 +89,38 @@ public class BidderService {
             throw new BusinessException("Mã phiên đấu giá (Session ID) không được để trống.");
         }
 
+        // 2. Xóa user khỏi phòng phát thanh Realtime
         String sessionId = request.getSessionId();
 
+        // 2. Ràng buộc nghiệp vụ: Kiểm tra trạng thái phiên đấu giá
+        // 2. Lấy thông tin Session từ DB
         AuctionSession session = AuctionSessionDAO.getInstance().getSessionById(sessionId);
         if (session == null) {
             throw new BusinessException("Phiên đấu giá không tồn tại trong hệ thống.");
         }
 
+        // Theo luồng logic: OPEN (Đăng ký) -> RUNNING (Đấu giá) -> FINISHED
         if (session.getStatus() != SessionStatus.OPEN) {
             throw new BusinessException("Không thể đăng ký! Phiên đấu giá này hiện không ở trạng thái mở đăng ký.");
         }
 
+        // 3. Ràng buộc nghiệp vụ: Chống đăng ký trùng lặp
+        // 3. Ràng buộc nghiệp vụ: Chống hủy đăng ký trùng lặp
         boolean isAlreadyRegistered = SessionRegistrationDAO.getInstance().checkRegistration(bidderId, sessionId);
         if (isAlreadyRegistered) {
             throw new BusinessException("Bạn đã đăng ký tham gia phiên đấu giá này từ trước rồi.");
         }
 
+        // 4. Map dữ liệu sang Entity để lưu
         SessionRegistration registration = AuctionSessionMapper.toEntity(request, bidderId);
 
+        // 5. Ghi xuống Cơ sở dữ liệu
         boolean isSuccess = SessionRegistrationDAO.getInstance().registerBidder(registration);
 
         if (isSuccess) {
             return true;
         } else {
+            // Lỗi này xảy ra khi Database từ chối (VD: lỗi khóa ngoại, đứt kết nối...)
             throw new BusinessException("Lỗi hệ thống: Không thể ghi nhận yêu cầu đăng ký của bạn lúc này.");
         }
     }
@@ -110,6 +134,7 @@ public class BidderService {
      * @return true nếu hủy thành công
      */
     public boolean cancelSessionRegistration(SessionRegisterRequestDTO request, String bidderId){
+        // 1. Kiểm tra tính hợp lệ của đầu vào (Fail-fast)
         if (bidderId == null || bidderId.trim().isEmpty()) {
             throw new BusinessException("Mã người dùng (Bidder ID) không hợp lệ.");
         }
@@ -119,11 +144,13 @@ public class BidderService {
 
         String sessionId = request.getSessionId();
 
+        // 2. Ràng buộc nghiệp vụ: Kiểm tra trạng thái phiên đấu giá
         AuctionSession session = AuctionSessionDAO.getInstance().getSessionById(sessionId);
         if (session == null) {
             throw new BusinessException("Phiên đấu giá không tồn tại trong hệ thống.");
         }
 
+        // Theo luồng logic: OPEN (Đăng ký) -> RUNNING (Đấu giá) -> FINISHED
         if (session.getStatus() != SessionStatus.OPEN) {
             throw new BusinessException("Không thể đăng ký! Phiên đấu giá này hiện không ở trạng thái mở đăng ký.");
         }
@@ -133,11 +160,13 @@ public class BidderService {
             throw new BusinessException("Bạn đã hủy đăng ký tham gia phiên đấu giá này từ trước rồi.");
         }
 
+        // 4. Ghi xuống Cơ sở dữ liệu
         boolean isSuccess = SessionRegistrationDAO.getInstance().deleteRegistration(bidderId, sessionId);
 
         if (isSuccess) {
             return true;
         } else {
+            // Lỗi này xảy ra khi Database từ chối (VD: lỗi khóa ngoại, đứt kết nối...)
             throw new BusinessException("Lỗi hệ thống: Không thể ghi nhận yêu cầu hủy đăng ký của bạn lúc này.");
         }
     }
@@ -150,6 +179,7 @@ public class BidderService {
      * @param bidderId ID của user.
      */
     public void leaveSession(SessionTargetRequestDTO request, String bidderId) {
+        // 1. Fail-fast: Kiểm tra tham số truyền vào
         if (bidderId == null || bidderId.trim().isEmpty()) {
             throw new BusinessException("Mã người dùng không hợp lệ.");
         }
@@ -170,6 +200,7 @@ public class BidderService {
      * @return DTO chứa thông tin đồng bộ toàn diện của phòng đấu giá.
      */
     public AuctionRoomSyncDTO joinSession(SessionTargetRequestDTO request, String bidderId) {
+        // 1. Fail-fast
         if (bidderId == null || bidderId.trim().isEmpty()) {
             throw new BusinessException("Mã người dùng không hợp lệ.");
         }
@@ -184,11 +215,16 @@ public class BidderService {
             throw new BusinessException("Không tìm thấy phiên đấu giá này.");
         }
 
+        // 3. Kiểm tra trạng thái
         if (session.getStatus() == SessionStatus.FINISHED || session.getStatus() == SessionStatus.CANCELED) {
             throw new BusinessException("Phiên đấu giá đã kết thúc hoặc bị hủy.");
         }
 
 
+        // ==========================================
+        // 4. QUÁ TRÌNH GOM DỮ LIỆU (DATA AGGREGATION)
+        // ==========================================
+        // 4.1. Lấy Image URL thông qua itemId (Fix: getImageUrl -> getImageURL)
         String imageURL = null;
         String itemId = session.getItemId();
         Item item =null;
@@ -199,16 +235,21 @@ public class BidderService {
             }
         }
 
+        // 4.2. Lấy Lịch sử đấu giá (Fix: getHistoryBySessionId -> getRecentBids)
         List<BidHistoryDTO> sessionHistory = BidDAO.getInstance().getRecentBids(sessionId);
 
+        // 4.3. Xác định người đang dẫn đầu (Fix warning: get(0) -> getFirst())
         String highestBidderName = null;
         if (sessionHistory != null && !sessionHistory.isEmpty()) {
             highestBidderName = sessionHistory.getFirst().getBidderName();
         }
+        // 4.4 Lấy AutoBid của bidder
         AutoBidSetting autoBidSetting= AutoBidSettingDAO.getInstance().getAutoBid(bidderId,sessionId);
 
+        // 5. Mở luồng Realtime
         RealtimeBroadcastService.getInstance().subscribe(sessionId, bidderId);
 
+        // 6. Trả về đúng DTO mà Client mong đợi theo Registry (Fix: getSessionId -> getId)
         long endTime=session.getEndTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         BigDecimal currentPrice = session.getCurrentPrice()!=null?session.getCurrentPrice():session.getStartPrice();
         return new AuctionRoomSyncDTO(

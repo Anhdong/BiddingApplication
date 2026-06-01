@@ -38,6 +38,7 @@ public class AuctionViewMapper {
     public static SessionInfoResponseDTO toDetailDto(AuctionSession session, Item item) {
         if (session == null || item == null) return null;
 
+        // 1. Khởi tạo DTO và ánh xạ các trường cơ bản từ AuctionSession
         SessionInfoResponseDTO dto = new SessionInfoResponseDTO();
         dto.setSessionId(session.getId());
         dto.setItemId(item.getId());
@@ -47,11 +48,13 @@ public class AuctionViewMapper {
         dto.setEndTime(session.getEndTime());
         dto.setStatus(session.getStatus());
 
+        // 2. Ánh xạ thông tin vật phẩm từ Item
         dto.setItemName(item.getName());
         dto.setDescription(item.getDescription());
         dto.setImageUrl(item.getImageURL());
         dto.setCategory(item.getCategory());
 
+        // 4. Đa hình thuộc tính sản phẩm
         dto.setAttribute(item.getDisplayAttributes());
         return dto;
     }

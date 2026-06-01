@@ -15,8 +15,7 @@ public enum ActionType {
     // Nhóm Admin (Quản trị viên - 5 hành động)
     GET_ALL_USERS, // Lấy danh sách User để quản lý
     GET_ALL_SESSIONS, // Lấy toàn bộ phiên đấu giá
-    REQUEST_OTP, // Yêu cầu Server sinh mã OTP và in ra console
-    BAN_USER_WITH_OTP, // Khóa tài khoản kèm mã xác thực
+    BAN_USER, // Khóa tài khoản kèm mã xác thực
     CANCEL_SESSION_WITH_OTP, // Hủy phiên khẩn cấp kèm mã xác thực
 
     // Nhóm Seller (Người bán - 5 hành động)
