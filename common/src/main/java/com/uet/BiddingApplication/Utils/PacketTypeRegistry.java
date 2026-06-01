@@ -47,7 +47,7 @@ public class PacketTypeRegistry {
         requestTypes.put(ActionType.GET_ALL_USERS, Void.class);
         requestTypes.put(ActionType.GET_ALL_SESSIONS, Void.class);
         requestTypes.put(ActionType.BAN_USER, AdminActionRequestDTO.class);
-        requestTypes.put(ActionType.CANCEL_SESSION_WITH_OTP, AdminActionRequestDTO.class);
+        requestTypes.put(ActionType.CANCEL_SESSION, AdminActionRequestDTO.class);
 
         // --- Nhóm Seller ---
         requestTypes.put(ActionType.CREATE_ITEM, ItemCreateDTO.class);

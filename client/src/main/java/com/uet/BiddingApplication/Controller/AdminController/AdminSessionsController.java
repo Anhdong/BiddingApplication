@@ -68,7 +68,7 @@ public class AdminSessionsController implements Initializable, ViewControllerLif
     public void onShow() {
         log.info("[AdminSessions] Đăng ký lắng nghe danh sách phiên đấu giá.");
         ResponseDispatcher.getInstance().subscribe(ActionType.GET_ALL_SESSIONS, AdminSessionsCallback);
-        ResponseDispatcher.getInstance().subscribe(ActionType.CANCEL_SESSION_WITH_OTP, CancleSessionCallback);
+        ResponseDispatcher.getInstance().subscribe(ActionType.CANCEL_SESSION, CancleSessionCallback);
 
         requestAdminSessions();
     }
@@ -77,7 +77,7 @@ public class AdminSessionsController implements Initializable, ViewControllerLif
     public void onHide() {
         log.info("[AdminSessions] Hủy đăng ký lắng nghe danh sách phiên đấu giá.");
         ResponseDispatcher.getInstance().unsubscribe(ActionType.GET_ALL_SESSIONS, AdminSessionsCallback);
-        ResponseDispatcher.getInstance().unsubscribe(ActionType.CANCEL_SESSION_WITH_OTP, CancleSessionCallback);
+        ResponseDispatcher.getInstance().unsubscribe(ActionType.CANCEL_SESSION, CancleSessionCallback);
     }
 
     //--MAIN METHOD--
@@ -108,7 +108,7 @@ public class AdminSessionsController implements Initializable, ViewControllerLif
     private void requestCancelSession(AdminActionRequestDTO payload){
         log.info("[AdminSessions] Đang gửi yêu cầu hủy phiên đấu giá...");
         RequestPacket<AdminActionRequestDTO> request = new RequestPacket<>();
-        request.setAction(ActionType.CANCEL_SESSION_WITH_OTP);
+        request.setAction(ActionType.CANCEL_SESSION);
         request.setUserId(ClientSession.getInstance().getCurrentUser().getId());
         request.setToken(ClientSession.getInstance().getCurrentToken());
         request.setPayload(payload);

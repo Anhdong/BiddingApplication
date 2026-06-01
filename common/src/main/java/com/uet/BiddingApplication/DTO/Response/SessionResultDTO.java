@@ -9,16 +9,16 @@ public class SessionResultDTO {
     private BigDecimal finalPrice;
     private SessionStatus status;
 
-    private String winnerId;
+    private String winnerName;
 
     public SessionResultDTO() {
     }
 
-    public SessionResultDTO(String sessionId, BigDecimal finalPrice, SessionStatus status, String winnerId) {
+    public SessionResultDTO(String sessionId, BigDecimal finalPrice, SessionStatus status, String winnerName) {
         this.sessionId = sessionId;
         this.finalPrice = finalPrice;
         this.status = status;
-        this.winnerId = winnerId;
+        this.winnerName = winnerName;
     }
 
     public String getSessionId() {
@@ -45,11 +45,11 @@ public class SessionResultDTO {
         this.status = status;
     }
 
-    public String getWinnerId() {
-        return winnerId;
+    public String getWinnerName() {
+        return winnerName;
     }
 
-    public void setWinnerId(String winnerId) {
-        this.winnerId = winnerId;
+    public void setWinnerName(String winnerName) {
+        this.winnerName = winnerName;
     }
 }

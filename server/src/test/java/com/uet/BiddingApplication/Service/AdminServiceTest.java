@@ -178,7 +178,7 @@ public class AdminServiceTest {
 
         AdminActionRequestDTO request = new AdminActionRequestDTO();
         request.setTargetId(targetId);
-        request.setOtpCode(validOTP);
+        request.setKey(validOTP);
 
         // Cấu hình hành vi cho Mock
         when(mockUserDAO.findById(adminId)).thenReturn(mockAdmin);
@@ -205,7 +205,7 @@ public class AdminServiceTest {
 
         AdminActionRequestDTO request = new AdminActionRequestDTO();
         request.setTargetId("bidder-1");
-        request.setOtpCode("999999"); // Cố tình nhập sai
+        request.setKey("999999"); // Cố tình nhập sai
 
         BusinessException exception = assertThrows(BusinessException.class,
                 () -> adminService.banUser(request, "admin-1"));
@@ -235,7 +235,7 @@ public class AdminServiceTest {
 
         AdminActionRequestDTO request = new AdminActionRequestDTO();
         request.setTargetId(sessionId);
-        request.setOtpCode(validOTP);
+        request.setKey(validOTP);
         request.setActionReason("Vi phạm bản quyền");
 
         when(mockUserDAO.findById(adminId)).thenReturn(mockAdmin);
@@ -266,7 +266,7 @@ public class AdminServiceTest {
 
         AdminActionRequestDTO request = new AdminActionRequestDTO();
         request.setTargetId("session-1");
-        request.setOtpCode("111111");
+        request.setKey("111111");
 
         BusinessException exception = assertThrows(BusinessException.class,
                 () -> adminService.cancelSession(request, "admin-1"));
