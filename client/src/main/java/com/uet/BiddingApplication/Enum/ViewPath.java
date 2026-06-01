@@ -20,6 +20,7 @@ public enum ViewPath {
     UPDATE_PROFILE("/app/fxml/CommonView/UpdateProfileView.fxml", false), // KHÔNG CACHE
     CHANGE_PASSWORD("/app/fxml/CommonView/ChangePasswordView.fxml", false), // KHÔNG CACHE
     INPUT_DIALOG("/app/fxml/CommonView/InputDialogView.fxml", false), // KHÔNG CACHE
+    TOAST("/app/fxml/CommonView/ToastView.fxml", false),
 
 
     // BIDDER
