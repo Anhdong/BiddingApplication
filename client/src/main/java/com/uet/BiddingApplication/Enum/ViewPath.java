@@ -11,7 +11,7 @@ public enum ViewPath {
     // SIDEBAR (Các thành phần này thường load 1 lần gắn cứng vào mép màn hình, không qua hệ thống chuyển tab)
     BIDDER_SIDEBAR("/app/fxml/SidebarView/BidderSidebarView.fxml", false),
     SELLER_SIDEBAR("/app/fxml/SidebarView/SellerSidebarView.fxml", false),
-    ADMIN_SIDEBAR("/app/fxml/SidebarView/AdminSidebar.fxml", false),
+    ADMIN_SIDEBAR("/app/fxml/SidebarView/AdminSidebarView.fxml", false),
 
     //COMMON
     ITEM_CARD("/app/fxml/CommonView/ItemCardView.fxml",false),
@@ -32,9 +32,8 @@ public enum ViewPath {
     SELLER_ITEM_FORM("/app/fxml/SellerView/SellerItemFormView.fxml", false),  // CACHE: Để người dùng gõ dở thông tin lỡ ấn sang tab khác không bị mất form
 
     // ADMIN
-    ADMIN_DASHBOARD("",true),
-    ADMIN_SESSIONS("",true),
-    ADMIN_USERS("",true);
+    ADMIN_SESSIONS("/app/fxml/AdminView/AdminSessionsView.fxml",true),
+    ADMIN_USERS("/app/fxml/AdminView/AdminUsersView.fxml",true);
 
     private final String path;
     private final boolean cacheable; // Thêm thuộc tính đánh dấu Cache
@@ -66,7 +65,7 @@ public enum ViewPath {
         return switch (role) {
         case RoleType.BIDDER -> ViewPath.BIDDER_BROWSE;
         case RoleType.SELLER -> ViewPath.SELLER_ITEMS;
-        case RoleType.ADMIN  -> ViewPath.ADMIN_DASHBOARD;
+        case RoleType.ADMIN  -> ViewPath.ADMIN_SESSIONS;
         };
     }
 }

@@ -46,7 +46,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
          <graphic>
-            <FontIcon iconLiteral="mdi2s-scale-balance" styleClass="medium-icon" text="󰄐" />
+            <FontIcon iconLiteral="mdi2s-scale-balance" styleClass="medium-icon" />
          </graphic>
          <toggleGroup>
             <ToggleGroup fx:id="sidebarGroup" />
@@ -61,7 +61,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
          <graphic>
-            <FontIcon iconLiteral="mdi2a-account" styleClass="medium-icon" text="󰋚" />
+            <FontIcon iconLiteral="mdi2a-account" styleClass="medium-icon" />
          </graphic>
       </ToggleButton>
       <Region prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
