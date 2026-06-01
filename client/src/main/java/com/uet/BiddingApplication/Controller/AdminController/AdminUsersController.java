@@ -89,7 +89,7 @@ public class AdminUsersController implements Initializable, ViewControllerLifecy
             return;
         }
 
-        AdminActionRequestDTO payload = new AdminActionRequestDTO(selectedUser.getId(),null,key);
+        AdminActionRequestDTO payload = new AdminActionRequestDTO(selectedUser.getId(),key);
         requestBanUser(payload);
     }
 

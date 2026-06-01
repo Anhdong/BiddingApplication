@@ -2,12 +2,10 @@ package com.uet.BiddingApplication.DTO.Request;
 
 public class AdminActionRequestDTO {
     private String targetId;
-    private String actionReason;
     private String key;
 
-    public AdminActionRequestDTO(String targetId, String actionReason, String key) {
+    public AdminActionRequestDTO(String targetId, String key) {
         this.targetId = targetId;
-        this.actionReason = actionReason;
         this.key = key;
     }
 
@@ -20,14 +18,6 @@ public class AdminActionRequestDTO {
 
     public void setTargetId(String targetId) {
         this.targetId = targetId;
-    }
-
-    public String getActionReason() {
-        return actionReason;
-    }
-
-    public void setActionReason(String actionReason) {
-        this.actionReason = actionReason;
     }
 
     public String getKey() {

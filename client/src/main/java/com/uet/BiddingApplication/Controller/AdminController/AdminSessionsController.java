@@ -91,7 +91,7 @@ public class AdminSessionsController implements Initializable, ViewControllerLif
             return;
         }
 
-        AdminActionRequestDTO payload = new AdminActionRequestDTO(selectedItem.getSessionId(),null,key);
+        AdminActionRequestDTO payload = new AdminActionRequestDTO(selectedItem.getSessionId(),key);
         requestCancelSession(payload);
     }
 

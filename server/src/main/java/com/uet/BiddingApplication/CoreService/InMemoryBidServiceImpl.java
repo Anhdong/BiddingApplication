@@ -302,7 +302,7 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
      * Dành cho Admin/Hệ thống gọi khi phát hiện vi phạm và cần hủy ngay lập tức phiên đang chạy.
      */
     @Override
-    public void forceCancelSession(String sessionId, String reason) {
+    public void forceCancelSession(String sessionId) {
         AuctionSession session = searchCacheManager.getSession(sessionId);
         if (session == null) return;
 
@@ -327,7 +327,7 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
             ResponsePacket<SessionTargetDTO> cancelPacket = new ResponsePacket<>(
                     ActionType.REALTIME_SESSION_CANCELED,
                     401,
-                    "Phiên đấu giá đã bị Admin hủy: " + reason,
+                    "Phiên đấu giá đã bị Admin hủy",
                     sessionTargetDTO
             );
 

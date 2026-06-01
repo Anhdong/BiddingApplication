@@ -190,7 +190,7 @@ public class AdminService {
         }
 
         // 4. Thực hiện nghiệp vụ
-        InMemoryBidServiceImpl.getInstance().forceCancelSession(sessionId,request.getActionReason());
+        InMemoryBidServiceImpl.getInstance().forceCancelSession(sessionId);
 
 
         return true; // Hoàn tất an toàn

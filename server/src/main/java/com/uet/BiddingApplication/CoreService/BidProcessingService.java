@@ -42,5 +42,5 @@ public interface BidProcessingService {
      */
     void startSessionProcessor(String sessionId);
 
-    void forceCancelSession(String sessionId, String reason);
+    void forceCancelSession(String sessionId);
 }
