@@ -176,7 +176,8 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
                     task.bidderId(),
                     req.getBidderName(),
                     req.getBidAmount(),
-                    req.getBidType()
+                    req.getBidType(),
+                    session.getEndTime()
             );
             // Gửi xuống mạng
             if(dbSuccess) {

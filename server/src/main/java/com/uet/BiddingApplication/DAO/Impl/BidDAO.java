@@ -189,7 +189,7 @@ public class BidDAO implements IBidDAO {
                 try (PreparedStatement ps = conn.prepareStatement(updateSessionSql)) {
                     ps.setBigDecimal(1, bidAmount);
                     ps.setString(2, bidderName);
-                    ps.setTimestamp(2,java.sql.Timestamp.valueOf(endTime) );
+                    ps.setTimestamp(3,java.sql.Timestamp.valueOf(endTime) );
                     ps.setString(4, sessionId);
 
                     ps.executeUpdate();
