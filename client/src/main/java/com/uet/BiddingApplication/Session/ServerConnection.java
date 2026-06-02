@@ -102,7 +102,7 @@ public class ServerConnection {
             // Nhờ JavaFX Thread báo lỗi lên màn hình để user không bấm mù quáng nữa
             javafx.application.Platform.runLater(() -> {
                 // Hiển thị Toast hoặc Alert tùy bạn
-                NotificationUtil.showAlert(Alert.AlertType.ERROR,"Mất kết nối", "Hệ thống đang gián đoạn, vui lòng chờ trong giây lát...");
+                NotificationUtil.showError("Mất kết nối", "Hệ thống đang gián đoạn, vui lòng chờ trong giây lát...");
             });
             return;
         }
@@ -161,7 +161,7 @@ public class ServerConnection {
         log.error("[Watchdog] Phát hiện rớt mạng. Bắt đầu tiến trình Auto-Reconnect...");
 
         Platform.runLater(()->{
-            NotificationUtil.showAlert(Alert.AlertType.ERROR,"Lỗi Kết Nối","Mất kết nối đến server, tiến hành kết nối lại");
+            NotificationUtil.showError("Lỗi Kết Nối","Mất kết nối đến server, tiến hành kết nối lại");
         });
 
         Thread reconnectThread = new Thread(() -> {
@@ -201,7 +201,7 @@ public class ServerConnection {
                         log.info("[Watchdog] Kết nối lại THÀNH CÔNG tại IP: " + serverIp);
 
                         Platform.runLater(()->{
-                            NotificationUtil.showAlert(Alert.AlertType.INFORMATION,"Kết Nối Thành Công","Đã khôi phục kết nối mạng");
+                            NotificationUtil.showInfo("Kết Nối Thành Công","Đã khôi phục kết nối mạng");
                         });
                         break;
                     }

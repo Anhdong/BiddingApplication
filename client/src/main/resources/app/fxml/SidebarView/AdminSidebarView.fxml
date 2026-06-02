@@ -13,7 +13,7 @@
 <?import javafx.scene.shape.SVGPath?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox alignment="TOP_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="200.0" prefHeight="800.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.uet.BiddingApplication.Controller.SidebarController.BidderSidebarController">
+<VBox alignment="TOP_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="200.0" prefHeight="800.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.uet.BiddingApplication.Controller.SidebarController.AdminSidebarController">
    <children>
       <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="32.0">
          <children>
@@ -37,22 +37,22 @@
             <Insets bottom="10.0" />
          </VBox.margin>
       </Separator>
-      <ToggleButton fx:id="btnBrowse" maxHeight="80.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleBrowse" prefHeight="80.0" selected="true" text="Browse">
+      <ToggleButton fx:id="btnSessions" maxHeight="80.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleSessions" prefHeight="80.0" selected="true" text="Sessions">
+         <styleClass>
+            <String fx:value="flat" />
+            <String fx:value="title-3" />
+         </styleClass>
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
+         <graphic>
+            <FontIcon iconLiteral="mdi2s-scale-balance" styleClass="medium-icon" />
+         </graphic>
          <toggleGroup>
             <ToggleGroup fx:id="sidebarGroup" />
          </toggleGroup>
-         <graphic>
-            <FontIcon iconLiteral="mdi2e-earth" styleClass="medium-icon" text="󰇧" />
-         </graphic>
-         <styleClass>
-            <String fx:value="flat" />
-            <String fx:value="title-3" />
-         </styleClass>
       </ToggleButton>
-      <ToggleButton fx:id="btnWatchlist" maxHeight="80.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleWatchlist" prefHeight="80.0" text="Watchlist" toggleGroup="$sidebarGroup">
+      <ToggleButton fx:id="btnUsers" maxHeight="80.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleUsers" prefHeight="80.0" text="Users" toggleGroup="$sidebarGroup">
          <styleClass>
             <String fx:value="flat" />
             <String fx:value="title-3" />
@@ -61,19 +61,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
          <graphic>
-            <FontIcon iconLiteral="mdi2c-cart" styleClass="medium-icon" />
-         </graphic>
-      </ToggleButton>
-      <ToggleButton fx:id="btnHistory" maxHeight="80.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleHistory" prefHeight="80.0" text="History" toggleGroup="$sidebarGroup">
-         <styleClass>
-            <String fx:value="flat" />
-            <String fx:value="title-3" />
-         </styleClass>
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-         <graphic>
-            <FontIcon iconLiteral="mdi2h-history" styleClass="medium-icon" />
+            <FontIcon iconLiteral="mdi2a-account" styleClass="medium-icon" />
          </graphic>
       </ToggleButton>
       <Region prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />

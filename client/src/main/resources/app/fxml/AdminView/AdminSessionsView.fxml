@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.StackPane?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import java.lang.String?>
+<StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.uet.BiddingApplication.Controller.AdminController.AdminSessionsController">
+   <children>
+      <TableView fx:id="table" prefHeight="800.0" prefWidth="1080.0">
+        <columns>
+          <TableColumn fx:id="nameCol" editable="false" prefWidth="298.0" text="Name" />
+          <TableColumn fx:id="statusCol" editable="false" prefWidth="128.5" text="Status" />
+            <TableColumn fx:id="startPriceCol" editable="false" prefWidth="228.0" text="Start Price" />
+            <TableColumn fx:id="startTimeCol" editable="false" prefWidth="217.0" text="Start Time" />
+            <TableColumn fx:id="endTimeCol" editable="false" prefWidth="206.5" text="End Time" />
+        </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+      </TableView>
+      <Button alignment="CENTER" mnemonicParsing="false" onAction="#handleCancelSession" text="CANCEL" StackPane.alignment="BOTTOM_RIGHT">
+         <graphic>
+            <FontIcon iconLiteral="mdi2d-delete" styleClass="large-icon" />
+         </graphic>
+         <styleClass>
+            <String fx:value="title-1" />
+            <String fx:value="accent" />
+         </styleClass>
+         <StackPane.margin>
+            <Insets bottom="24.0" right="24.0" />
+         </StackPane.margin>
+      </Button>
+   </children>
+</StackPane>

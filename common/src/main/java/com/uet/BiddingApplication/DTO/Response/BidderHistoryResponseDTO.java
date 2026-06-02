@@ -8,18 +8,18 @@ import java.time.LocalDateTime;
 public class BidderHistoryResponseDTO  {
     private String sessionId;
     private String itemName;
-    private String winnerId;
+    private String winnerName;
     private BigDecimal myHighestBid;
     private BigDecimal finalPrice;
     private SessionStatus status;
     private LocalDateTime time;
 
-    public BidderHistoryResponseDTO(String sessionId, String itemName, String winnerId,
+    public BidderHistoryResponseDTO(String sessionId, String itemName, String winnerName,
                                     BigDecimal myHighestBid, BigDecimal finalPrice, SessionStatus status,
                                     LocalDateTime time) {
         this.sessionId = sessionId;
         this.itemName = itemName;
-        this.winnerId = winnerId;
+        this.winnerName = winnerName;
         this.myHighestBid = myHighestBid;
         this.finalPrice = finalPrice;
         this.status = status;
@@ -60,12 +60,12 @@ public class BidderHistoryResponseDTO  {
         this.itemName = itemName;
     }
 
-    public String getWinnerId() {
-        return winnerId;
+    public String getWinnerName() {
+        return winnerName;
     }
 
-    public void setWinnerId(String winnerId) {
-        this.winnerId = winnerId;
+    public void setWinnerName(String winnerName) {
+        this.winnerName = winnerName;
     }
 
     public BigDecimal getMyHighestBid() {

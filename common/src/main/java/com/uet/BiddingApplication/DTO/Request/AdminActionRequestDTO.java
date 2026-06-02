@@ -2,13 +2,11 @@ package com.uet.BiddingApplication.DTO.Request;
 
 public class AdminActionRequestDTO {
     private String targetId;
-    private String actionReason;
-    private String otpCode;
+    private String key;
 
-    public AdminActionRequestDTO(String targetId, String actionReason, String otpCode) {
+    public AdminActionRequestDTO(String targetId, String key) {
         this.targetId = targetId;
-        this.actionReason = actionReason;
-        this.otpCode = otpCode;
+        this.key = key;
     }
 
     public AdminActionRequestDTO() {
@@ -22,19 +20,11 @@ public class AdminActionRequestDTO {
         this.targetId = targetId;
     }
 
-    public String getActionReason() {
-        return actionReason;
+    public String getKey() {
+        return key;
     }
 
-    public void setActionReason(String actionReason) {
-        this.actionReason = actionReason;
-    }
-
-    public String getOtpCode() {
-        return otpCode;
-    }
-
-    public void setOtpCode(String otpCode) {
-        this.otpCode = otpCode;
+    public void setKey(String key) {
+        this.key = key;
     }
 }

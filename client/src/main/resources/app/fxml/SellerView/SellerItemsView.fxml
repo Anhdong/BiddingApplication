@@ -24,7 +24,7 @@
                   </TilePane>
                </content>
             </ScrollPane>
-            <Button fx:id="btnAdd" mnemonicParsing="false" onAction="#switchToAddItem" text="ADD" StackPane.alignment="BOTTOM_RIGHT">
+            <Button fx:id="btnAdd" alignment="CENTER" mnemonicParsing="false" onAction="#switchToAddItem" text="ADD" StackPane.alignment="BOTTOM_RIGHT">
                <graphic>
                   <FontIcon iconLiteral="mdi2p-plus" styleClass="large-icon" />
                </graphic>
@@ -43,7 +43,7 @@
       <HBox alignment="CENTER" maxWidth="500.0" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
             <FontIcon iconLiteral="mdi2m-magnify" styleClass="large-icon" />
-            <TextField fx:id="searchField" maxWidth="-Infinity" prefHeight="50.0" prefWidth="500.0" promptText="Search here..." style="-fx-background-color: transparent;">
+            <TextField fx:id="searchField" maxWidth="-Infinity" onAction="#onSearchEnter" prefHeight="50.0" prefWidth="500.0" promptText="Search here..." style="-fx-background-color: transparent;">
                <HBox.margin>
                   <Insets />
                </HBox.margin></TextField>

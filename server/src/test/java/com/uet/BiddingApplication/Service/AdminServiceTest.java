@@ -1,5 +1,6 @@
 package com.uet.BiddingApplication.Service;
 
+import com.uet.BiddingApplication.CoreService.InMemoryBidServiceImpl;
 import com.uet.BiddingApplication.CoreService.SearchCacheManager;
 import com.uet.BiddingApplication.CoreService.SessionStartScheduler;
 import com.uet.BiddingApplication.DAO.Impl.AuctionSessionDAO;
@@ -37,6 +38,7 @@ public class AdminServiceTest {
     @Mock private AuctionServer mockAuctionServer;
     @Mock private SearchCacheManager mockCacheManager;
     @Mock private RealtimeBroadcastService mockBroadcastService;
+    @Mock private InMemoryBidServiceImpl mockInMemoryBidService;
     @Mock private ItemDAO mockItemDAO;
     @Mock private AutoBidManager mockAutoBidManager;
     @Mock private SessionStartScheduler mockScheduler;
@@ -52,6 +54,7 @@ public class AdminServiceTest {
         injectSingleton(SearchCacheManager.class, mockCacheManager);
         injectSingleton(RealtimeBroadcastService.class, mockBroadcastService);
         injectSingleton(ItemDAO.class, mockItemDAO);
+        injectSingleton(InMemoryBidServiceImpl.class, mockInMemoryBidService);
         injectSingleton(AutoBidManager.class, mockAutoBidManager);
         injectSingleton(SessionStartScheduler.class, mockScheduler);
     }
@@ -66,6 +69,7 @@ public class AdminServiceTest {
         injectSingleton(RealtimeBroadcastService.class, null);
         injectSingleton(ItemDAO.class, null);
         injectSingleton(AutoBidManager.class, null);
+        injectSingleton(InMemoryBidServiceImpl.class, null);
         injectSingleton(SessionStartScheduler.class, null);
     }
 
@@ -178,7 +182,7 @@ public class AdminServiceTest {
 
         AdminActionRequestDTO request = new AdminActionRequestDTO();
         request.setTargetId(targetId);
-        request.setOtpCode(validOTP);
+        request.setKey(validOTP);
 
         // Cấu hình hành vi cho Mock
         when(mockUserDAO.findById(adminId)).thenReturn(mockAdmin);
@@ -205,7 +209,7 @@ public class AdminServiceTest {
 
         AdminActionRequestDTO request = new AdminActionRequestDTO();
         request.setTargetId("bidder-1");
-        request.setOtpCode("999999"); // Cố tình nhập sai
+        request.setKey("999999"); // Cố tình nhập sai
 
         BusinessException exception = assertThrows(BusinessException.class,
                 () -> adminService.banUser(request, "admin-1"));
@@ -221,7 +225,7 @@ public class AdminServiceTest {
     @Test
     @DisplayName("Cancel Session: Thành công hủy phiên đang OPEN")
     void testCancelSession_Success() {
-        // 1. Arrange
+        // 1. Arrange (Chuẩn bị dữ liệu)
         String adminId = "admin-1";
         String sessionId = "session-1";
         String validOTP = "654321";
@@ -231,25 +235,26 @@ public class AdminServiceTest {
 
         AuctionSession mockSession = new AuctionSession();
         mockSession.setId(sessionId);
-        mockSession.setStatus(SessionStatus.OPEN);
+        mockSession.setStatus(SessionStatus.OPEN); // Trạng thái hợp lệ để hủy
 
         AdminActionRequestDTO request = new AdminActionRequestDTO();
         request.setTargetId(sessionId);
-        request.setOtpCode(validOTP);
-        request.setActionReason("Vi phạm bản quyền");
+        request.setKey(validOTP);
 
+        // Giả lập hành vi của DAO
         when(mockUserDAO.findById(adminId)).thenReturn(mockAdmin);
         when(mockSessionDAO.getSessionById(sessionId)).thenReturn(mockSession);
-        when(mockSessionDAO.updateStatus(sessionId, SessionStatus.CANCELED)).thenReturn(true);
 
-        // 2. Act
+        // 2. Act (Thực thi)
         boolean result = adminService.cancelSession(request, adminId);
 
-        // 3. Assert
-        assertTrue(result);
-        verify(mockCacheManager, times(1)).removeSession(sessionId); // Kiểm tra dọn dẹp RAM
-        verify(mockScheduler, times(1)).cancelSchedule(sessionId); // Kiểm tra hủy lịch trình
-        verify(mockBroadcastService, times(1)).broadcast(eq(sessionId), any()); // Kiểm tra phát thanh
+        // 3. Assert (Kiểm chứng)
+        assertTrue(result, "Hàm phải trả về true khi hủy thành công");
+
+        // KIỂM CHỨNG DUY NHẤT CẦN THIẾT: AdminService đã gọi sang InMemoryBidService
+        verify(mockInMemoryBidService, times(1)).forceCancelSession(sessionId);
+
+        // Tuyệt đối KHÔNG verify mockScheduler, mockCacheManager, mockBroadcastService ở đây
     }
 
     @Test
@@ -266,7 +271,7 @@ public class AdminServiceTest {
 
         AdminActionRequestDTO request = new AdminActionRequestDTO();
         request.setTargetId("session-1");
-        request.setOtpCode("111111");
+        request.setKey("111111");
 
         BusinessException exception = assertThrows(BusinessException.class,
                 () -> adminService.cancelSession(request, "admin-1"));

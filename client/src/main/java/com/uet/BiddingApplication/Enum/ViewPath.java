@@ -11,12 +11,16 @@ public enum ViewPath {
     // SIDEBAR (Các thành phần này thường load 1 lần gắn cứng vào mép màn hình, không qua hệ thống chuyển tab)
     BIDDER_SIDEBAR("/app/fxml/SidebarView/BidderSidebarView.fxml", false),
     SELLER_SIDEBAR("/app/fxml/SidebarView/SellerSidebarView.fxml", false),
-    ADMIN_SIDEBAR("/app/fxml/SidebarView/AdminSidebar.fxml", false),
+    ADMIN_SIDEBAR("/app/fxml/SidebarView/AdminSidebarView.fxml", false),
 
     //COMMON
     ITEM_CARD("/app/fxml/CommonView/ItemCardView.fxml",false),
     ITEM_DETAIL("/app/fxml/CommonView/ItemDetailView.fxml",false),
     AUCTION("/app/fxml/CommonView/AuctionView.fxml", false), // KHÔNG CACHE: Phải load mới 100% mỗi khi vào 1 phòng đấu giá khác nhau
+    UPDATE_PROFILE("/app/fxml/CommonView/UpdateProfileView.fxml", false), // KHÔNG CACHE
+    CHANGE_PASSWORD("/app/fxml/CommonView/ChangePasswordView.fxml", false), // KHÔNG CACHE
+    INPUT_DIALOG("/app/fxml/CommonView/InputDialogView.fxml", false), // KHÔNG CACHE
+    TOAST("/app/fxml/CommonView/ToastView.fxml", false),
 
 
     // BIDDER
@@ -30,7 +34,8 @@ public enum ViewPath {
     SELLER_ITEM_FORM("/app/fxml/SellerView/SellerItemFormView.fxml", false),  // CACHE: Để người dùng gõ dở thông tin lỡ ấn sang tab khác không bị mất form
 
     // ADMIN
-    ADMIN_DASHBOARD("",true);
+    ADMIN_SESSIONS("/app/fxml/AdminView/AdminSessionsView.fxml",true),
+    ADMIN_USERS("/app/fxml/AdminView/AdminUsersView.fxml",true);
 
     private final String path;
     private final boolean cacheable; // Thêm thuộc tính đánh dấu Cache
@@ -62,7 +67,7 @@ public enum ViewPath {
         return switch (role) {
         case RoleType.BIDDER -> ViewPath.BIDDER_BROWSE;
         case RoleType.SELLER -> ViewPath.SELLER_ITEMS;
-        case RoleType.ADMIN  -> ViewPath.ADMIN_DASHBOARD;
+        case RoleType.ADMIN  -> ViewPath.ADMIN_SESSIONS;
         };
     }
 }

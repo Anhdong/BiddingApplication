@@ -81,7 +81,7 @@ public class RequestRouter {
             // CHUẨN YÊU CẦU: Đóng gói ResponsePacket với statusCode = 400,
             // kèm message do Service ném ra.
             // =========================================================
-            System.out.println("[Router - Business] Từ chối yêu cầu " + currentAction + " của " +
+            log.info("[Router - Business] Từ chối yêu cầu " + currentAction + " của " +
                     (client.getUserId() != null ? client.getUserId() : "Guest") + ": " + e.getMessage());
 
             // Trực tiếp gán statusCode 400 và truyền e.getMessage()
@@ -93,7 +93,7 @@ public class RequestRouter {
             // CHUẨN YÊU CẦU: Bắt các lỗi hệ thống (NullPointer, rớt DB),
             // đóng gói status 500, báo "Lỗi máy chủ nội bộ" và ghi log console.
             // =========================================================
-            System.err.println("[Router - System Error] Lỗi nghiêm trọng khi xử lý " + currentAction +
+           log.error("[Router - System Error] Lỗi nghiêm trọng khi xử lý " + currentAction +
                     " từ " + (client.getUserId() != null ? client.getUserId() : "Guest"));
             log.error("Đã xảy ra lỗi Exception:", e); // Ghi log console
 

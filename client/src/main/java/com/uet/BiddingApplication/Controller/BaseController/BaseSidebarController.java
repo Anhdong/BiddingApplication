@@ -3,16 +3,14 @@ package com.uet.BiddingApplication.Controller.BaseController;
 import com.uet.BiddingApplication.Controller.MainViewController;
 import com.uet.BiddingApplication.DTO.Packet.RequestPacket;
 import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
-import com.uet.BiddingApplication.DTO.Request.AuthRequestDTO;
-import com.uet.BiddingApplication.DTO.Response.AuthResponseDTO;
 import com.uet.BiddingApplication.Enum.ActionType;
 import com.uet.BiddingApplication.Enum.ViewPath;
-import com.uet.BiddingApplication.Main;
 import com.uet.BiddingApplication.Session.ClientSession;
 import com.uet.BiddingApplication.Session.ResponseDispatcher;
 import com.uet.BiddingApplication.Session.ServerConnection;
 import com.uet.BiddingApplication.Util.AppExecutor;
 import com.uet.BiddingApplication.Util.NotificationUtil;
+import com.uet.BiddingApplication.Util.ThemeManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -42,10 +40,18 @@ public class BaseSidebarController implements Initializable {
     @FXML protected FontIcon btnSetting;
     @FXML protected ContextMenu settingsMenu;
 
+    //--CALLBACK--
+    private final Consumer<ResponsePacket<?>> forceLogoutCallback = this::handleForceLogoutResponse;
+    private final Consumer<ResponsePacket<?>> logoutCallback = this::handleLogoutResponse;
 
     //--INIT--
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        //Subscribe force logout
+        ResponseDispatcher.getInstance().subscribe(ActionType.FORCE_LOGOUT,forceLogoutCallback);
+        ResponseDispatcher.getInstance().subscribe(ActionType.LOGOUT,logoutCallback);
+
         // Cannot click off selected button & reload if reclick
         sidebarGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal == null) {
@@ -70,33 +76,78 @@ public class BaseSidebarController implements Initializable {
         });
     }
 
+    //--HANDLE RESPONSE--
+    private void handleLogoutResponse(ResponsePacket<?> response) {
+        if (response.getStatusCode() == 200) {
+            ResponseDispatcher.getInstance().unsubscribe(ActionType.LOGOUT,logoutCallback);
+
+            NotificationUtil.showInfo(response.getMessage());
+            log.info("[BaseSidebar] {}", response.getMessage());
+
+            handleLogout();
+        } else {
+            log.error("[BaseSidebar] Không thể logout tài khoản.");
+        }
+    }
+
+    private void handleForceLogoutResponse(ResponsePacket<?> response) {
+        if (response.getStatusCode() == 403) {
+            ResponseDispatcher.getInstance().unsubscribe(ActionType.FORCE_LOGOUT,forceLogoutCallback);
+
+            NotificationUtil.showInfo(response.getMessage());
+            log.info("[BaseSidebar] {}", response.getMessage());
+
+            handleLogout();
+
+            ServerConnection.getInstance().startAutoReconnect();
+        } else {
+            log.error("[BaseSidebar] Không thể force logout tài khoản.");
+        }
+    }
+
     //--MAIN METHODS--
     private void setupSettingsMenu(){
         //Create menu
         settingsMenu = new ContextMenu();
 
         // Create menu items
-        //MenuItem itemProfile = new MenuItem("Hồ sơ cá nhân");
+        MenuItem itemLightDark = new MenuItem("Light/Dark Mode");
+        MenuItem itemUpdateProfile = new MenuItem("Update Profile");
+        MenuItem itemChangePassword = new MenuItem("Change Password");
         MenuItem itemLogout = new MenuItem("Log out");
 
         SeparatorMenuItem separator = new SeparatorMenuItem();
 
         //Add Action on items
+        itemLightDark.setOnAction(event -> {
+            log.info("[BaseSidebar]  Chuyển màu theme");
+            if(ThemeManager.getCurrentTheme() == ThemeManager.Theme.DARK) {
+                ThemeManager.setTheme(ThemeManager.Theme.LIGHT);
+            } else if(ThemeManager.getCurrentTheme() == ThemeManager.Theme.LIGHT) {
+                ThemeManager.setTheme(ThemeManager.Theme.DARK);
+            }
+        });
+        itemUpdateProfile.setOnAction(event -> {
+            log.info("[BaseSidebar] Chuyển sang trang cập nhật thông tin");
+            MainViewController.getInstance().loadView(ViewPath.UPDATE_PROFILE);
+        });
+        itemChangePassword.setOnAction(event -> {
+            log.info("[BaseSidebar] Chuyển sang trang đổi mật khẩu");
+            MainViewController.getInstance().loadView(ViewPath.CHANGE_PASSWORD);
+        });
         itemLogout.setOnAction(event -> {
-            handleLogout();
+            log.info("[BaseSidebar] Gửi yêu cầu đăng xuất");
+            requestLogout();
         });
 
         //Add items
-        settingsMenu.getItems().addAll(separator, itemLogout);
+
+        settingsMenu.getItems().addAll(itemLightDark,itemUpdateProfile,itemChangePassword,separator, itemLogout);
     }
 
     protected void handleLogout(){
         //OnHide current controller
         MainViewController.getInstance().clearCacheOnLogout();
-
-        //Send Request
-        log.info("[BaseSidebar] Gửi yêu cầu đăng xuất");
-        requestLogout();
 
         //Switch to Login
         try {
