@@ -347,9 +347,9 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
     private void handleSessionEndResponse(ResponsePacket<?> response) {
         if (response.getStatusCode() == 200) {
             SessionResultDTO info = (SessionResultDTO) response.getPayload();
-            NotificationUtil.showInfo("The auction has ended!");
-            RoleType role=  ClientSession.getInstance().getCurrentUser().getRole();
+            NotificationUtil.showAlert("Auction End!",(info.getWinnerName()!=null)?"The winner is " + info.getWinnerName():"There is no winner");
 
+            RoleType role=  ClientSession.getInstance().getCurrentUser().getRole();
             //Navigate user back to page
             if(role == RoleType.BIDDER) MainViewController.getInstance().loadView(ViewPath.BIDDER_WATCHLIST);
             else if (role == RoleType.SELLER) MainViewController.getInstance().loadView(ViewPath.SELLER_ITEMS);
