@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ButtonType?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<DialogPane fx:id="dialogPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="360.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.uet.BiddingApplication.Controller.CommonController.InputDialogController">
+   <expandableContent>
+      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="320.0" />
+   </expandableContent>
+   <styleClass>
+      <String fx:value="border-subtle" />
+      <String fx:value="rounded" />
+   </styleClass>
+   <content>
+      <VBox alignment="CENTER">
+         <children>
+            <PasswordField fx:id="txtInput">
+               <styleClass>
+                  <String fx:value="title-2" />
+                  <String fx:value="flat" />
+               </styleClass>
+               <VBox.margin>
+                  <Insets left="50.0" right="50.0" />
+               </VBox.margin>
+            </PasswordField>
+         </children>
+      </VBox>
+   </content>
+   <buttonTypes>
+      <ButtonType fx:constant="OK" />
+   </buttonTypes>
+   <header>
+      <Label fx:id="label" alignment="CENTER" contentDisplay="RIGHT" text="Label">
+         <graphic>
+            <FontIcon fx:id="icon" iconLiteral="mdi2k-key" styleClass="large-icon" />
+         </graphic>
+         <padding>
+            <Insets top="8.0" />
+         </padding>
+         <styleClass>
+            <String fx:value="title-1" />
+            <String fx:value="medium-icon" />
+         </styleClass>
+      </Label>
+   </header>
+</DialogPane>

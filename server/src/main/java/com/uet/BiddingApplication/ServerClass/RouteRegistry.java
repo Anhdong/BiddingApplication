@@ -101,10 +101,10 @@ public class RouteRegistry {
             return new ResponsePacket<>(ActionType.BAN_USER, 200, "Đã khóa tài khoản thành công", null);
         });
 
-        registry.put(ActionType.CANCEL_SESSION_WITH_OTP, req -> {
+        registry.put(ActionType.CANCEL_SESSION, req -> {
             AdminActionRequestDTO dto = (AdminActionRequestDTO) req.getPayload();
             AdminService.getInstance().cancelSession(dto, req.getUserId());
-            return new ResponsePacket<>(ActionType.CANCEL_SESSION_WITH_OTP, 200, "Đã hủy phiên đấu giá khẩn cấp", null);
+            return new ResponsePacket<>(ActionType.CANCEL_SESSION, 200, "Đã hủy phiên đấu giá khẩn cấp", null);
         });
 
         // ==============================================================================

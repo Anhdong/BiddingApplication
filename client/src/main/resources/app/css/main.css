@@ -1,14 +1,3 @@
-.auth-background {
-    /* Đường dẫn đến hình ảnh của bạn */
-    -fx-background-image: url("/app/assets/background.jpg");
-    /* Căn giữa hình ảnh */
-    -fx-background-position: center center;
-    /* Không lặp lại hình ảnh */
-    -fx-background-repeat: no-repeat;
-    /* QUAN TRỌNG: Hiệu ứng Cover (Tự phóng to và crop để lấp đầy) */
-    -fx-background-size: cover;
-}
-
 /*Overwrite .rounded*/
 .rounded {
     -fx-background-radius: 20;               /* Bo góc cho nền */
@@ -24,6 +13,12 @@
 .interactive-card:hover {
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 15, 0, 0, 5);
     -fx-translate-y: -0.5; /* Nhấc nhẹ card lên một chút */
+}
+
+/*button pop effect*/
+.button:armed, .toggle-button:armed {
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
 }
 
 /*Rewrite Atlantafx flat class*/

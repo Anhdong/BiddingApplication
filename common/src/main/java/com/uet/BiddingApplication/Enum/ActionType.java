@@ -16,7 +16,7 @@ public enum ActionType {
     GET_ALL_USERS, // Lấy danh sách User để quản lý
     GET_ALL_SESSIONS, // Lấy toàn bộ phiên đấu giá
     BAN_USER, // Khóa tài khoản kèm mã xác thực
-    CANCEL_SESSION_WITH_OTP, // Hủy phiên khẩn cấp kèm mã xác thực
+    CANCEL_SESSION, // Hủy phiên khẩn cấp kèm mã xác thực
 
     // Nhóm Seller (Người bán - 5 hành động)
     CREATE_ITEM, // Tạo vật phẩm & Mở phiên đấu giá

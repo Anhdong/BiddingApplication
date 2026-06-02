@@ -3,6 +3,7 @@ package com.uet.BiddingApplication.Service;
 import java.security.SecureRandom;
 import java.util.List;
 
+import com.uet.BiddingApplication.CoreService.InMemoryBidServiceImpl;
 import com.uet.BiddingApplication.CoreService.SearchCacheManager;
 import com.uet.BiddingApplication.CoreService.SessionStartScheduler;
 import com.uet.BiddingApplication.DAO.Impl.AuctionSessionDAO;
@@ -112,7 +113,7 @@ public class AdminService {
      */
     public boolean banUser(AdminActionRequestDTO request, String adminId) {
         // 1. Fail-Fast: Kiểm tra dữ liệu Request đầu vào
-        if (request == null || request.getTargetId() == null || request.getOtpCode() == null) {
+        if (request == null || request.getTargetId() == null || request.getKey() == null) {
             throw new BusinessException("Dữ liệu yêu cầu không hợp lệ.");
         }
 
@@ -122,7 +123,7 @@ public class AdminService {
             throw new BusinessException("Bạn không có quyền thực hiện hành động này.");
         }
 
-        if (!admin.getSecretKey().equals(request.getOtpCode())) {
+        if (!admin.getSecretKey().equals(request.getKey())) {
             throw new BusinessException("Mã OTP xác thực không chính xác.");
         }
 
@@ -159,7 +160,7 @@ public class AdminService {
      */
     public boolean cancelSession(AdminActionRequestDTO request, String adminId) {
         // 1. Fail-Fast: Kiểm tra dữ liệu Request đầu vào
-        if (request == null || request.getTargetId() == null || request.getOtpCode() == null) {
+        if (request == null || request.getTargetId() == null || request.getKey() == null) {
             throw new BusinessException("Dữ liệu yêu cầu hủy phiên không hợp lệ.");
         }
 
@@ -171,8 +172,8 @@ public class AdminService {
             throw new BusinessException("Bạn không có quyền thực hiện hành động quản trị này.");
         }
 
-        if (!admin.getSecretKey().equals(request.getOtpCode())) {
-            throw new BusinessException("Mã OTP xác thực không chính xác.");
+        if (!admin.getSecretKey().equals(request.getKey())) {
+            throw new BusinessException("Mã xác thực không chính xác.");
         }
 
         // 3. Fail-Fast & Bảo vệ toàn vẹn nghiệp vụ: Kiểm tra trạng thái phiên đấu giá
@@ -188,25 +189,9 @@ public class AdminService {
             throw new BusinessException("Không thể hủy phiên đấu giá vì phiên này đã kết thúc hoặc đã bị hủy trước đó.");
         }
 
-        // 4. Thực hiện nghiệp vụ (Bước 1): Cập nhật trạng thái Database TRƯỚC
-        boolean isUpdated = AuctionSessionDAO.getInstance().updateStatus(sessionId, SessionStatus.CANCELED);
-        if (!isUpdated) {
-            throw new BusinessException("Lỗi hệ thống: Không thể cập nhật trạng thái hủy phiên vào cơ sở dữ liệu.");
-        }
+        // 4. Thực hiện nghiệp vụ
+        InMemoryBidServiceImpl.getInstance().forceCancelSession(sessionId);
 
-        // 5. Thực hiện nghiệp vụ (Bước 2): Tách biệt Network & Cache (Side-effects)
-        // a. Xóa phiên khỏi RAM để không ai có thể tìm thấy trên trang chủ nữa
-        SearchCacheManager.getInstance().removeSession(sessionId);
-        SessionStartScheduler.getInstance().cancelSchedule(sessionId);
-
-        // b. Phát thanh thông báo đóng phòng khẩn cấp cho tất cả Bidder đang xem phiên này
-        ResponsePacket<String> cancelNotification = new ResponsePacket<>(
-                ActionType.REALTIME_SESSION_END, // Hoặc một ActionType cụ thể cho việc Hủy phiên
-                200,
-                "Phiên đấu giá đã bị Quản trị viên hủy bỏ khẩn cấp. Lý do: " + request.getActionReason(),
-                sessionId
-        );
-        RealtimeBroadcastService.getInstance().broadcast(sessionId, cancelNotification);
 
         return true; // Hoàn tất an toàn
     }

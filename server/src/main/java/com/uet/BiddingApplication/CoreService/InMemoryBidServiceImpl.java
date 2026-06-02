@@ -176,8 +176,7 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
                     task.bidderId(),
                     req.getBidderName(),
                     req.getBidAmount(),
-                    req.getBidType(),
-                    session.getEndTime()
+                    req.getBidType()
             );
             // Gửi xuống mạng
             if(dbSuccess) {
@@ -262,9 +261,7 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
                 sessionId, session.getCurrentPrice(),session.getWinnerName());
 
         if (dbUpdated&&statusUpdated) {
-            String winner = (session.getWinnerName() != null)
-                    ? session.getWinnerName()
-                    : "NO_WINNER";
+            String winner = session.getWinnerName();
             SessionResultDTO result = new SessionResultDTO(
                     sessionId,
                     session.getCurrentPrice(),
@@ -305,7 +302,7 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
      * Dành cho Admin/Hệ thống gọi khi phát hiện vi phạm và cần hủy ngay lập tức phiên đang chạy.
      */
     @Override
-    public void forceCancelSession(String sessionId, String reason) {
+    public void forceCancelSession(String sessionId) {
         AuctionSession session = searchCacheManager.getSession(sessionId);
         if (session == null) return;
 
@@ -329,8 +326,8 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
             sessionTargetDTO.setSessionId(sessionId);
             ResponsePacket<SessionTargetDTO> cancelPacket = new ResponsePacket<>(
                     ActionType.REALTIME_SESSION_CANCELED,
-                    403,
-                    "Phiên đấu giá đã bị Admin hủy: " + reason,
+                    401,
+                    "Phiên đấu giá đã bị Admin hủy",
                     sessionTargetDTO
             );
 

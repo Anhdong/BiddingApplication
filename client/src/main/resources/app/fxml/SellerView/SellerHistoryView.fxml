@@ -4,16 +4,17 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.StackPane?>
 
-<StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1080.0" styleClass="bg-neutral-subtle" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1080.0" styleClass="bg-neutral-subtle" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.uet.BiddingApplication.Controller.SellerController.SellerHistoryController">
    <children>
-      <TableView prefHeight="800.0" prefWidth="1080.0" styleClass="bg-default">
+      <TableView fx:id="table" prefHeight="800.0" prefWidth="1080.0" styleClass="bg-default">
         <columns>
-          <TableColumn editable="false" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="180.0" text="Name" />
-            <TableColumn editable="false" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="255.0" text="Start Price" />
-            <TableColumn editable="false" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="255.0" text="Final Price" />
-          <TableColumn editable="false" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="120.0" text="Winner" />
-            <TableColumn editable="false" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="90.0" text="Status" />
-            <TableColumn editable="false" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="180.0" text="Time/Date" />
+          <TableColumn fx:id="nameCol" editable="false" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="180.0" text="Name" />
+            <TableColumn fx:id="startPriceCol" editable="false" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="255.0" text="Start Price" />
+            <TableColumn fx:id="finalPriceCol" editable="false" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="255.0" text="Final Price" />
+          <TableColumn fx:id="winnerCol" editable="false" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="120.0" text="Winner" />
+            <TableColumn fx:id="statusCol" editable="false" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="90.0" text="Status" />
+            <TableColumn fx:id="startTimeCol" editable="false" minWidth="0.0" prefWidth="180.0" text="Start Time" />
+            <TableColumn fx:id="endTimeCol" editable="false" minWidth="0.0" prefWidth="180.0" text="End Time" />
         </columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

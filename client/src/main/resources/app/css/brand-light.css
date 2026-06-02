@@ -1,0 +1,80 @@
+.root {
+    /* --- 1. BẢNG MÀU NỀN (LIGHT/WHITE) --- */
+    /* Mapped from White, Light, and Gray Light */
+    -color-bg-default:      #FFFFFF;
+    -color-bg-subtle:       #F2F4F7;
+    -color-bg-inset:        #DBE1E8;
+
+    /* Mapped from Dark and Gray */
+    -color-fg-default:      #131415;
+    -color-fg-muted:        #767A8C;
+
+    /* --- 2. GHI ĐÈ TOÀN BỘ DẢI MÀU ACCENT (XANH BLUE) --- */
+    /* Dải màu được tạo từ Light Blue (#DFE9FF) đến Dark Blue (#03369D) */
+    -color-accent-0: #F5F8FF;
+    -color-accent-1: #DFE9FF; /* Light Blue từ ảnh */
+    -color-accent-2: #B3CBFF;
+    -color-accent-3: #87ADFF;
+    -color-accent-4: #4D84FF;
+    -color-accent-5: #1153ED; /* Main Blue gốc (R:17 G:83 B:237) */
+    -color-accent-6: #0D45C9;
+    -color-accent-7: #0936A3;
+    -color-accent-8: #03369D; /* Dark Blue từ ảnh */
+    -color-accent-9: #022060;
+
+    /* Gán biến chính */
+    -color-accent-emphasis: -color-accent-5;
+    -color-accent-fg:       #FFFFFF; /* Chữ trắng trên nền xanh */
+
+    /* --- 3. ĐỊNH NGHĨA BIẾN CHO NÚT --- */
+    -color-btn-bg-hover:    -color-accent-4; /* Màu sáng hơn khi hover */
+    -color-btn-bg-pressed:  -color-accent-6; /* Màu đậm hơn khi nhấn */
+
+    /* Border khi focus */
+    -color-btn-border-focused: -color-accent-emphasis;
+
+    /* Đồng bộ JavaFX gốc */
+    -fx-accent:             -color-accent-emphasis;
+}
+
+/* --- 4. FIX TRIỆT ĐỂ TRẠNG THÁI NÚT --- */
+/* Đảm bảo nút .accent và .default lấy màu Xanh chính */
+.button.accent, .button.default {
+    -fx-background-color: -color-accent-emphasis;
+    -fx-text-fill: -color-accent-fg;
+}
+
+/* Khi di chuột qua */
+.button.accent:hover, .button.default:hover {
+    -fx-background-color: -color-btn-bg-hover;
+}
+
+/* Khi đang nhấn (Armed) hoặc đang Focus */
+.button.accent:armed, .button.default:armed,
+.button.accent:focused, .button.default:focused {
+    -fx-background-color: -color-btn-bg-pressed;
+}
+
+/* Xử lý viền Focus */
+.button:focused {
+    -fx-background-insets: 0, 1, 2;
+    -fx-background-radius: 6, 5, 4;
+}
+
+/* --- 5. ICON COLOR --- */
+/* SVG tự động lấy màu chữ tối (#131415) trong giao diện sáng */
+.color-svg {
+    -fx-fill: -color-fg-default;
+}
+
+/* --- 6. WALLPAPER --- */
+.auth-background {
+    /* Đường dẫn đến hình ảnh của bạn */
+    -fx-background-image: url("/app/assets/light_wallpaper.jpg");
+    /* Căn giữa hình ảnh */
+    -fx-background-position: center center;
+    /* Không lặp lại hình ảnh */
+    -fx-background-repeat: no-repeat;
+    /* QUAN TRỌNG: Hiệu ứng Cover (Tự phóng to và crop để lấp đầy) */
+    -fx-background-size: cover;
+}
