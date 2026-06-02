@@ -21,6 +21,7 @@ import com.uet.BiddingApplication.Session.ResponseDispatcher;
 import com.uet.BiddingApplication.Session.ServerConnection;
 import com.uet.BiddingApplication.Util.NotificationUtil;
 import com.uet.BiddingApplication.Util.UIUtil;
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -145,9 +146,7 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
 
             //Coundown Timer
             if (dto.getRemainingMillis() > 0) {
-                startCountdownTimer(dto.getRemainingMillis());
-            } else {
-                lblTimer.setText("Auction End!");
+                syncCountdownTimer(dto.getRemainingMillis());
             }
 
             if(dto.getCurrentPrice() != null) lblCurrentBid.setText("$"+dto.getCurrentPrice().toString());
@@ -174,50 +173,37 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
         for (BidHistoryDTO newBid : dto.getHistory().reversed()) handleNewBidHistory(newBid);
     }
 
-    private void startCountdownTimer(long remainingMillis) {
-        // 1. Dừng timer cũ nếu có (phòng trường hợp bấm linh tinh)
-        if (countdownTimeline != null) {
-            countdownTimeline.stop();
-        }
-
-        // 2. Tính ra chính xác thời điểm kết thúc (tuyệt đối)
+    private void syncCountdownTimer(long remainingMillis) {
         endTimeMillis = System.currentTimeMillis() + remainingMillis;
 
-        // 3. Tạo một Timeline chạy lặp lại mỗi 1 giây (1000 ms)
-        countdownTimeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
-            // Lấy thời gian hiện tại
-            long currentTime = System.currentTimeMillis();
-            long timeLeft = endTimeMillis - currentTime;
-
-            // Nếu hết giờ
-            if (timeLeft <= 0) {
-                lblTimer.setText("00:00:00");
-                // Dừng đồng hồ
-                countdownTimeline.stop();
-                // Có thể xử lý thêm: Khóa nút Đặt giá, hiển thị chữ "Đã kết thúc" v.v.
-                return;
+        Platform.runLater(() -> {
+            if (countdownTimeline == null || countdownTimeline.getStatus() != Animation.Status.RUNNING) {
+                countdownTimeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> updateLblTimer()));
+                countdownTimeline.setCycleCount(Timeline.INDEFINITE);
+                countdownTimeline.play();
             }
+            updateLblTimer();
+        });
+    }
 
-            long seconds = timeLeft / 1000;
+    private void updateLblTimer() {
+        long timeLeft = endTimeMillis - System.currentTimeMillis();
 
-            // Công thức tính Ngày, Giờ, Phút, Giây
-            long d = seconds / 86400;
-            long h = (seconds % 86400) / 3600;
-            long m = (seconds % 3600) / 60;
-            long s = seconds % 60;
-            // Cập nhật giao diện
-            if (d > 0) {
-                lblTimer.setText(String.format("%d days - %02d:%02d:%02d", d, h, m, s));
-            } else {
-                lblTimer.setText(String.format("%02d:%02d:%02d", h, m, s));
-            }
-        }));
+        // Xử lý hết giờ...
+        if (timeLeft <= 0) {
+            if (countdownTimeline != null) countdownTimeline.stop();
+            lblTimer.setText("00:00:00");
+            return;
+        }
 
-        // Cho phép Timeline chạy lặp vô hạn (cho đến khi ta gọi .stop() ở trên)
-        countdownTimeline.setCycleCount(Timeline.INDEFINITE);
+        // Chuyển đổi và hiển thị (như code cũ)
+        long totalSeconds = timeLeft / 1000;
+        long hours = totalSeconds / 3600;
+        long minutes = (totalSeconds % 3600) / 60;
+        long seconds = totalSeconds % 60;
 
-        // Bắt đầu chạy
-        countdownTimeline.play();
+        String formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        lblTimer.setText(formattedTime);
     }
 
     private void handleNewBidHistory(BidHistoryDTO newBid) {
@@ -350,7 +336,7 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
             RealtimeUpdateDTO dto = (RealtimeUpdateDTO) response.getPayload();
 
             handleNewBidHistory(dto.getLastBid());
-            startCountdownTimer(dto.getRemainingMillis());
+            syncCountdownTimer(dto.getRemainingMillis());
 
             log.info("[Auction] Cập nhật giá thành công.");
         } else {
