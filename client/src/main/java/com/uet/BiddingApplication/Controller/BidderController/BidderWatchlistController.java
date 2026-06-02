@@ -66,7 +66,7 @@ public class BidderWatchlistController extends BaseBrowseController {
         // Button Action (Chỉ hiện nút Hủy đăng ký khi trạng thái OPEN hoặc RUNNING)
         if (status == SessionStatus.OPEN) {
             controller.setButtonVisible(true);
-            controller.setBtnAction("Remove", event -> requestDeleteRegister(sessionId));
+            controller.setBtnAction("mdi2t-trash-can", event -> requestDeleteRegister(sessionId));
         } else {
             controller.setButtonVisible(false);
         }

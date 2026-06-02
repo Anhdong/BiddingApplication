@@ -14,6 +14,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +33,7 @@ public class ItemCardController implements Initializable {
     @FXML private ImageView imgItem;
     @FXML private Label lblName, lblDatetime, lblPrice;
     @FXML private Button btnAction;
+    @FXML private FontIcon icon;
 
     private AuctionCardDTO currentItem;
 
@@ -85,9 +87,9 @@ public class ItemCardController implements Initializable {
     }
 
     //--BUTTON ACTION--
-    public void setBtnAction(String label, EventHandler<ActionEvent> actionHandler){
+    public void setBtnAction(String iconLiteral, EventHandler<ActionEvent> actionHandler){
         Platform.runLater(()->{
-            btnAction.setText(label);
+            icon.setIconLiteral(iconLiteral);
             btnAction.setOnAction(actionHandler);
         });
     }
