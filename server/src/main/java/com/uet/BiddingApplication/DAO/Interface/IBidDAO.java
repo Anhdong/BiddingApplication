@@ -6,11 +6,12 @@ import com.uet.BiddingApplication.Enum.BidType;
 import com.uet.BiddingApplication.Model.BidTransaction;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface IBidDAO {
     boolean insertBid(BidTransaction bid);
     List<BidHistoryDTO> getRecentBids(String sessionId);
     List<BidderHistoryResponseDTO> getBidderHistory(String bidderId);
-    boolean placeBidAtomicTransaction(String sessionId, String bidderId, String bidderName,BigDecimal bidAmount, BidType bidType);
+    boolean placeBidAtomicTransaction(String sessionId, String bidderId, String bidderName, BigDecimal bidAmount, BidType bidType, LocalDateTime endTime);
 }

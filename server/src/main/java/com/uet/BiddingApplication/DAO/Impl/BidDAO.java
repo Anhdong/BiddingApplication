@@ -162,9 +162,9 @@ public class BidDAO implements IBidDAO {
         return history;
     }
     @Override
-    public boolean placeBidAtomicTransaction(String sessionId,String bidderId, String bidderName, BigDecimal bidAmount, BidType bidType) {
+    public boolean placeBidAtomicTransaction(String sessionId,String bidderId, String bidderName, BigDecimal bidAmount, BidType bidType,LocalDateTime endTime) {
         String insertBidSql = "INSERT INTO bid_transactions (id, created_at, bidder_id, session_id, bid_amount, bid_type) VALUES (?::uuid, ?, ?::uuid, ?::uuid, ?, ?)";
-        String updateSessionSql = "UPDATE auction_sessions SET current_price = ?, winner_name = ? WHERE id = ?::uuid";
+        String updateSessionSql = "UPDATE auction_sessions SET current_price = ?, winner_name = ?,end_time=? WHERE id = ?::uuid";
 
         // Sử dụng try-with-resources cho Connection để đảm bảo connection luôn được trả về pool
         try (Connection conn = DatabaseConnectionPool.getConnection()) {
@@ -189,7 +189,8 @@ public class BidDAO implements IBidDAO {
                 try (PreparedStatement ps = conn.prepareStatement(updateSessionSql)) {
                     ps.setBigDecimal(1, bidAmount);
                     ps.setString(2, bidderName);
-                    ps.setString(3, sessionId);
+                    ps.setTimestamp(2,java.sql.Timestamp.valueOf(endTime) );
+                    ps.setString(4, sessionId);
 
                     ps.executeUpdate();
                 }

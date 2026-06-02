@@ -105,7 +105,8 @@ public class InMemoryBidServiceImplTest {
                 eq(bidderId),
                 eq(bidderName),
                 any(BigDecimal.class),
-                any(BidType.class)
+                any(BidType.class),
+                eq(session.getEndTime())
         )).thenReturn(true);
 
         // 3. Thực thi
@@ -124,7 +125,8 @@ public class InMemoryBidServiceImplTest {
                 eq(bidderId),
                 eq(bidderName),
                 any(BigDecimal.class), // Dùng any để tránh lỗi so sánh BigDecimal scale
-                eq(BidType.MANUAL)
+                eq(BidType.MANUAL),
+                eq(session.getEndTime())
         );
 
         // Kiểm tra xem có broadcast không (chỉ khi dbSuccess = true mới có)

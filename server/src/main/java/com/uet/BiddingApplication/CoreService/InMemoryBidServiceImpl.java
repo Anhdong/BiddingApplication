@@ -176,7 +176,8 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
                     task.bidderId(),
                     req.getBidderName(),
                     req.getBidAmount(),
-                    req.getBidType()
+                    req.getBidType(),
+                    session.getEndTime()
             );
             // Gửi xuống mạng
             if(dbSuccess) {
@@ -262,7 +263,7 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
 
         if (dbUpdated&&statusUpdated) {
             String winner = (session.getWinnerName() != null)
-                    ? session.getWinnerName().substring(0, 5)
+                    ? session.getWinnerName()
                     : "NO_WINNER";
             SessionResultDTO result = new SessionResultDTO(
                     sessionId,
