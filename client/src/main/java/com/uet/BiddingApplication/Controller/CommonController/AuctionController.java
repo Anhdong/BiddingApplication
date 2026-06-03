@@ -79,6 +79,7 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
     private final Consumer<ResponsePacket<?>> joinSessionCallback = this::handleJoinSessionResponse;
     private final Consumer<ResponsePacket<?>> priceUpdateCallback = this::handlePriceUpdateResponse;
     private final Consumer<ResponsePacket<?>> sessionEndCallback = this::handleSessionEndResponse;
+    private final Consumer<ResponsePacket<?>> sessionCancelCallback = this::handleSessionCancelResponse;
     private final Consumer<ResponsePacket<?>> autoBidCancelCallback = this::handleAutoBidCancelResponse;
 
     private final Consumer<ResponsePacket<?>> placeManualBidCallback = this::handlePlaceManualBidResponse;
@@ -109,6 +110,7 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
         ResponseDispatcher.getInstance().subscribe(ActionType.JOIN_SESSION, joinSessionCallback);
         ResponseDispatcher.getInstance().subscribe(ActionType.REALTIME_PRICE_UPDATE, priceUpdateCallback);
         ResponseDispatcher.getInstance().subscribe(ActionType.REALTIME_SESSION_END, sessionEndCallback);
+        ResponseDispatcher.getInstance().subscribe(ActionType.REALTIME_SESSION_CANCELED, sessionCancelCallback);
         ResponseDispatcher.getInstance().subscribe(ActionType.AUTO_BID_CANCEL, autoBidCancelCallback);
 
         ResponseDispatcher.getInstance().subscribe(ActionType.PLACE_MANUAL_BID, placeManualBidCallback);
@@ -126,6 +128,7 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
         ResponseDispatcher.getInstance().unsubscribe(ActionType.JOIN_SESSION, joinSessionCallback);
         ResponseDispatcher.getInstance().unsubscribe(ActionType.REALTIME_PRICE_UPDATE, priceUpdateCallback);
         ResponseDispatcher.getInstance().unsubscribe(ActionType.REALTIME_SESSION_END, sessionEndCallback);
+        ResponseDispatcher.getInstance().unsubscribe(ActionType.REALTIME_SESSION_CANCELED, sessionCancelCallback);
         ResponseDispatcher.getInstance().unsubscribe(ActionType.AUTO_BID_CANCEL, autoBidCancelCallback);
 
         ResponseDispatcher.getInstance().unsubscribe(ActionType.PLACE_MANUAL_BID, placeManualBidCallback);
@@ -357,6 +360,21 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
             log.info("[Auction] Phiên đấu giá kết thúc thành công");
         } else {
             log.error("[Aution] Phiên đấu giá kết thúc không thành công: {}", response.getMessage());
+        }
+    }
+
+    private void handleSessionCancelResponse(ResponsePacket<?> response) {
+        if (response.getStatusCode() == 401) {
+            NotificationUtil.showAlert("Auction Cancel!","Session is canceled by admin!");
+
+            RoleType role=  ClientSession.getInstance().getCurrentUser().getRole();
+            //Navigate user back to page
+            if(role == RoleType.BIDDER) MainViewController.getInstance().loadView(ViewPath.BIDDER_WATCHLIST);
+            else if (role == RoleType.SELLER) MainViewController.getInstance().loadView(ViewPath.SELLER_ITEMS);
+
+            log.info("[Auction] Phiên đấu bị hủy bởi admin");
+        } else {
+            log.error("[Aution] Phiên đấu giá hủy không thành công: {}", response.getMessage());
         }
     }
 
