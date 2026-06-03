@@ -18,10 +18,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Side;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -39,6 +36,7 @@ public class BaseSidebarController implements Initializable {
     @FXML private ToggleGroup sidebarGroup; // Inject từ FXML qua @FXML
     @FXML protected FontIcon btnSetting;
     @FXML protected ContextMenu settingsMenu;
+    @FXML protected Label lblUsername;
 
     //--CALLBACK--
     private final Consumer<ResponsePacket<?>> forceLogoutCallback = this::handleForceLogoutResponse;
@@ -59,6 +57,9 @@ public class BaseSidebarController implements Initializable {
             }});
 
         setupSettingsMenu();
+
+        //Show username
+        lblUsername.setText(ClientSession.getInstance().getCurrentUser().getUsername());
     }
 
     //--NETWORK REQUEST--
