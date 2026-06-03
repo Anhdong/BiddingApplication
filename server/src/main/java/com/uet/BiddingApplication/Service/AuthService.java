@@ -193,11 +193,14 @@ public class AuthService {
             throw new BusinessException("Không tìm thấy thông tin người dùng.");
         }
 
-        if (this.userDAO.findByUsername(request.getUsername()) != null) {
+        User userFindByName = this.userDAO.findByUsername(request.getUsername());
+        User userFindByPhone = this.userDAO.findByPhone(request.getPhone());
+
+        if (userFindByName != null && userFindByName.getPhone() != request.getPhone()){
             throw new BusinessException("Tên đăng nhập (Username) đã tồn tại.");
         }
 
-        if (this.userDAO.findByPhone(request.getPhone()) != null){
+        if (userFindByPhone != null && userFindByName.getUsername() != request.getUsername()){
             throw new BusinessException("Số điện thoại (Phone Number) đã tồn tại.");
         }
 
