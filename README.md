@@ -13,15 +13,15 @@
     - Logback
 
 ### Stack kỹ thuật
-    - Java 25
-    - JavaFX 25 + AtlantaFX 2.0 + Ikonli 12.4
-    - PostgreSQL + HikariCP 6.2
-    - BCrypt 0.4
-    - Gson 2.12
-    - JUnit 5.11 + Mockito 5.14
-    - Logback 1.5 
-    - Maven + GitHub Actions 
-    - dotenv-java 3.2
+- Java 25
+- JavaFX 25 + AtlantaFX 2.0 + Ikonli 12.4
+- PostgreSQL + HikariCP 6.2
+- BCrypt 0.4
+- Gson 2.12
+- JUnit 5.11 + Mockito 5.14
+- Logback 1.5 
+- Maven + GitHub Actions 
+- dotenv-java 3.2
 
 ### Nghiệp vụ 
  Hai vai trò Seller và Bidder; luồng đầy đủ đăng ký → tạo phiên → đặt bid → kết thúc → công bố kết quả; lịch sử bid minh bạch. 
