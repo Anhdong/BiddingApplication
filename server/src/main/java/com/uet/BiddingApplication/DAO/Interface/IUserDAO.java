@@ -9,6 +9,7 @@ public interface IUserDAO {
     public boolean insertUser(User user);
     public User findByEmail(String email);
     public User findById(String userId);
+    public User findByPhone(String phone);
     public boolean updateStatus(String userId, boolean isActive);
     public boolean updateProfile(User user);
     public boolean changePassword(String userId, String newHashedPassword);

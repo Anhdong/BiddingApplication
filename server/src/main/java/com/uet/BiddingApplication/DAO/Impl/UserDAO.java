@@ -128,6 +128,22 @@ public class UserDAO implements IUserDAO {
         }
         return null;
     }
+    public User findByPhone(String phone) {
+        String sql = "SELECT * FROM users WHERE phone = ?";
+        try (Connection conn = DatabaseConnectionPool.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            // Xử lý ép kiểu String sang UUID cho PostgreSQL
+            ps.setString(1, phone);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return mapRowToUser(rs);
+            }
+        } catch (SQLException | IllegalArgumentException e) {
+            log.error("[UserDAO] Lỗi findById (Sai format UUID hoặc lỗi DB): " + phone);
+            log.error("Đã xảy ra lỗi Exception:", e);
+        }
+        return null;
+    }
 
     // =========================================================================
     // 2. CÁC HÀM THÊM / SỬA (WRITE)
