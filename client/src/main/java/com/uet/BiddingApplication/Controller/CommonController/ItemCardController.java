@@ -70,7 +70,11 @@ public class ItemCardController implements Initializable {
                 }
             });
         } else {
-            Platform.runLater(()->{lblDatetime.setText(sentenceCase((status.toString())));});
+            Platform.runLater(()->{
+                lblDatetime.setText(sentenceCase((status.toString())));
+                if(status == SessionStatus.RUNNING) lblDatetime.getStyleClass().add("success");
+                else lblDatetime.getStyleClass().add("danger");
+            });
         }
     }
 
