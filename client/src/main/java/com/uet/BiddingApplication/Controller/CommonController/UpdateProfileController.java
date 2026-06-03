@@ -1,5 +1,6 @@
 package com.uet.BiddingApplication.Controller.CommonController;
 
+import com.uet.BiddingApplication.Controller.MainViewController;
 import com.uet.BiddingApplication.DTO.Packet.RequestPacket;
 import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
 import com.uet.BiddingApplication.DTO.Request.ProfileUpdateRequestDTO;
@@ -86,6 +87,9 @@ public class UpdateProfileController implements Initializable ,ViewControllerLif
             ClientSession.getInstance().getCurrentUser().setUsername(dto.getUsername());
             ClientSession.getInstance().getCurrentUser().setPhone(dto.getPhone());
             log.info("[UpdateProfile] Update current user session info successfully");
+
+            //Update to sidebar lblUsername
+            MainViewController.getInstance().getSidebarController().updateName();
 
             NotificationUtil.showInfo("Success","Update profile successfully!");
             log.info("[UpdateProfile] Update profile successfully");

@@ -59,7 +59,13 @@ public class BaseSidebarController implements Initializable {
         setupSettingsMenu();
 
         //Show username
-        lblUsername.setText(ClientSession.getInstance().getCurrentUser().getUsername());
+        updateName();
+    }
+
+    public void updateName(){
+        Platform.runLater(()->
+            lblUsername.setText(ClientSession.getInstance().getCurrentUser().getUsername())
+        );
     }
 
     //--NETWORK REQUEST--
