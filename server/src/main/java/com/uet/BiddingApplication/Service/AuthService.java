@@ -102,8 +102,13 @@ public class AuthService {
         if (this.userDAO.findByEmail(request.getEmail()) != null) {
             throw new BusinessException("Email này đã được đăng ký.");
         }
+
         if (this.userDAO.findByUsername(request.getUsername()) != null) {
             throw new BusinessException("Tên đăng nhập (Username) đã tồn tại.");
+        }
+
+        if (this.userDAO.findByPhone(request.getPhone()) != null){
+            throw new BusinessException("Số điện thoại (Phone Number) đã tồn tại.");
         }
 
         // 2. Băm mật khẩu và map dữ liệu
@@ -188,6 +193,14 @@ public class AuthService {
             throw new BusinessException("Không tìm thấy thông tin người dùng.");
         }
 
+        if (this.userDAO.findByUsername(request.getUsername()) != null) {
+            throw new BusinessException("Tên đăng nhập (Username) đã tồn tại.");
+        }
+
+        if (this.userDAO.findByPhone(request.getPhone()) != null){
+            throw new BusinessException("Số điện thoại (Phone Number) đã tồn tại.");
+        }
+
         // 2. Đổ dữ liệu mới từ request (DTO) vào thực thể (Entity)
         UserMapper.updateEntity(request, user);
 
@@ -197,6 +210,7 @@ public class AuthService {
         }
         return UserMapper.toDto(user);
     }
+
     public void reconnect(String userId,String oldToken) {
         if (oldToken == null || oldToken.trim().isEmpty()) {
             throw new BusinessException("Token không được để trống.");
