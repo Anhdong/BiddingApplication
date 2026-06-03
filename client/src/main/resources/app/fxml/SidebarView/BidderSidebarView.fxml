@@ -77,13 +77,26 @@
          </graphic>
       </ToggleButton>
       <Region prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-      <FontIcon fx:id="btnSetting" iconLiteral="mdi2c-cog" onMouseClicked="#showSettingsMenu" styleClass="large-icon">
+      <HBox alignment="CENTER_LEFT" spacing="6.0">
          <VBox.margin>
-            <Insets bottom="16.0" right="16.0" />
+            <Insets />
          </VBox.margin>
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-      </FontIcon>
+         <children>
+            <FontIcon fx:id="btnSetting" iconLiteral="mdi2c-cog" onMouseClicked="#showSettingsMenu" styleClass="large-icon">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </FontIcon>
+            <Label fx:id="lblUsername">
+               <styleClass>
+                  <String fx:value="text-bold" />
+                  <String fx:value="title-4" />
+               </styleClass>
+            </Label>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" />
+         </padding>
+      </HBox>
    </children>
 </VBox>

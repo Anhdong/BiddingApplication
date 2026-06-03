@@ -77,7 +77,7 @@ public class BidderBrowseController extends BaseBrowseController {
         // Button Action (Chỉ hiện nút Đăng ký khi trạng thái OPEN hoặc RUNNING)
         if (status == SessionStatus.OPEN) {
             controller.setButtonVisible(true);
-            controller.setBtnAction("Add", event -> requestPreRegister(sessionId));
+            controller.setBtnAction("mdi2p-plus", event -> requestPreRegister(sessionId));
         } else {
             controller.setButtonVisible(false);
         }

@@ -21,6 +21,7 @@ import com.uet.BiddingApplication.Session.ResponseDispatcher;
 import com.uet.BiddingApplication.Session.ServerConnection;
 import com.uet.BiddingApplication.Util.NotificationUtil;
 import com.uet.BiddingApplication.Util.UIUtil;
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -78,6 +79,7 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
     private final Consumer<ResponsePacket<?>> joinSessionCallback = this::handleJoinSessionResponse;
     private final Consumer<ResponsePacket<?>> priceUpdateCallback = this::handlePriceUpdateResponse;
     private final Consumer<ResponsePacket<?>> sessionEndCallback = this::handleSessionEndResponse;
+    private final Consumer<ResponsePacket<?>> sessionCancelCallback = this::handleSessionCancelResponse;
     private final Consumer<ResponsePacket<?>> autoBidCancelCallback = this::handleAutoBidCancelResponse;
 
     private final Consumer<ResponsePacket<?>> placeManualBidCallback = this::handlePlaceManualBidResponse;
@@ -108,6 +110,7 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
         ResponseDispatcher.getInstance().subscribe(ActionType.JOIN_SESSION, joinSessionCallback);
         ResponseDispatcher.getInstance().subscribe(ActionType.REALTIME_PRICE_UPDATE, priceUpdateCallback);
         ResponseDispatcher.getInstance().subscribe(ActionType.REALTIME_SESSION_END, sessionEndCallback);
+        ResponseDispatcher.getInstance().subscribe(ActionType.REALTIME_SESSION_CANCELED, sessionCancelCallback);
         ResponseDispatcher.getInstance().subscribe(ActionType.AUTO_BID_CANCEL, autoBidCancelCallback);
 
         ResponseDispatcher.getInstance().subscribe(ActionType.PLACE_MANUAL_BID, placeManualBidCallback);
@@ -125,13 +128,16 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
         ResponseDispatcher.getInstance().unsubscribe(ActionType.JOIN_SESSION, joinSessionCallback);
         ResponseDispatcher.getInstance().unsubscribe(ActionType.REALTIME_PRICE_UPDATE, priceUpdateCallback);
         ResponseDispatcher.getInstance().unsubscribe(ActionType.REALTIME_SESSION_END, sessionEndCallback);
+        ResponseDispatcher.getInstance().unsubscribe(ActionType.REALTIME_SESSION_CANCELED, sessionCancelCallback);
         ResponseDispatcher.getInstance().unsubscribe(ActionType.AUTO_BID_CANCEL, autoBidCancelCallback);
 
         ResponseDispatcher.getInstance().unsubscribe(ActionType.PLACE_MANUAL_BID, placeManualBidCallback);
 
-        //Request leave room
-        requestLeaveSession();
-        requestUnsubscribeRealtime();
+        //Request leave room if not logging out
+        if (ClientSession.getInstance().isLoggedIn()) {
+            requestLeaveSession();
+            requestUnsubscribeRealtime();
+        }
     }
 
     //--MAIN METHODS--
@@ -145,9 +151,7 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
 
             //Coundown Timer
             if (dto.getRemainingMillis() > 0) {
-                startCountdownTimer(dto.getRemainingMillis());
-            } else {
-                lblTimer.setText("Auction End!");
+                syncCountdownTimer(dto.getRemainingMillis());
             }
 
             if(dto.getCurrentPrice() != null) lblCurrentBid.setText("$"+dto.getCurrentPrice().toString());
@@ -174,50 +178,37 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
         for (BidHistoryDTO newBid : dto.getHistory().reversed()) handleNewBidHistory(newBid);
     }
 
-    private void startCountdownTimer(long remainingMillis) {
-        // 1. Dừng timer cũ nếu có (phòng trường hợp bấm linh tinh)
-        if (countdownTimeline != null) {
-            countdownTimeline.stop();
-        }
-
-        // 2. Tính ra chính xác thời điểm kết thúc (tuyệt đối)
+    private void syncCountdownTimer(long remainingMillis) {
         endTimeMillis = System.currentTimeMillis() + remainingMillis;
 
-        // 3. Tạo một Timeline chạy lặp lại mỗi 1 giây (1000 ms)
-        countdownTimeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
-            // Lấy thời gian hiện tại
-            long currentTime = System.currentTimeMillis();
-            long timeLeft = endTimeMillis - currentTime;
-
-            // Nếu hết giờ
-            if (timeLeft <= 0) {
-                lblTimer.setText("00:00:00");
-                // Dừng đồng hồ
-                countdownTimeline.stop();
-                // Có thể xử lý thêm: Khóa nút Đặt giá, hiển thị chữ "Đã kết thúc" v.v.
-                return;
+        Platform.runLater(() -> {
+            if (countdownTimeline == null || countdownTimeline.getStatus() != Animation.Status.RUNNING) {
+                countdownTimeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> updateLblTimer()));
+                countdownTimeline.setCycleCount(Timeline.INDEFINITE);
+                countdownTimeline.play();
             }
+            updateLblTimer();
+        });
+    }
 
-            long seconds = timeLeft / 1000;
+    private void updateLblTimer() {
+        long timeLeft = endTimeMillis - System.currentTimeMillis();
 
-            // Công thức tính Ngày, Giờ, Phút, Giây
-            long d = seconds / 86400;
-            long h = (seconds % 86400) / 3600;
-            long m = (seconds % 3600) / 60;
-            long s = seconds % 60;
-            // Cập nhật giao diện
-            if (d > 0) {
-                lblTimer.setText(String.format("%d days - %02d:%02d:%02d", d, h, m, s));
-            } else {
-                lblTimer.setText(String.format("%02d:%02d:%02d", h, m, s));
-            }
-        }));
+        // Xử lý hết giờ...
+        if (timeLeft <= 0) {
+            if (countdownTimeline != null) countdownTimeline.stop();
+            lblTimer.setText("00:00:00");
+            return;
+        }
 
-        // Cho phép Timeline chạy lặp vô hạn (cho đến khi ta gọi .stop() ở trên)
-        countdownTimeline.setCycleCount(Timeline.INDEFINITE);
+        // Chuyển đổi và hiển thị (như code cũ)
+        long totalSeconds = timeLeft / 1000;
+        long hours = totalSeconds / 3600;
+        long minutes = (totalSeconds % 3600) / 60;
+        long seconds = totalSeconds % 60;
 
-        // Bắt đầu chạy
-        countdownTimeline.play();
+        String formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        lblTimer.setText(formattedTime);
     }
 
     private void handleNewBidHistory(BidHistoryDTO newBid) {
@@ -350,7 +341,7 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
             RealtimeUpdateDTO dto = (RealtimeUpdateDTO) response.getPayload();
 
             handleNewBidHistory(dto.getLastBid());
-            startCountdownTimer(dto.getRemainingMillis());
+            syncCountdownTimer(dto.getRemainingMillis());
 
             log.info("[Auction] Cập nhật giá thành công.");
         } else {
@@ -361,9 +352,9 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
     private void handleSessionEndResponse(ResponsePacket<?> response) {
         if (response.getStatusCode() == 200) {
             SessionResultDTO info = (SessionResultDTO) response.getPayload();
-            NotificationUtil.showInfo("The auction has ended!");
-            RoleType role=  ClientSession.getInstance().getCurrentUser().getRole();
+            NotificationUtil.showAlert("Auction End!",(info.getWinnerName()!=null)?"The winner is " + info.getWinnerName():"There is no winner");
 
+            RoleType role=  ClientSession.getInstance().getCurrentUser().getRole();
             //Navigate user back to page
             if(role == RoleType.BIDDER) MainViewController.getInstance().loadView(ViewPath.BIDDER_WATCHLIST);
             else if (role == RoleType.SELLER) MainViewController.getInstance().loadView(ViewPath.SELLER_ITEMS);
@@ -371,6 +362,21 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
             log.info("[Auction] Phiên đấu giá kết thúc thành công");
         } else {
             log.error("[Aution] Phiên đấu giá kết thúc không thành công: {}", response.getMessage());
+        }
+    }
+
+    private void handleSessionCancelResponse(ResponsePacket<?> response) {
+        if (response.getStatusCode() == 401) {
+            NotificationUtil.showAlert("Auction Cancel!","Session is canceled by admin!");
+
+            RoleType role=  ClientSession.getInstance().getCurrentUser().getRole();
+            //Navigate user back to page
+            if(role == RoleType.BIDDER) MainViewController.getInstance().loadView(ViewPath.BIDDER_WATCHLIST);
+            else if (role == RoleType.SELLER) MainViewController.getInstance().loadView(ViewPath.SELLER_ITEMS);
+
+            log.info("[Auction] Phiên đấu bị hủy bởi admin");
+        } else {
+            log.error("[Aution] Phiên đấu giá hủy không thành công: {}", response.getMessage());
         }
     }
 

@@ -139,6 +139,19 @@ public class NotificationUtil {
     }
 
     // ==========================================
+    // NOTIFICATION ALERT
+    // ==========================================
+    public static void showAlert(String title, String content) {
+        Platform.runLater(()->{
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(content);
+            applyStyles(alert.getDialogPane());
+            alert.showAndWait();
+        });
+    }
+    // ==========================================
     // CONFIRMATION DIALOG (Returns true/false)
     // ==========================================
     public static boolean showConfirmation(String title, String content){

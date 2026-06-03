@@ -6,7 +6,7 @@
 
 <StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.uet.BiddingApplication.Controller.BidderController.BidderHistoryController">
    <children>
-      <TableView fx:id="table" prefHeight="800.0" prefWidth="1080.0">
+      <TableView fx:id="table" prefHeight="800.0" prefWidth="1080.0" styleClass="bg-default">
         <columns>
           <TableColumn fx:id="nameCol" editable="false" prefWidth="188.0" text="Name" />
             <TableColumn fx:id="myBidCol" editable="false" prefWidth="255.0" text="My Highest Bid" />

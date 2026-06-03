@@ -1,5 +1,6 @@
 package com.uet.BiddingApplication.Controller;
 
+import com.uet.BiddingApplication.Controller.BaseController.BaseSidebarController;
 import com.uet.BiddingApplication.Enum.RoleType;
 import com.uet.BiddingApplication.Enum.ViewPath;
 import com.uet.BiddingApplication.Interface.ViewControllerLifecycle;
@@ -41,8 +42,12 @@ public class MainViewController implements Initializable {
     // Lưu vết Controller đang hiển thị trên màn hình hiện tại
     private Object currentController;
 
+    // Lưu Controller của sidebar để cập nhật
+    private BaseSidebarController sidebarController;
+
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) { //Background Thread
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        //Background Thread
         // Gán instance bằng chính object này khi giao diện load xong
         instance = this;
         setupUserInterface(ClientSession.getInstance().getCurrentUser().getRole());
@@ -52,10 +57,12 @@ public class MainViewController implements Initializable {
         try { //set Sidebar
             FXMLLoader loader = new FXMLLoader(getClass().getResource(ViewPath.getSidebarView(role).getPath()));
             Parent sidebar = loader.load();
+            sidebarController = loader.getController();
             Platform.runLater(()->SidebarSlot.getChildren().setAll(sidebar));
         } catch (IOException e) {
             log.error("[MainViewController] Thiết lập Sidebar không thành công: {}", e.getMessage());
         }
+
         try { //set defaultView
             loadView(ViewPath.getDefaultView(role));
         } catch (Exception e) {
@@ -66,12 +73,8 @@ public class MainViewController implements Initializable {
                 log.error("--- NGUYÊN NHÂN GỐC RỄ (ROOT CAUSE) ---");
                 log.error("Type: {}", rootCause.getClass().getName());
                 log.error("Message: {}", rootCause.getMessage());
-
-                // In thẳng ra Console để trace được dòng code gây lỗi trong Controller
-                rootCause.printStackTrace();
             } else {
-                // Nếu không có root cause, in stacktrace của lỗi hiện tại
-                e.printStackTrace();
+                log.error("[MainViewController] {}",e.getMessage());
             }
         }
         log.info("[MainViewController] Thiết lập default View thành công");
@@ -143,10 +146,15 @@ public class MainViewController implements Initializable {
         }
 
         currentController = null;
+        sidebarController = null;
 
         viewCache.clear();
         controllerCache.clear();
 
         log.info("[MainViewController] Đã dọn sạch bộ nhớ Cache Giao diện!");
+    }
+
+    public BaseSidebarController getSidebarController(){
+        return sidebarController;
     }
 }

@@ -66,7 +66,7 @@ public class SellerItemsController extends BaseBrowseController {
         // Button Action (Chỉ hiện nút chỉnh sửa khi OPEN)
         if (status == SessionStatus.OPEN) {
             controller.setButtonVisible(true);
-            controller.setBtnAction("Edit", event -> {
+            controller.setBtnAction("mdi2p-pencil", event -> {
                 log.info("[SellerBrowse] Seller chọn chỉnh sửa sản phẩm: {}", item.getItemName());
                 MainViewController.getInstance().loadView(ViewPath.SELLER_ITEM_FORM, (SellerItemsFormController c) -> {
                     c.setupFormMode(item.getSessionId(), item.getItemId());
