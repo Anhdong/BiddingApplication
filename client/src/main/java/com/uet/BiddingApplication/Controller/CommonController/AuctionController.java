@@ -133,9 +133,11 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
 
         ResponseDispatcher.getInstance().unsubscribe(ActionType.PLACE_MANUAL_BID, placeManualBidCallback);
 
-        //Request leave room
-        requestLeaveSession();
-        requestUnsubscribeRealtime();
+        //Request leave room if not logging out
+        if (ClientSession.getInstance().isLoggedIn()) {
+            requestLeaveSession();
+            requestUnsubscribeRealtime();
+        }
     }
 
     //--MAIN METHODS--
