@@ -193,12 +193,18 @@ public class AuthService {
             throw new BusinessException("Không tìm thấy thông tin người dùng.");
         }
 
-        if (this.userDAO.findByUsername(request.getUsername()) != null) {
-            throw new BusinessException("Tên đăng nhập (Username) đã tồn tại.");
+        if (request.getUsername() != null && !request.getUsername().trim().isEmpty()) {
+            User userFindByName = this.userDAO.findByUsername(request.getUsername());
+            if (userFindByName != null && !userFindByName.getId().equals(userId)) {
+                throw new BusinessException("Tên đăng nhập (Username) đã tồn tại.");
+            }
         }
 
-        if (this.userDAO.findByPhone(request.getPhone()) != null){
-            throw new BusinessException("Số điện thoại (Phone Number) đã tồn tại.");
+        if (request.getPhone() != null && !request.getPhone().trim().isEmpty()) {
+            User userFindByPhone = this.userDAO.findByPhone(request.getPhone());
+            if (userFindByPhone != null && !userFindByPhone.getId().equals(userId)) {
+                throw new BusinessException("Số điện thoại (Phone Number) đã tồn tại.");
+            }
         }
 
         // 2. Đổ dữ liệu mới từ request (DTO) vào thực thể (Entity)

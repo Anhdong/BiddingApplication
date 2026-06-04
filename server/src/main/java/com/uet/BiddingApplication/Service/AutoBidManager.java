@@ -6,6 +6,7 @@ import com.uet.BiddingApplication.DTO.Request.BidRequestDTO;
 import com.uet.BiddingApplication.DTO.Packet.ResponsePacket;
 import com.uet.BiddingApplication.Enum.ActionType;
 import com.uet.BiddingApplication.Enum.BidType;
+import com.uet.BiddingApplication.Enum.SessionStatus;
 import com.uet.BiddingApplication.Model.AuctionSession;
 import com.uet.BiddingApplication.Model.AutoBidSetting;
 import com.uet.BiddingApplication.DAO.Impl.AutoBidSettingDAO;
@@ -49,6 +50,7 @@ public class AutoBidManager {
         if (setting == null || setting.getSessionId() == null || setting.getBidderId() == null) {
             return;
         }
+        String sessionId = setting.getSessionId();
 
         // [LOGIC DATABASE 1]: Lưu xuống DB trước.
         // Sử dụng hàm DAO (Upsert hoặc Delete rồi Insert) để đảm bảo ràng buộc UNIQUE dưới Database.
@@ -59,7 +61,7 @@ public class AutoBidManager {
         }
 
         ConcurrentLinkedQueue<AutoBidSetting> queue = autoBidQueues.computeIfAbsent(
-                setting.getSessionId(),
+                sessionId,
                 k -> new ConcurrentLinkedQueue<>()
         );
 
@@ -68,6 +70,39 @@ public class AutoBidManager {
 
         queue.add(setting);
         log.info("[INFO] Đăng ký Auto-bid thành công cho User [" + setting.getBidderId() + "] tại phiên [" + setting.getSessionId() + "]");
+        // ==========================================
+        // THÊM MỚI: KIỂM TRA VÀ KÍCH HOẠT NGAY LẬP TỨC
+        // ==========================================
+        AuctionSession session = SearchCacheManager.getInstance().getSession(sessionId);
+        if (session != null && session.getStatus() == SessionStatus.RUNNING) {
+            String currentWinner = session.getWinnerName();
+
+            // Nếu người vừa cài Autobid KHÔNG PHẢI là người đang dẫn đầu -> Bắn ngay 1 lệnh lên workerQueue
+            if (!setting.getBidderId().equals(currentWinner)) {
+
+                BigDecimal validIncrement = setting.getIncrement().max(session.getBidStep());
+                BigDecimal currentPrice = session.getCurrentPrice() != null ? session.getCurrentPrice() : session.getStartPrice();
+                BigDecimal nextBidPrice = currentPrice.add(validIncrement);
+
+                // Kiểm tra xem tiền có đủ để theo vòng đầu tiên này không
+                if (setting.getMaxBid().compareTo(nextBidPrice) >= 0) {
+                    BidRequestDTO autoRequest = new BidRequestDTO();
+                    autoRequest.setBidderName(setting.getBidderName());
+                    autoRequest.setSessionId(sessionId);
+                    autoRequest.setBidAmount(nextBidPrice);
+                    autoRequest.setBidType(BidType.AUTO);
+
+                    log.info("[INFO] Kích hoạt Auto-Bid lần đầu cho User [" + setting.getBidderId() + "], giá: " + nextBidPrice);
+
+                    // Đẩy vào hàng đợi để worker xử lý tuần tự, đảm bảo không bị xung đột luồng
+                    InMemoryBidServiceImpl.getInstance().enqueueBid(autoRequest, setting.getBidderId());
+                } else {
+                    // Xử lý báo lỗi ngay nếu maxBid cài đặt quá thấp so với giá hiện tại
+                    log.info("[INFO] User [" + setting.getBidderId() + "] cài Autobid nhưng MaxBid không đủ qua bước đầu.");
+                    // (Bạn có thể gọi cancelAutoBid và gửi thông báo về client tại đây)
+                }
+            }
+        }
     }
 
     /**
