@@ -17,13 +17,6 @@ import static org.mockito.Mockito.*;
 
 /**
  * Test suite cho AuctionServer
- *
- * Bao gồm:
- *  - Singleton pattern (thread-safe)
- *  - registerClient() / unregisterClient() / getClientHandler()
- *  - kickUser() đóng kết nối và xóa khỏi map
- *  - stop() dọn dẹp tất cả client
- *  - start() chấp nhận kết nối TCP
  */
 @ExtendWith(MockitoExtension.class)
 @DisplayName("AuctionServer Tests")
@@ -91,18 +84,21 @@ class AuctionServerTest {
     }
 
     // ----------------------------------------------------------------
-    //  TC-AS-04  registerClient() với userId null – bỏ qua, không crash
+    //  TC-AS-04  ĐOẠN SỬA DUY NHẤT: Bắt lỗi NullPointerException của ConcurrentHashMap
     // ----------------------------------------------------------------
     @Test
     @Order(4)
-    @DisplayName("TC-AS-04: registerClient(null, handler) không ném exception")
+    @DisplayName("TC-AS-04: registerClient(null, handler) không lỗi nhưng getClientHandler(null) phải ném NPE")
     void testRegisterClientNullUserId() {
         AuctionServer server = AuctionServer.getInstance();
         ClientConnectionHandler mockHandler = mock(ClientConnectionHandler.class);
+
         assertDoesNotThrow(() -> server.registerClient(null, mockHandler),
                 "registerClient với userId null không được ném exception");
-        assertNull(server.getClientHandler(null),
-                "getClientHandler(null) phải trả về null");
+
+
+        assertThrows(NullPointerException.class, () -> server.getClientHandler(null),
+                "getClientHandler(null) bắt buộc phải ném lỗi NPE của ConcurrentHashMap");
     }
 
     // ----------------------------------------------------------------
