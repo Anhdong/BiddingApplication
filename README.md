@@ -88,7 +88,8 @@ db.username=<your-supabase-username>
 db.password=<your-supabase-password>
 ```
 
-*(Lưu ý: Hãy đảm bảo bạn đã chạy các script SQL để khởi tạo bảng và schema cần thiết cho hệ thống trên Supabase trước khi khởi chạy).*
+> [!NOTE]
+>Hãy đảm bảo bạn đã chạy các script SQL để khởi tạo bảng và schema cần thiết cho hệ thống trên Supabase trước khi khởi chạy.
 
 ### **4. Thiết lập Lưu trữ ảnh (Supabase Storage)**  
 Do ứng dụng có chức năng quản lý, tải xuống và đọc các định dạng ảnh của vật phẩm thông qua URL từ Supabase, bạn cần thiết lập một Storage Bucket trên Supabase, thiết lập quyền (policies) cho phép đọc/ghi public để hiển thị ảnh trên UI JavaFX một cách chính xác.
@@ -122,7 +123,9 @@ java -jar server-executable.jar
 cd client/target
 java -jar client-executable.jar
 ```
-_(Lưu ý: Khi thực hiện lệnh trên Windows có thể cần dùng **\\** thay cho **/** trong đường dẫn thư mục )._
+
+> [!NOTE]
+> Khi thực hiện lệnh trên Windows có thể cần dùng **\\** thay cho **/** trong đường dẫn thư mục.
 
 # Danh sách chức năng
 ### 1. Thiết kế lớp & cây kế thừa
