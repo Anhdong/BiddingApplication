@@ -155,29 +155,24 @@ class UDPDiscoveryServerTest {
     // ----------------------------------------------------------------
     @Test
     @Order(5)
-    @DisplayName("TC-UDP-05: Server dừng an toàn khi Thread bị interrupt()")
+    @DisplayName("TC-UDP-05: Server dừng an toàn khi gọi stop() đóng Socket")
     void testStopsOnInterrupt() throws Exception {
-        assertTrue(serverThread.isAlive(), "Server phải đang chạy trước interrupt");
+        assertTrue(serverThread.isAlive(), "Server phải đang chạy trước khi dừng");
 
-        // 1. Gửi lệnh ngắt luồng (đặt cờisInterrupted = true)
+        // 1. Gọi hàm đóng Socket chủ động thay vì gửi gói tin mồi UDP
+        // Hành động này sẽ ép socket.receive() ném ra SocketException và thoát.
+        udpServer.stop();
+
+        // Cắm thêm cờ ngắt luồng để đảm bảo đúng thủ tục của Thread
         serverThread.interrupt();
 
-        // 2. Gửi gói tin mồi để giải phóng hàm socket.receive() đang bị nghẽn
-        try (DatagramSocket wakeUpSocket = new DatagramSocket()) {
-            byte[] dummyData = "WAKE_UP_SIGNAL".getBytes();
-            DatagramPacket wakeUpPacket = new DatagramPacket(
-                    dummyData, dummyData.length,
-                    InetAddress.getByName("127.0.0.1"), UDP_PORT);
-            wakeUpSocket.send(wakeUpPacket);
-        }
-
-        // 3. Chờ tối đa 2 giây cho luồng phụ đóng hoàn toàn
+        // 2. Chờ tối đa 2 giây cho luồng phụ kết thúc và đóng hoàn toàn
         serverThread.join(2000);
 
+        // 3. Khẳng định luồng đã chết, tức là Socket đã được nhả ra
         assertFalse(serverThread.isAlive(),
-                "Luồng UDPDiscoveryServer phải dừng hẳn sau khi nhận tín hiệu ngắt");
+                "Luồng UDPDiscoveryServer phải dừng hẳn sau khi nhận tín hiệu stop()");
     }
-
     // ----------------------------------------------------------------
     //  TC-UDP-06  Message rỗng – không crash, không phản hồi
     // ----------------------------------------------------------------
