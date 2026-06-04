@@ -287,4 +287,77 @@ public class AuthServiceTest {
         assertNotNull(result, "Phải trả về UserProfileDTO thay vì null");
         verify(mockUserDAO, times(1)).updateProfile(any(User.class));
     }
+
+    @Test
+    @DisplayName("updateProfile: Thất bại khi tên đăng nhập đã được sử dụng bởi người khác")
+    void testUpdateProfile_Fail_DuplicateUsername() {
+        String userId = "user-1";
+
+        Bidder mockUser = new Bidder();
+        mockUser.setId(userId);
+
+        Bidder otherUser = new Bidder();
+        otherUser.setId("user-2");
+        otherUser.setUsername("existingName");
+
+        when(mockUserDAO.findById(userId)).thenReturn(mockUser);
+        when(mockUserDAO.findByUsername("existingName")).thenReturn(otherUser);
+
+        ProfileUpdateRequestDTO request = new ProfileUpdateRequestDTO("existingName", "0987654321", "HCM");
+
+        BusinessException exception = assertThrows(BusinessException.class,
+                () -> authService.updateProfile(request, userId));
+
+        assertEquals("Tên đăng nhập (Username) đã tồn tại.", exception.getMessage());
+        verify(mockUserDAO, never()).updateProfile(any(User.class));
+    }
+
+    @Test
+    @DisplayName("updateProfile: Thất bại khi số điện thoại đã được sử dụng bởi người khác")
+    void testUpdateProfile_Fail_DuplicatePhone() {
+        String userId = "user-1";
+
+        Bidder mockUser = new Bidder();
+        mockUser.setId(userId);
+
+        Bidder otherUser = new Bidder();
+        otherUser.setId("user-2");
+        otherUser.setPhone("0987654321");
+
+        when(mockUserDAO.findById(userId)).thenReturn(mockUser);
+        when(mockUserDAO.findByPhone("0987654321")).thenReturn(otherUser);
+
+        ProfileUpdateRequestDTO request = new ProfileUpdateRequestDTO("newName", "0987654321", "HCM");
+
+        BusinessException exception = assertThrows(BusinessException.class,
+                () -> authService.updateProfile(request, userId));
+
+        assertEquals("Số điện thoại (Phone Number) đã tồn tại.", exception.getMessage());
+        verify(mockUserDAO, never()).updateProfile(any(User.class));
+    }
+
+    @Test
+    @DisplayName("updateProfile: Thành công khi tên đăng nhập/số điện thoại trùng với chính mình")
+    void testUpdateProfile_Success_SameUserKeepingDetails() {
+        String userId = "user-1";
+
+        Bidder mockUser = new Bidder();
+        mockUser.setId(userId);
+        mockUser.setUsername("myUsername");
+        mockUser.setPhone("0987654321");
+        mockUser.setEmail("test@test.com");
+        mockUser.setRole(RoleType.BIDDER);
+
+        when(mockUserDAO.findById(userId)).thenReturn(mockUser);
+        when(mockUserDAO.findByUsername("myUsername")).thenReturn(mockUser);
+        when(mockUserDAO.findByPhone("0987654321")).thenReturn(mockUser);
+        when(mockUserDAO.updateProfile(any(User.class))).thenReturn(true);
+
+        ProfileUpdateRequestDTO request = new ProfileUpdateRequestDTO("myUsername", "0987654321", "HCM");
+
+        UserProfileDTO result = authService.updateProfile(request, userId);
+
+        assertNotNull(result, "Phải trả về UserProfileDTO thay vì null");
+        verify(mockUserDAO, times(1)).updateProfile(any(User.class));
+    }
 }
