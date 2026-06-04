@@ -159,11 +159,23 @@ class UDPDiscoveryServerTest {
     void testStopsOnInterrupt() throws Exception {
         assertTrue(serverThread.isAlive(), "Server phải đang chạy trước interrupt");
 
+        // 1. Gửi lệnh ngắt luồng (đặt cờisInterrupted = true)
         serverThread.interrupt();
+
+        // 2. Gửi gói tin mồi để giải phóng hàm socket.receive() đang bị nghẽn
+        try (DatagramSocket wakeUpSocket = new DatagramSocket()) {
+            byte[] dummyData = "WAKE_UP_SIGNAL".getBytes();
+            DatagramPacket wakeUpPacket = new DatagramPacket(
+                    dummyData, dummyData.length,
+                    InetAddress.getByName("127.0.0.1"), UDP_PORT);
+            wakeUpSocket.send(wakeUpPacket);
+        }
+
+        // 3. Chờ tối đa 2 giây cho luồng phụ đóng hoàn toàn
         serverThread.join(2000);
 
         assertFalse(serverThread.isAlive(),
-                "Luồng UDPDiscoveryServer phải dừng sau interrupt()");
+                "Luồng UDPDiscoveryServer phải dừng hẳn sau khi nhận tín hiệu ngắt");
     }
 
     // ----------------------------------------------------------------
