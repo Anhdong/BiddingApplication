@@ -159,15 +159,18 @@ class UDPDiscoveryServerTest {
     void testStopsOnInterrupt() throws Exception {
         assertTrue(serverThread.isAlive(), "Server phải đang chạy trước interrupt");
 
-        // 1. Gửi lệnh ngắt luồng (đặt cờisInterrupted = true)
+        // 1. Cắm cờ ngắt luồng trước
         serverThread.interrupt();
+        Thread.sleep(50); // Chờ một chút nhỏ để cờ được ghi nhận
 
-        // 2. Gửi gói tin mồi để giải phóng hàm socket.receive() đang bị nghẽn
+        // 2. Gửi gói tin mồi bằng cách bind rõ ràng vào localhost để tránh bị GitHub Actions chặn
         try (DatagramSocket wakeUpSocket = new DatagramSocket()) {
+            wakeUpSocket.setReuseAddress(true);
             byte[] dummyData = "WAKE_UP_SIGNAL".getBytes();
+            // Sử dụng "localhost" thay vì "127.0.0.1" giúp một số runner tự động phân giải interface chuẩn hơn
             DatagramPacket wakeUpPacket = new DatagramPacket(
                     dummyData, dummyData.length,
-                    InetAddress.getByName("127.0.0.1"), UDP_PORT);
+                    InetAddress.getByName("localhost"), UDP_PORT);
             wakeUpSocket.send(wakeUpPacket);
         }
 
@@ -177,7 +180,6 @@ class UDPDiscoveryServerTest {
         assertFalse(serverThread.isAlive(),
                 "Luồng UDPDiscoveryServer phải dừng hẳn sau khi nhận tín hiệu ngắt");
     }
-
     // ----------------------------------------------------------------
     //  TC-UDP-06  Message rỗng – không crash, không phản hồi
     // ----------------------------------------------------------------
