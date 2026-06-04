@@ -168,7 +168,7 @@ public class SellerItemsFormController implements Initializable, ViewControllerL
             NotificationUtil.showError("StartPrice is invalid.");
             return false;
         }
-        if(txtMinBid.getText().isEmpty() || !txtStartPrice.getText().matches("\\d+(\\.\\d+)?")){
+        if(txtMinBid.getText().isEmpty() || !txtMinBid.getText().matches("\\d+(\\.\\d+)?")){
             NotificationUtil.showError("Minimum Bid increment is invalid.");
             return false;
         }
