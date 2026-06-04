@@ -1,6 +1,6 @@
 
-# BIDDING APPLICATION
-# Bài toán phạm vi hệ thống
+# ✨BIDDING APPLICATION
+# 💻Bài toán phạm vi hệ thống
 ### Mục tiêu  
 **BiddingApplication** mô phỏng quy trình đấu giá điện tử đầy đủ trên nền desktop (Java), đồng thời thực hành toàn diện OOP, kiến trúc Client-Server, xử lý đồng thời, kết nối CSDL và xây dựng giao diện JavaFX. Cụ thể:  
  - **Hệ thống Client-Server:** Server xử lý nghiệp vụ qua Socket TCP, Client giao diện JavaFX — toàn bộ logic nghiệp vụ phía Server.
@@ -29,7 +29,7 @@
 ### Giới hạn
  Ứng dụng desktop LAN/localhost, chưa thể thực hiện thanh toán thật, mục đích học thuật và nghiên cứu.
 
-# Công nghệ, môi trường và cài đặt
+# 🕹️Công nghệ, môi trường và cài đặt
 ### Công nghệ sử dụng  
  - **Ngôn ngữ:** Java 25
  - **Giao diện (Client):** JavaFX (tích hợp AtlantaFX theme, Ikonli icons)
@@ -46,7 +46,7 @@
  - Cài đặt Apache Maven (phiên bản 3.x trở lên).
  - Kết nối mạng ổn định để kết nối với cơ sở dữ liệu Supabase.
 
-# Cấu trúc thư mục
+# 📂Cấu trúc thư mục
 ```text
     # 3 Module chính
     BiddingApplication/                                                                                              
@@ -96,7 +96,7 @@
 
 ```
 
-# Hướng dẫn chạy chương trình
+# 📖Hướng dẫn chạy chương trình
 ## Hướng dẫn cài đặt và Thiết lập (Setup)
 
 ### **1. Yêu cầu tiền quyết (Prerequisites)**  
@@ -166,7 +166,7 @@ java -jar client-executable.jar
 > [!NOTE]
 > Khi thực hiện lệnh trên Windows có thể cần dùng **\\** thay cho **/** trong đường dẫn thư mục.
 
-# Danh sách chức năng
+# 📑Danh sách chức năng
 ### 1. Thiết kế lớp & cây kế thừa
  - [x] Các lớp chính (User, Bidder, Seller, Item, Auction, BidTransaction…)   
  - [x] Nguyên tắc OOP (Encapsulation, Inheritance, Polymorphism, Abstraction)   
