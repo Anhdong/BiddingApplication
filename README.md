@@ -47,15 +47,54 @@
  - Kết nối mạng ổn định để kết nối với cơ sở dữ liệu Supabase.
 
 # Cấu trúc thư mục
-### Dự án được chia thành 3 module chính
-### 1. Client  
- Chứa toàn bộ mã nguồn xử lý giao diện người dùng (Controllers, Views, CSS) và xử lý kết nối, gửi nhận gói tin từ phía người dùng.
+```text
+    # 3 Module chính
+    BiddingApplication/                                                                                              
+    ├── README.md                                                                                                    
+    ├── pom.xml                        # Root POM (Quản lý các module)                                               
+    │                                                                                                                
+    ├── client/                        # Module Client (JavaFX UI)                                                   
+    │   ├── pom.xml                                                                                                  
+    │   └── src/                                                                                                     
+    │       └── main/                                                                                                
+    │           ├── java/com/uet/BiddingApplication/                                                                 
+    │           │   ├── Controller/    # Các controllers xử lý logic giao diện                                       
+    │           │   ├── Enum/          # Các enums dành riêng cho client                                             
+    │           │   ├── Interface/                                                                                   
+    │           │   ├── Session/       # Quản lý phiên làm việc ở client                                             
+    │           │   └── Util/          # Các tiện ích phía client                                                    
+    │           │                                                                                                    
+    │           └── resources/         # Tài nguyên tĩnh của ứng dụng GUI                                                                       
+    │                                                                                                                
+    ├── common/                        # Module Common (Dùng chung cho cả Client & Server)                           
+    │   ├── pom.xml                                                                                                  
+    │   └── src/                                                                                                     
+    │       └── main/                                                                                                
+    │           └── java/com/uet/BiddingApplication/                                                                 
+    │               ├── DTO/           # Data Transfer Objects (Packet, Request, Response)                           
+    │               ├── Enum/          # Các hằng số/enum dùng chung                                                 
+    │               ├── Exception/     # Xử lý ngoại lệ                                                              
+    │               ├── Model/         # Các Entity/Model chính của hệ thống                                         
+    │               └── Utils/         # Các Mapper, Factory dùng chung
+    │
+    └── server/                        # Module Server (Core logic & Database)
+        ├── pom.xml
+        └── src/
+            ├── main/
+            │   ├── java/com/uet/BiddingApplication/
+            │   │   ├── Config/        # Cấu hình server
+            │   │   ├── CoreService/   # Các service cốt lõi (BidProcessing, Cache, Scheduler)
+            │   │   ├── DAO/           # Data Access Object (Tương tác database)
+            │   │   ├── Launcher/      # Điểm khởi chạy server
+            │   │   ├── ServerClass/   # Xử lý kết nối TCP/UDP, Request Router
+            │   │   ├── Service/       # Business logic (Admin, Auction, Auth, Bidder, Seller)
+            │   │   └── Utils/         # Quản lý kết nối Database, Storage
+            │   │
+            │   └── resources/
+            │
+            └── test/                  # Unit tests cho Server
 
-### 2. Server  
- Chứa các service cốt lõi (CoreService, AdminService, AutoBidManager...), lớp truy xuất cơ sở dữ liệu (DAO), và lõi máy chủ TCP Socket/UDP Discovery điều phối đa luồng.
-
-### 3.Common  
- Module dùng chung chứa các Model, định nghĩa cấu trúc gói tin giao tiếp (Request/Response DTOs), Enum, và Parser (Gson).
+```
 
 # Hướng dẫn chạy chương trình
 ## Hướng dẫn cài đặt và Thiết lập (Setup)
