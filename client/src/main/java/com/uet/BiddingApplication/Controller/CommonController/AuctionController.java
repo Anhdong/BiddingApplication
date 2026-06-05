@@ -159,6 +159,9 @@ public class AuctionController implements Initializable, ViewControllerLifecycle
             lblName.setText(dto.getItemName());
             txtDesc.setText(dto.getDescription());
 
+            //Bid step hint
+            txtBidStep.setPromptText("Min Step: "+dto.getBidStep()+"$");
+
             //Khoi phuc set up nut auto Bid
             AutoBidSetting autoBidSetting = dto.getAutoBidSetting();
             if(autoBidSetting != null) {
