@@ -3,7 +3,6 @@ package com.uet.BiddingApplication.ServerClass;
 import org.junit.jupiter.api.*;
 
 import java.net.*;
-import java.util.concurrent.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -155,23 +154,30 @@ class UDPDiscoveryServerTest {
     // ----------------------------------------------------------------
     @Test
     @Order(5)
-    @DisplayName("TC-UDP-05: Server dừng an toàn khi gọi stop() đóng Socket")
+    @DisplayName("TC-UDP-05: Server dừng an toàn khi Thread bị interrupt()")
     void testStopsOnInterrupt() throws Exception {
-        assertTrue(serverThread.isAlive(), "Server phải đang chạy trước khi dừng");
+        assertTrue(serverThread.isAlive(), "Server phải đang chạy trước interrupt");
 
-        // 1. Gọi hàm đóng Socket chủ động thay vì gửi gói tin mồi UDP
-        // Hành động này sẽ ép socket.receive() ném ra SocketException và thoát.
-        udpServer.stop();
-
-        // Cắm thêm cờ ngắt luồng để đảm bảo đúng thủ tục của Thread
+        // 1. Cắm cờ ngắt luồng trước
         serverThread.interrupt();
+        Thread.sleep(50); // Chờ một chút nhỏ để cờ được ghi nhận
 
-        // 2. Chờ tối đa 2 giây cho luồng phụ kết thúc và đóng hoàn toàn
+        // 2. Gửi gói tin mồi bằng cách bind rõ ràng vào localhost để tránh bị GitHub Actions chặn
+        try (DatagramSocket wakeUpSocket = new DatagramSocket()) {
+            wakeUpSocket.setReuseAddress(true);
+            byte[] dummyData = "WAKE_UP_SIGNAL".getBytes();
+            // Sử dụng "localhost" thay vì "127.0.0.1" giúp một số runner tự động phân giải interface chuẩn hơn
+            DatagramPacket wakeUpPacket = new DatagramPacket(
+                    dummyData, dummyData.length,
+                    InetAddress.getByName("localhost"), UDP_PORT);
+            wakeUpSocket.send(wakeUpPacket);
+        }
+
+        // 3. Chờ tối đa 2 giây cho luồng phụ đóng hoàn toàn
         serverThread.join(2000);
 
-        // 3. Khẳng định luồng đã chết, tức là Socket đã được nhả ra
         assertFalse(serverThread.isAlive(),
-                "Luồng UDPDiscoveryServer phải dừng hẳn sau khi nhận tín hiệu stop()");
+                "Luồng UDPDiscoveryServer phải dừng hẳn sau khi nhận tín hiệu ngắt");
     }
     // ----------------------------------------------------------------
     //  TC-UDP-06  Message rỗng – không crash, không phản hồi
