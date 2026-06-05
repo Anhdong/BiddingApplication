@@ -44,6 +44,9 @@ public class AutoBidManagerTest {
 
         // 3. Xóa sạch dữ liệu hàng đợi RAM trước mỗi test case để tránh Flaky Tests
         clearAutoBidQueues();
+
+        // 4. Tiêm Synchronous Executor để chạy bất đồng bộ đồng bộ trong test
+        injectField(autoBidManager, "executor", (java.util.concurrent.Executor) Runnable::run);
     }
 
     @AfterEach
@@ -52,6 +55,7 @@ public class AutoBidManagerTest {
         injectSingleton(RealtimeBroadcastService.class, null);
         injectSingleton(InMemoryBidServiceImpl.class, null);
         injectSingleton(AutoBidSettingDAO.class, null);
+        injectField(autoBidManager, "executor", java.util.concurrent.ForkJoinPool.commonPool());
         clearAutoBidQueues();
     }
 
@@ -60,6 +64,12 @@ public class AutoBidManagerTest {
         Field field = clazz.getDeclaredField("instance");
         field.setAccessible(true);
         field.set(null, mockInstance);
+    }
+
+    private void injectField(Object target, String fieldName, Object value) throws Exception {
+        Field field = target.getClass().getDeclaredField(fieldName);
+        field.setAccessible(true);
+        field.set(target, value);
     }
 
     private void clearAutoBidQueues() throws Exception {
