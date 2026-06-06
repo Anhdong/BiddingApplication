@@ -1,5 +1,6 @@
+<div align="center"> <img src="https://raw.githubusercontent.com/Anhdong/BiddingApplication/refs/heads/ReadMe/assets/banner.jpg"> <h1>✨Bidding Application</h1>
 
-# ✨BIDDING APPLICATION
+# 📷Screenshots
 <p align="center">
   <img src="https://raw.githubusercontent.com/Anhdong/BiddingApplication/refs/heads/ReadMe/assets/login.png" width="410" />
   <img src="https://raw.githubusercontent.com/Anhdong/BiddingApplication/refs/heads/ReadMe/assets/items.png" width="410" />
@@ -9,6 +10,7 @@
   <img src="https://raw.githubusercontent.com/Anhdong/BiddingApplication/refs/heads/ReadMe/assets/auction.png" width="410" />
   <img src="https://raw.githubusercontent.com/Anhdong/BiddingApplication/refs/heads/ReadMe/assets/history.png" width="410" />
 </p>
+
 # 💻Bài toán phạm vi hệ thống
 ### Mục tiêu  
 **BiddingApplication** mô phỏng quy trình đấu giá điện tử đầy đủ trên nền desktop (Java), đồng thời thực hành toàn diện OOP, kiến trúc Client-Server, xử lý đồng thời, kết nối CSDL và xây dựng giao diện JavaFX. Cụ thể:  
