@@ -1,13 +1,13 @@
 
 # ✨BIDDING APPLICATION
 <p align="center">
-  <img src="YOUR_IMAGE_URL_1" width="410" />
-  <img src="YOUR_IMAGE_URL_2" width="410" />
+  <img src="https://raw.githubusercontent.com/Anhdong/BiddingApplication/refs/heads/ReadMe/assets/login.png" width="410" />
+  <img src="https://raw.githubusercontent.com/Anhdong/BiddingApplication/refs/heads/ReadMe/assets/items.png" width="410" />
 </p>
 
 <p align="center">
-  <img src="YOUR_IMAGE_URL_3" width="410" />
-  <img src="YOUR_IMAGE_URL_4" width="410" />
+  <img src="https://raw.githubusercontent.com/Anhdong/BiddingApplication/refs/heads/ReadMe/assets/auction.png" width="410" />
+  <img src="https://raw.githubusercontent.com/Anhdong/BiddingApplication/refs/heads/ReadMe/assets/history.png" width="410" />
 </p>
 # 💻Bài toán phạm vi hệ thống
 ### Mục tiêu  
