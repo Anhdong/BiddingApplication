@@ -1,5 +1,14 @@
 
 # ✨BIDDING APPLICATION
+<p align="center">
+  <img src="YOUR_IMAGE_URL_1" width="410" />
+  <img src="YOUR_IMAGE_URL_2" width="410" />
+</p>
+
+<p align="center">
+  <img src="YOUR_IMAGE_URL_3" width="410" />
+  <img src="YOUR_IMAGE_URL_4" width="410" />
+</p>
 # 💻Bài toán phạm vi hệ thống
 ### Mục tiêu  
 **BiddingApplication** mô phỏng quy trình đấu giá điện tử đầy đủ trên nền desktop (Java), đồng thời thực hành toàn diện OOP, kiến trúc Client-Server, xử lý đồng thời, kết nối CSDL và xây dựng giao diện JavaFX. Cụ thể:  
