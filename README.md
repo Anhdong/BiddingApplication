@@ -1,4 +1,6 @@
-<div align="center"> <img src="https://raw.githubusercontent.com/Anhdong/BiddingApplication/refs/heads/ReadMe/assets/banner.jpg"> <h1>✨Bidding Application</h1>
+<div align="center"> <img src="https://raw.githubusercontent.com/Anhdong/BiddingApplication/refs/heads/ReadMe/assets/banner.jpg"> <h1>✨Bidding Application</h1> </div>
+
+<br>
 
 # 📷Screenshots
 <p align="center">
@@ -207,3 +209,8 @@ java -jar client-executable.jar
  - [x] Retry DB tự động (Kết thúc phiên an toàn)   
  - [x] Reconnect & Quản lý hồ sơ (Khôi phục session tự động)   
  - [x] CI/CD 2 jobs + Cross-platform
+
+# 💪🏻Contribute
+<a href="https://github.com/Anhdong/BiddingApplication/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Anhdong/BiddingApplication" />
+</a>
