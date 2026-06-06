@@ -195,4 +195,4 @@ java -jar client-executable.jar
  - [x] In-Memory Cache (SearchCacheManager — giảm tải DB)   
  - [x] Retry DB tự động (Kết thúc phiên an toàn)   
  - [x] Reconnect & Quản lý hồ sơ (Khôi phục session tự động)   
- - [x] Đăng bán lại sản phẩm (Relist) CI/CD 2 jobs + Cross-platform
+ - [x] CI/CD 2 jobs + Cross-platform

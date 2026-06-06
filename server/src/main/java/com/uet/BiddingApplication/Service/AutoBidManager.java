@@ -25,6 +25,7 @@ public class AutoBidManager {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AutoBidManager.class);
 
     private ConcurrentHashMap<String, ConcurrentLinkedQueue<AutoBidSetting>> autoBidQueues;
+    private java.util.concurrent.Executor executor = java.util.concurrent.ForkJoinPool.commonPool();
 
     private static volatile AutoBidManager instance = null;
 
@@ -120,7 +121,7 @@ public class AutoBidManager {
                 // [LOGIC DATABASE 2]: Xóa khỏi DB (Bất đồng bộ để phản hồi Client nhanh nhất)
                 CompletableFuture.runAsync(() -> {
                     AutoBidSettingDAO.getInstance().deleteAutoBid(bidderId,sessionId);
-                });
+                }, executor);
                 log.info("[INFO] User [" + bidderId + "] đã hủy Auto-bid tại phiên [" + sessionId + "]");
             }
 
@@ -166,7 +167,7 @@ public class AutoBidManager {
                 // b) [LOGIC DATABASE 3]: Xóa vĩnh viễn khỏi DB (Bắt buộc dùng luồng riêng để không kẹt luồng AutoBid)
                 CompletableFuture.runAsync(() -> {
                     AutoBidSettingDAO.getInstance().deleteAutoBid(setting.getBidderId(),sessionId);
-                });
+                }, executor);
 
                 // c) Đóng gói Packet thông báo
                 ResponsePacket<Void> cancelPacket = new ResponsePacket<>(

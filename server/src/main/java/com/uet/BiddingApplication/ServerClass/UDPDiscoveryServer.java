@@ -8,13 +8,18 @@ public class UDPDiscoveryServer implements Runnable {
     @Override
     public void run() {
         try (DatagramSocket socket = new DatagramSocket(8888)) {
+            socket.setSoTimeout(200); // Đặt timeout để socket.receive không block vô tận khi thread bị interrupt
             log.info("Bật luồng phản hồi UDP Discovery trên Port 8888...");
             byte[] receiveBuffer = new byte[1024];
 
             // Vòng lặp an toàn, tự dừng nếu Thread bị ngắt (interrupt)
             while (!Thread.currentThread().isInterrupted()) {
                 DatagramPacket receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
-                socket.receive(receivePacket);
+                try {
+                    socket.receive(receivePacket);
+                } catch (java.net.SocketTimeoutException e) {
+                    continue; // Timeout thì tiếp tục vòng lặp để check interrupted
+                }
 
                 String message = new String(receivePacket.getData(), 0, receivePacket.getLength());
 
