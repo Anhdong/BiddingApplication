@@ -13,6 +13,16 @@
   <img src="https://raw.githubusercontent.com/Anhdong/BiddingApplication/refs/heads/ReadMe/assets/history.png" width="410" />
 </p>
 
+# 📚 Table of Contents
+
+- [📷Screenshots](#screenshots)
+- [💻Bài toán phạm vi hệ thống](#bài-toán-phạm-vi-hệ-thống)
+- [🕹️Công nghệ, môi trường và cài đặt](#công-nghệ-môi-trường-và-cài-đặt)
+- [📂Cấu trúc thư mục](#cấu-trúc-thư-mục)
+- [📖Hướng dẫn chạy chương trình](#hướng-dẫn-chạy-chương-trình)
+- [📑Danh sách chức năng](#danh-sách-chức-năng)
+- [💪🏻Contribute](#contribute)
+
 # 💻Bài toán phạm vi hệ thống
 ### Mục tiêu  
 **BiddingApplication** mô phỏng quy trình đấu giá điện tử đầy đủ trên nền desktop (Java), đồng thời thực hành toàn diện OOP, kiến trúc Client-Server, xử lý đồng thời, kết nối CSDL và xây dựng giao diện JavaFX. Cụ thể:  
@@ -54,7 +64,7 @@
 ### Môi trường chạy  
  Ứng dụng hỗ trợ đa nền tảng (Cross-platform) bao gồm Windows, macOS và Linux.
 
-### Yêu cầu cài đặt:  
+### Yêu cầu cài đặt  
  - Hệ máy cần cài đặt sẵn JDK 25.
  - Cài đặt Apache Maven (phiên bản 3.x trở lên).
  - Kết nối mạng ổn định để kết nối với cơ sở dữ liệu Supabase.
