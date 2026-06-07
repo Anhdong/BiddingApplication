@@ -7,7 +7,11 @@ public class UDPDiscoveryServer implements Runnable {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(UDPDiscoveryServer.class);
     @Override
     public void run() {
-        try (DatagramSocket socket = new DatagramSocket(8888)) {
+        DatagramSocket socket = null;
+        try {
+            socket = new DatagramSocket(null);
+            socket.setReuseAddress(true);
+            socket.bind(new java.net.InetSocketAddress(8888));
             socket.setSoTimeout(200); // Đặt timeout để socket.receive không block vô tận khi thread bị interrupt
             log.info("Bật luồng phản hồi UDP Discovery trên Port 8888...");
             byte[] receiveBuffer = new byte[1024];
@@ -35,7 +39,11 @@ public class UDPDiscoveryServer implements Runnable {
             }
         } catch (Exception e) {
             // Khi server gọi udpDiscoveryThread.interrupt() hoặc tắt JVM, nó sẽ rơi vào đây
-            log.info("Luồng UDP Discovery đã được đóng.");
+            log.error("Lỗi trong luồng UDP Discovery: " + e.getMessage(), e);
+        } finally {
+            if (socket != null && !socket.isClosed()) {
+                socket.close();
+            }
         }
     }
 }

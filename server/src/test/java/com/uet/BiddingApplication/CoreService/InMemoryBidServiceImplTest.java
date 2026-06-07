@@ -132,4 +132,42 @@ public class InMemoryBidServiceImplTest {
         // Kiểm tra xem có broadcast không (chỉ khi dbSuccess = true mới có)
         verify(mockBroadcast, timeout(1000)).broadcast(eq(sessionId), any());
     }
+
+    @Test
+    @DisplayName("Self-bidding: Chặn người đang dẫn đầu tự đôn giá lên")
+    void testSelfBidding_Blocked() throws Exception {
+        String sessionId = UUID.randomUUID().toString();
+        String bidderId = UUID.randomUUID().toString();
+        String bidderName = "Nguyen Van A";
+        BigDecimal bidAmount = new BigDecimal("1200.00");
+
+        AuctionSession session = new AuctionSession();
+        session.setId(sessionId);
+        session.setStatus(SessionStatus.RUNNING);
+        session.setCurrentPrice(new BigDecimal("1000.00"));
+        session.setBidStep(new BigDecimal("100.00"));
+        session.setEndTime(LocalDateTime.now().plusHours(1));
+        session.setWinnerName(bidderName); // Đặt Nguyen Van A làm người dẫn đầu hiện tại
+
+        when(mockCache.getSession(sessionId)).thenReturn(session);
+
+        BidRequestDTO request = new BidRequestDTO();
+        request.setSessionId(sessionId);
+        request.setBidAmount(bidAmount);
+        request.setBidderName(bidderName);
+        request.setBidType(BidType.MANUAL);
+
+        bidService.enqueueBid(request, bidderId);
+
+        // Xác minh là gửi tin nhắn riêng báo lỗi cho user
+        verify(mockBroadcast, timeout(10000).atLeastOnce()).sendPrivateMessage(
+                eq(bidderId),
+                argThat(packet -> packet != null 
+                        && packet.getStatusCode() == 400 
+                        && "Bạn đang là người dẫn đầu, không thể tự nâng giá.".equals(packet.getMessage()))
+        );
+
+        // Đảm bảo không gọi placeBidAtomicTransaction xuống DB
+        verify(mockBidDAO, never()).placeBidAtomicTransaction(any(), any(), any(), any(), any(), any());
+    }
 }

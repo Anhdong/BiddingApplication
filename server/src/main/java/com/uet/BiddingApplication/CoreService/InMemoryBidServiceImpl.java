@@ -157,7 +157,7 @@ public class InMemoryBidServiceImpl implements BidProcessingService {
         }
 
         // [BỔ SUNG MỚI]: Chặn tự đôn giá (Self-bidding)
-        if (task.bidderId.equals(session.getWinnerName())) {
+        if (session.getWinnerName() != null && req.getBidderName().equals(session.getWinnerName())) {
             throw new BusinessException("Bạn đang là người dẫn đầu, không thể tự nâng giá.");
         }
 

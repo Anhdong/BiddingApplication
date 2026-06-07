@@ -79,7 +79,7 @@ public class AutoBidManager {
             String currentWinner = session.getWinnerName();
 
             // Nếu người vừa cài Autobid KHÔNG PHẢI là người đang dẫn đầu -> Bắn ngay 1 lệnh lên workerQueue
-            if (!setting.getBidderId().equals(currentWinner)) {
+            if (currentWinner == null || !setting.getBidderName().equals(currentWinner)) {
 
                 BigDecimal validIncrement = setting.getIncrement().max(session.getBidStep());
                 BigDecimal currentPrice = session.getCurrentPrice() != null ? session.getCurrentPrice() : session.getStartPrice();
