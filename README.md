@@ -224,3 +224,6 @@ java -jar client-executable.jar
 <a href="https://github.com/Anhdong/BiddingApplication/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=Anhdong/BiddingApplication" />
 </a>
+
+# 🔍Báo cáo & Demo
+[![Link Drive](https://github.com/Anhdong/BiddingApplication/blob/ReadMe/assets/drive_button.png?raw=true)](https://drive.google.com/drive/folders/1AMPZMyQftG0uP7_-iBeWDZ77QrA3-DZC?usp=drive_link)
