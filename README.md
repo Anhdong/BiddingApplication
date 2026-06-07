@@ -1,16 +1,16 @@
-<div align="center"> <img src="https://raw.githubusercontent.com/Anhdong/BiddingApplication/refs/heads/ReadMe/assets/banner.jpg"> <h1>✨Bidding Application</h1> </div>
+<div align="center"> <img src="https://raw.githubusercontent.com/Anhdong/BiddingApplication/refs/heads/main/assets/banner.jpg"> <h1>✨Bidding Application</h1> </div>
 
 <br>
 
 # 📷Screenshots
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Anhdong/BiddingApplication/refs/heads/ReadMe/assets/login.png" width="410" />
-  <img src="https://raw.githubusercontent.com/Anhdong/BiddingApplication/refs/heads/ReadMe/assets/items.png" width="410" />
+  <img src="https://raw.githubusercontent.com/Anhdong/BiddingApplication/refs/heads/main/assets/login.png" width="410" />
+  <img src="https://raw.githubusercontent.com/Anhdong/BiddingApplication/refs/heads/main/assets/items.png" width="410" />
 </p>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Anhdong/BiddingApplication/refs/heads/ReadMe/assets/auction.png" width="410" />
-  <img src="https://raw.githubusercontent.com/Anhdong/BiddingApplication/refs/heads/ReadMe/assets/history.png" width="410" />
+  <img src="https://raw.githubusercontent.com/Anhdong/BiddingApplication/refs/heads/main/assets/auction.png" width="410" />
+  <img src="https://raw.githubusercontent.com/Anhdong/BiddingApplication/refs/heads/main/assets/history.png" width="410" />
 </p>
 
 # 📚 Table of Contents
@@ -226,4 +226,4 @@ java -jar client-executable.jar
 </a>
 
 # 🔍Báo cáo & Demo
-[![Link Drive](https://github.com/Anhdong/BiddingApplication/blob/ReadMe/assets/drive_button.png?raw=true)](https://drive.google.com/drive/folders/1AMPZMyQftG0uP7_-iBeWDZ77QrA3-DZC?usp=drive_link)
+[![Link Drive](https://github.com/Anhdong/BiddingApplication/blob/main/assets/drive_button.png?raw=true)](https://drive.google.com/drive/folders/1AMPZMyQftG0uP7_-iBeWDZ77QrA3-DZC?usp=drive_link)
