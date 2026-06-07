@@ -1,6 +1,29 @@
+<div align="center"> <img src="https://raw.githubusercontent.com/Anhdong/BiddingApplication/refs/heads/ReadMe/assets/banner.jpg"> <h1>✨Bidding Application</h1> </div>
 
-# BIDDING APPLICATION
-# Bài toán phạm vi hệ thống
+<br>
+
+# 📷Screenshots
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Anhdong/BiddingApplication/refs/heads/ReadMe/assets/login.png" width="410" />
+  <img src="https://raw.githubusercontent.com/Anhdong/BiddingApplication/refs/heads/ReadMe/assets/items.png" width="410" />
+</p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Anhdong/BiddingApplication/refs/heads/ReadMe/assets/auction.png" width="410" />
+  <img src="https://raw.githubusercontent.com/Anhdong/BiddingApplication/refs/heads/ReadMe/assets/history.png" width="410" />
+</p>
+
+# 📚 Table of Contents
+
+- [📷Screenshots](#screenshots)
+- [💻Bài toán phạm vi hệ thống](#bài-toán-phạm-vi-hệ-thống)
+- [🕹️Công nghệ, môi trường và cài đặt](#công-nghệ-môi-trường-và-cài-đặt)
+- [📂Cấu trúc thư mục](#cấu-trúc-thư-mục)
+- [📖Hướng dẫn chạy chương trình](#hướng-dẫn-chạy-chương-trình)
+- [📑Danh sách chức năng](#danh-sách-chức-năng)
+- [💪🏻Contribute](#contribute)
+
+# 💻Bài toán phạm vi hệ thống
 ### Mục tiêu  
 **BiddingApplication** mô phỏng quy trình đấu giá điện tử đầy đủ trên nền desktop (Java), đồng thời thực hành toàn diện OOP, kiến trúc Client-Server, xử lý đồng thời, kết nối CSDL và xây dựng giao diện JavaFX. Cụ thể:  
  - **Hệ thống Client-Server:** Server xử lý nghiệp vụ qua Socket TCP, Client giao diện JavaFX — toàn bộ logic nghiệp vụ phía Server.
@@ -29,7 +52,7 @@
 ### Giới hạn
  Ứng dụng desktop LAN/localhost, chưa thể thực hiện thanh toán thật, mục đích học thuật và nghiên cứu.
 
-# Công nghệ, môi trường và cài đặt
+# 🕹️Công nghệ, môi trường và cài đặt
 ### Công nghệ sử dụng  
  - **Ngôn ngữ:** Java 25
  - **Giao diện (Client):** JavaFX (tích hợp AtlantaFX theme, Ikonli icons)
@@ -41,23 +64,62 @@
 ### Môi trường chạy  
  Ứng dụng hỗ trợ đa nền tảng (Cross-platform) bao gồm Windows, macOS và Linux.
 
-### Yêu cầu cài đặt:  
+### Yêu cầu cài đặt  
  - Hệ máy cần cài đặt sẵn JDK 25.
  - Cài đặt Apache Maven (phiên bản 3.x trở lên).
  - Kết nối mạng ổn định để kết nối với cơ sở dữ liệu Supabase.
 
-# Cấu trúc thư mục
-### Dự án được chia thành 3 module chính
-### 1. Client  
- Chứa toàn bộ mã nguồn xử lý giao diện người dùng (Controllers, Views, CSS) và xử lý kết nối, gửi nhận gói tin từ phía người dùng.
+# 📂Cấu trúc thư mục
+```text
+    # 3 Module chính
+    BiddingApplication/                                                                                              
+    ├── README.md                                                                                                    
+    ├── pom.xml                        # Root POM (Quản lý các module)                                               
+    │                                                                                                                
+    ├── client/                        # Module Client (JavaFX UI)                                                   
+    │   ├── pom.xml                                                                                                  
+    │   └── src/                                                                                                     
+    │       └── main/                                                                                                
+    │           ├── java/com/uet/BiddingApplication/                                                                 
+    │           │   ├── Controller/    # Các controllers xử lý logic giao diện                                       
+    │           │   ├── Enum/          # Các enums dành riêng cho client                                             
+    │           │   ├── Interface/                                                                                   
+    │           │   ├── Session/       # Quản lý phiên làm việc ở client                                             
+    │           │   └── Util/          # Các tiện ích phía client                                                    
+    │           │                                                                                                    
+    │           └── resources/         # Tài nguyên tĩnh của ứng dụng GUI                                                                       
+    │                                                                                                                
+    ├── common/                        # Module Common (Dùng chung cho cả Client & Server)                           
+    │   ├── pom.xml                                                                                                  
+    │   └── src/                                                                                                     
+    │       └── main/                                                                                                
+    │           └── java/com/uet/BiddingApplication/                                                                 
+    │               ├── DTO/           # Data Transfer Objects (Packet, Request, Response)                           
+    │               ├── Enum/          # Các hằng số/enum dùng chung                                                 
+    │               ├── Exception/     # Xử lý ngoại lệ                                                              
+    │               ├── Model/         # Các Entity/Model chính của hệ thống                                         
+    │               └── Utils/         # Các Mapper, Factory dùng chung
+    │
+    └── server/                        # Module Server (Core logic & Database)
+        ├── pom.xml
+        └── src/
+            ├── main/
+            │   ├── java/com/uet/BiddingApplication/
+            │   │   ├── Config/        # Cấu hình server
+            │   │   ├── CoreService/   # Các service cốt lõi (BidProcessing, Cache, Scheduler)
+            │   │   ├── DAO/           # Data Access Object (Tương tác database)
+            │   │   ├── Launcher/      # Điểm khởi chạy server
+            │   │   ├── ServerClass/   # Xử lý kết nối TCP/UDP, Request Router
+            │   │   ├── Service/       # Business logic (Admin, Auction, Auth, Bidder, Seller)
+            │   │   └── Utils/         # Quản lý kết nối Database, Storage
+            │   │
+            │   └── resources/
+            │
+            └── test/                  # Unit tests cho Server
 
-### 2. Server  
- Chứa các service cốt lõi (CoreService, AdminService, AutoBidManager...), lớp truy xuất cơ sở dữ liệu (DAO), và lõi máy chủ TCP Socket/UDP Discovery điều phối đa luồng.
+```
 
-### 3.Common  
- Module dùng chung chứa các Model, định nghĩa cấu trúc gói tin giao tiếp (Request/Response DTOs), Enum, và Parser (Gson).
-
-# Hướng dẫn chạy chương trình
+# 📖Hướng dẫn chạy chương trình
 ## Hướng dẫn cài đặt và Thiết lập (Setup)
 
 ### **1. Yêu cầu tiền quyết (Prerequisites)**  
@@ -127,7 +189,7 @@ java -jar client-executable.jar
 > [!NOTE]
 > Khi thực hiện lệnh trên Windows có thể cần dùng **\\** thay cho **/** trong đường dẫn thư mục.
 
-# Danh sách chức năng
+# 📑Danh sách chức năng
 ### 1. Thiết kế lớp & cây kế thừa
  - [x] Các lớp chính (User, Bidder, Seller, Item, Auction, BidTransaction…)   
  - [x] Nguyên tắc OOP (Encapsulation, Inheritance, Polymorphism, Abstraction)   
@@ -157,3 +219,11 @@ java -jar client-executable.jar
  - [x] Retry DB tự động (Kết thúc phiên an toàn)   
  - [x] Reconnect & Quản lý hồ sơ (Khôi phục session tự động)   
  - [x] CI/CD 2 jobs + Cross-platform
+
+# 💪🏻Contribute
+<a href="https://github.com/Anhdong/BiddingApplication/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Anhdong/BiddingApplication" />
+</a>
+
+# 🔍Báo cáo & Demo
+[![Link Drive](https://github.com/Anhdong/BiddingApplication/blob/ReadMe/assets/drive_button.png?raw=true)](https://drive.google.com/drive/folders/1AMPZMyQftG0uP7_-iBeWDZ77QrA3-DZC?usp=drive_link)

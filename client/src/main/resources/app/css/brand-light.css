@@ -67,7 +67,16 @@
     -fx-fill: -color-fg-default;
 }
 
-/* --- 6. WALLPAPER --- */
+/* --- 6. LINE CHART COLOR --- */
+.default-color0.chart-series-line {
+    -fx-stroke: -color-accent-emphasis ;
+}
+
+.default-color0.chart-line-symbol {
+    -fx-background-color: -color-accent-emphasis, -color-bg-default;
+}
+
+/* --- 7. WALLPAPER --- */
 .auth-background {
     /* Đường dẫn đến hình ảnh của bạn */
     -fx-background-image: url("/app/assets/light_wallpaper.jpg");
